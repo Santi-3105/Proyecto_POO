@@ -5,11 +5,11 @@ import javax.imageio.*;
 import java.io.*;
 
 
-abstract public class ObjetoGrafico implements ObjetoMovible{
+public abstract class ObjetoGrafico implements ObjetoMovible{
     protected BufferedImage imagen = null;
 
-    double posicionX = 0;
-    double posicionY = 0;
+    public double posicionX = 0;
+    public double posicionY = 0;
 
     public ObjetoGrafico(){}
     public ObjetoGrafico(String filename) {
