@@ -1,4 +1,4 @@
 package pong;
 
-public class Marcador {
+class Marcador {
 }
