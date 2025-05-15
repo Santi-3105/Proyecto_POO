@@ -3,17 +3,22 @@ package pong;
 import java.awt.*;
 import javax.swing.*;
 
-import clasesCompartidas.ObjetoGrafico;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
-public class MenuPong extends ObjetoGrafico {
+public class MenuPong implements ActionListener {
     protected JButton options;
     protected JCheckBox sound;
     protected JButton unJugador;
     protected JButton dosJugador;
     protected JLabel titulo;
+    protected JPanel panelBot;
+    protected JPanel panelBotConfg;
+    protected MenuConfig config;
+    protected JFrame frame;
 
     public MenuPong() {
-        JFrame frame = new JFrame();
+        frame = new JFrame();
         frame.setTitle("Pong");
         frame.setSize(800, 600);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -31,9 +36,9 @@ public class MenuPong extends ObjetoGrafico {
         unJugador = new JButton("Un jugador");
         dosJugador = new JButton("Dos jugadores");
         options = new JButton("Configuración");
-        sound = new JCheckBox("Sonido");
+        options.addActionListener(this);
 
-        JPanel panelBot = new JPanel();
+        panelBot = new JPanel();
         panelBot.setLayout(new GridBagLayout());
         panelBot.setBackground(Color.BLACK);
 
@@ -56,10 +61,9 @@ public class MenuPong extends ObjetoGrafico {
         panelBot.add(dosJugador);
         frame.add(panelBot, BorderLayout.CENTER);
 
-        JPanel panelBotConfg = new JPanel();
+        panelBotConfg = new JPanel();
         panelBotConfg.setLayout(new FlowLayout(FlowLayout.LEFT, 20, 10));
         panelBotConfg.setBackground(Color.BLACK);
-        panelBotConfg.add(sound);
         panelBotConfg.add(options);
         frame.add(panelBotConfg, BorderLayout.SOUTH);
 
@@ -69,25 +73,31 @@ public class MenuPong extends ObjetoGrafico {
         options.setForeground(Color.WHITE);
         options.setBackground(Color.BLACK);
         options.setBorder(BorderFactory.createLineBorder(Color.WHITE, 4, true));
-        // Configurar boton sound
-        // Configurar checkbox sound
-        sound.setFont(buttonFont);
-        sound.setForeground(Color.WHITE);
-        sound.setBackground(Color.BLACK);
-        sound.setBorder(BorderFactory.createLineBorder(Color.WHITE, 2, true)); // Borde blanco y redondeado
 
         frame.setVisible(true);
-
+        // Crear el menú de configuración pero sin hacerlo visible aún
+        config = new MenuConfig(frame, this);
+    }
+       public void mostrarMenuPrincipal() {
+        titulo.setVisible(true);
+        panelBot.setVisible(true);
+        panelBotConfg.setVisible(true);
     }
 
+    public void ocultarMenuPrincipal() {
+        titulo.setVisible(false);
+        panelBot.setVisible(false);
+        panelBotConfg.setVisible(false);
+    }
     public static void main(String[] args) {
         new MenuPong();
     }
-
     @Override
-    public void update(double delta) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'update'");
+    public void actionPerformed(ActionEvent e) {
+            if(e.getSource()==options)
+        {
+            ocultarMenuPrincipal();
+            config.mostrarMenuConfig();
+        }
     }
-
 }

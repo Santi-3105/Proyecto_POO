@@ -17,7 +17,7 @@ class Marcador {
     public void dibujar(Graphics g) {
         g.setColor(Color.WHITE);
         g.setFont(new Font("Arial", Font.BOLD, 30));
-        g.drawString(String.valueOf(puntosJugadorIzquierda), 100, 50);
-        g.drawString(String.valueOf(puntosJugadorDerecha), 500, 50);
+        //g.drawString(String.valueOf(puntosJugadorIzquierda), 100, 50);
+        //g.drawString(String.valueOf(puntosJugadorDerecha), 500, 50);
     }
 }
