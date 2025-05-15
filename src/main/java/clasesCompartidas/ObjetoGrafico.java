@@ -8,8 +8,8 @@ import java.io.*;
 public abstract class ObjetoGrafico implements ObjetoMovible{
     protected BufferedImage imagen = null;
 
-    public double posicionX = 0;
-    public double posicionY = 0;
+    protected double posicionX = 0;
+    protected  double posicionY = 0;
 
     public ObjetoGrafico(){}
     public ObjetoGrafico(String filename) {
