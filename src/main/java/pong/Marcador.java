@@ -6,8 +6,12 @@ import java.awt.Graphics;
 
 class Marcador {
     private int puntaje;
-    public void Marcador(){
+    private int posicionX;
+    private int posicionY;
+    public Marcador(int posicionX, int posicionY){
         puntaje = 0;
+        this.posicionX = posicionX;
+        this.posicionY = posicionY;
     }
 
     public void incrementarPuntaje() {
@@ -17,7 +21,6 @@ class Marcador {
     public void dibujar(Graphics g) {
         g.setColor(Color.WHITE);
         g.setFont(new Font("Arial", Font.BOLD, 30));
-        g.drawString(String.valueOf(puntosJugadorIzquierda), 100, 50);
-        g.drawString(String.valueOf(puntosJugadorDerecha), 500, 50);
+        g.drawString(String.valueOf(puntaje), posicionX, posicionY);
     }
 }
