@@ -101,6 +101,8 @@ public class MenuPong implements ActionListener {
         // Añadir tarjeta al frame
         frame.add(tarjeta);
         frame.setVisible(true);
+
+        //Termina constructor
     }
 
     public void mostrarMenuPrincipal() {

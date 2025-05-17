@@ -78,8 +78,6 @@ public class MenuConfig implements ActionListener {
         // Config panel
         config = new JPanel(new GridBagLayout());
         config.setOpaque(false);
-        // config.setVisible(false);
-        // config.setBackground(Color.BLACK);
         GridBagConstraints g = new GridBagConstraints();
         g.gridx = 0;
         g.gridy = 0;
@@ -154,9 +152,6 @@ public class MenuConfig implements ActionListener {
         panelConfigBot.add(atras);
         panelConfigBot.add(reset);
         panelConfigBot.setOpaque(false);
-        // panelConfigBot.setVisible(false);
-        // panelConfigBot.setBackground(Color.BLACK);
-        // NUEVO
         // Configuro los botones con color blanco y fondo transparente
         Font buttonFontConfg = new Font("Courier New", Font.BOLD, 20);
         ventana.setFont(buttonFontConfg);
@@ -241,25 +236,6 @@ public class MenuConfig implements ActionListener {
     public JPanel getPanelConfig() {
         return panelCompleto;
     }
-
-    /*
-     * public void mostrarMenuConfig()
-     * {
-     * frame.getContentPane().removeAll(); // Limpia el contenido actual
-     * frame.add(config, BorderLayout.CENTER);
-     * frame.add(panelConfigBot, BorderLayout.SOUTH);
-     * frame.getContentPane().revalidate();
-     * frame.getContentPane().repaint();
-     * config.setVisible(true);
-     * panelConfigBot.setVisible(true);
-     * }
-     * 
-     * public void ocultarMenuConfig() {
-     * config.setVisible(false);
-     * panelConfigBot.setVisible(false);
-     * menuPong.mostrarMenuPrincipal();
-     * }
-     */
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == atras) {
