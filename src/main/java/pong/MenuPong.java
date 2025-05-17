@@ -11,93 +11,110 @@ public class MenuPong implements ActionListener {
     protected JCheckBox sound;
     protected JButton unJugador;
     protected JButton dosJugador;
-    protected JLabel titulo;
-    protected JPanel panelBot;
-    protected JPanel panelBotConfg;
     protected MenuConfig config;
     protected JFrame frame;
+    protected JPanel fondoMenu;
+    protected JPanel tarjeta;
+    protected CardLayout cardLayout;
+    protected JPanel panelPrincipal;
 
     public MenuPong() {
         frame = new JFrame();
         frame.setTitle("Pong");
         frame.setSize(800, 600);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setLayout(new BorderLayout());
         frame.setLocationRelativeTo(null);
-        frame.getContentPane().setBackground(Color.BLACK);
 
-        // Crear título
-        titulo = new JLabel("PONG");
-        titulo.setFont(new Font("Arial", Font.BOLD, 80));
-        titulo.setForeground(Color.WHITE);
-        titulo.setHorizontalAlignment(JLabel.CENTER);
-        frame.add(titulo, BorderLayout.NORTH);
+        // Crear panel con CardLayout para intercambiar menús
+        tarjeta = new JPanel();
+        cardLayout = new CardLayout();
+        tarjeta.setLayout(cardLayout);
 
+        // Crear panel con fondo de imagen
+        fondoMenu = new JPanel() {
+            Image pongFondo = new ImageIcon(getClass().getResource("/pong/pongFondo.jpg")).getImage();
+
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                if (pongFondo != null) {
+                    g.drawImage(pongFondo, 0, 0, getWidth(), getHeight(), this);
+                } else {
+                    System.out.println("No se pudo cargar la imagen de fondo.");
+                }
+            }
+        };
+        fondoMenu.setLayout(new BorderLayout());
+
+        // Crear el menú principal
+        panelPrincipal = new JPanel();
+        panelPrincipal.setOpaque(false); // No cubre la imagen de fondo
+        panelPrincipal.setLayout(new GridBagLayout());
+
+        // Crear botones
         unJugador = new JButton("Un jugador");
         dosJugador = new JButton("Dos jugadores");
         options = new JButton("Configuración");
         options.addActionListener(this);
 
-        panelBot = new JPanel();
-        panelBot.setLayout(new GridBagLayout());
-        panelBot.setBackground(Color.BLACK);
-
-        // Creo una fuente para los botones
+        // Configurar botones
         Font buttonFont = new Font("Arial", Font.BOLD, 20);
-
-        // Configurar botón unJugador
         unJugador.setPreferredSize(new Dimension(200, 50));
         unJugador.setFont(buttonFont);
         unJugador.setForeground(Color.WHITE);
         unJugador.setBackground(Color.BLACK);
-        unJugador.setBorder(BorderFactory.createLineBorder(Color.WHITE, 6, true)); // Borde blanco y redondeado
-        // Configurar boton dosJugador
+        unJugador.setBorder(BorderFactory.createLineBorder(Color.WHITE, 6, true));
+
         dosJugador.setPreferredSize(new Dimension(200, 50));
         dosJugador.setFont(buttonFont);
         dosJugador.setForeground(Color.WHITE);
         dosJugador.setBackground(Color.BLACK);
-        dosJugador.setBorder(BorderFactory.createLineBorder(Color.WHITE, 6, true)); // Borde blanco y redondeado
-        panelBot.add(unJugador);
-        panelBot.add(dosJugador);
-        frame.add(panelBot, BorderLayout.CENTER);
+        dosJugador.setBorder(BorderFactory.createLineBorder(Color.WHITE, 6, true));
 
-        panelBotConfg = new JPanel();
-        panelBotConfg.setLayout(new FlowLayout(FlowLayout.LEFT, 20, 10));
-        panelBotConfg.setBackground(Color.BLACK);
-        panelBotConfg.add(options);
-        frame.add(panelBotConfg, BorderLayout.SOUTH);
-
-        // Estilos de los botones options y sound
-        // Configurar botón options
+        options.setPreferredSize(new Dimension(200, 50));
         options.setFont(buttonFont);
         options.setForeground(Color.WHITE);
         options.setBackground(Color.BLACK);
         options.setBorder(BorderFactory.createLineBorder(Color.WHITE, 4, true));
 
-        frame.setVisible(true);
+        // Añadir botones al panel principal
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(20, 20, 20, 20);
+        gbc.fill = GridBagConstraints.NONE;
+        gbc.gridy = 0;
+        panelPrincipal.add(unJugador, gbc);
+        gbc.gridy++;
+        panelPrincipal.add(dosJugador, gbc);
+        gbc.gridy++;
+        panelPrincipal.add(options, gbc);
+
+        // Añadir panel principal a fondo
+        fondoMenu.add(panelPrincipal, BorderLayout.CENTER);
+
+        // Añadir el panel con la imagen de fondo al card layout
+        tarjeta.add(fondoMenu, "menuPrincipal");
+
         // Crear el menú de configuración pero sin hacerlo visible aún
         config = new MenuConfig(frame, this);
-    }
-       public void mostrarMenuPrincipal() {
-        titulo.setVisible(true);
-        panelBot.setVisible(true);
-        panelBotConfg.setVisible(true);
+        tarjeta.add(config.getPanelConfig(), "menuConfig");
+
+        // Añadir tarjeta al frame
+        frame.add(tarjeta);
+        frame.setVisible(true);
     }
 
-    public void ocultarMenuPrincipal() {
-        titulo.setVisible(false);
-        panelBot.setVisible(false);
-        panelBotConfg.setVisible(false);
+    public void mostrarMenuPrincipal() {
+        cardLayout.show(tarjeta, "menuPrincipal");
     }
-    public static void main(String[] args) {
-        new MenuPong();
-    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
-            if(e.getSource()==options)
-        {
-            ocultarMenuPrincipal();
-            config.mostrarMenuConfig();
+        if (e.getSource() == options) {
+            cardLayout.show(tarjeta, "menuConfig");
         }
+    }
+
+    public static void main(String[] args) {
+        new MenuPong();
     }
 }
