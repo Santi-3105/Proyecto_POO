@@ -62,8 +62,12 @@ class Pelota extends ObjetoGrafico {
                 getY() + getAlto() > b.getY();
     }
 
+    public void setY(double y) {
+        this.posicionY = y;
+    }
+
     void invertirDireccionY() {
         // Multiplicamos por -1 para invertir dirección vertical
-        setVelocidadY(getVelocidadY());
+        setVelocidadY(-getVelocidadY());
     }
 }

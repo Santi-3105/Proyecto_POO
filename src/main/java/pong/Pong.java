@@ -35,7 +35,7 @@ public class Pong extends JGame {
             pelota = new Pelota(10, 400, 300, 150, 150);
             Keyboard teclado = this.getKeyboard();
             paletaIzquierda = new Paleta(10, 90, 30, 270,teclado);
-            paletaDerecha = new Paleta(10, 90, 740, 270,teclado);
+            paletaDerecha = new Paleta(10, 90, 760, 270,teclado);
             arcoIzquierdo = new Arco(0, 0, 5, getHeight(),true);
             arcoDerecho = new Arco(getWidth() - 5, 0, 5, getHeight(),false);
 
@@ -65,9 +65,13 @@ public class Pong extends JGame {
         // Colisión de pelota con la parte superior e inferior
         if (pelota.getY() <= 0) {
             // Toca el borde superior
+            pelota.setY(37);
             pelota.invertirDireccionY();
-        } else if (pelota.getY() + pelota.getAlto() >= getHeight()) {
+        }
+
+        if (pelota.getY() + pelota.getAlto() >= getHeight()) {
             // Toca el borde inferior
+            pelota.setY(getHeight() - pelota.getAlto()); // La pega al borde inferior
             pelota.invertirDireccionY();
         }
     }
