@@ -36,8 +36,8 @@ public class Pong extends JGame {
             Keyboard teclado = this.getKeyboard();
             paletaIzquierda = new Paleta(10, 90, 30, 270,teclado);
             paletaDerecha = new Paleta(10, 90, 760, 270,teclado);
-            arcoIzquierdo = new Arco(0, 0, 5, getHeight(),true);
-            arcoDerecho = new Arco(getWidth() - 5, 0, 5, getHeight(),false);
+            arcoIzquierdo = new Arco(0, true);
+            arcoDerecho = new Arco(getWidth(),false); //Acá estaba el getWidth() - 5
 
 
         }catch(Exception ex){
