@@ -54,4 +54,16 @@ class Pelota extends ObjetoGrafico {
     public double getVelocidadX(){
         return this.velocidadX;
     }
+
+    boolean colisiona(ObjetoGrafico b) {
+        return getX() < b.getX() + b.getAncho() &&
+                getX() + getAncho() > b.getX() &&
+                getY() < b.getY() + b.getAlto() &&
+                getY() + getAlto() > b.getY();
+    }
+
+    void invertirDireccionY() {
+        // Multiplicamos por -1 para invertir dirección vertical
+        setVelocidadY(getVelocidadY());
+    }
 }
