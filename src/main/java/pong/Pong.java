@@ -83,6 +83,8 @@ public class Pong extends JGame {
         pelota.mostrar(dibuje);
         paletaIzquierda.mostrar(dibuje);
         paletaDerecha.mostrar(dibuje);
+        arcoIzquierdo.getMarcador().dibujar(dibuje);
+        arcoDerecho.getMarcador().dibujar(dibuje);
     }
 
     public void gameShutdown(){
