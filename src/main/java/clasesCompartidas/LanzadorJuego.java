@@ -1,7 +1,13 @@
 package clasesCompartidas;
 import java.awt.*;
 import java.awt.event.*;
+import javax.sound.sampled.*;
+import java.io.IOException;
+import java.net.URL;
+
+
 import com.entropyinteractive.*;
+import lemmings.Lemming;
 import pong.Pong;
 
 public class LanzadorJuego extends Frame implements ActionListener{
@@ -14,6 +20,8 @@ public class LanzadorJuego extends Frame implements ActionListener{
     protected Label titulo;
     protected Panel tarjeta;
     protected Button boton;
+    protected Clip musicaFondo;
+
 
 
     public LanzadorJuego(){
@@ -21,7 +29,9 @@ public class LanzadorJuego extends Frame implements ActionListener{
         setSize(1100, 700);
         setLayout(null);
         setBackground(new Color(30, 30, 30)); // Fondo oscuro
-        setResizable(false);
+
+        iniciarMusicaFondo();
+
 
         titulo = new Label("Bienvenidos al Lanzador de Juegos", Label.CENTER);
         titulo.setFont(new Font("SansSerif", Font.BOLD, 24));
@@ -56,9 +66,11 @@ public class LanzadorJuego extends Frame implements ActionListener{
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
                 dispose();
+                System.exit(0);
             }
         });
 
+        setResizable(false);
         setVisible(true);
     }
 
@@ -107,13 +119,36 @@ public class LanzadorJuego extends Frame implements ActionListener{
         boton.setForeground(Color.WHITE);
         boton.setFont(btnFont);
         tarjeta.add(boton);
+        boton.addActionListener(this);
 
         return tarjeta;
     }
 
-    public void actionPerformed(ActionEvent e){
+    private void iniciarMusicaFondo() {
+        try {
+            URL sonidoURL = getClass().getClassLoader().getResource("sonidos/musica_lanzador.wav");
+            AudioInputStream audioIn = AudioSystem.getAudioInputStream(sonidoURL);
+            musicaFondo = AudioSystem.getClip();
+            musicaFondo.open(audioIn);
+            musicaFondo.loop(Clip.LOOP_CONTINUOUSLY); // Repetir indefinidamente
+        } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
+            e.printStackTrace();
+        }
+    }
 
-        if (e.getActionCommand().equals("Pong")){
+    private void detenerMusicaFondo() {
+        if (musicaFondo != null && musicaFondo.isRunning()) {
+            musicaFondo.stop();
+            musicaFondo.close();
+        }
+    }
+
+
+
+    public void actionPerformed(ActionEvent e){
+        detenerMusicaFondo(); // se detiene al empezar a jugar un juego
+
+        if (e.getActionCommand().equals("Jugar Pong")){
             juego = new Pong("Pong",800,600);
 
             t = new Thread() {
@@ -124,9 +159,9 @@ public class LanzadorJuego extends Frame implements ActionListener{
 
             t.start();
         }
-        /*
-        if (e.getActionCommand().equals("Lemmings")){
-            juego = new Lemming();
+
+        if (e.getActionCommand().equals("Jugar Lemmings")){
+            //juego = new Lemming();
 
             t = new Thread() {
                 public void run() {
@@ -135,7 +170,7 @@ public class LanzadorJuego extends Frame implements ActionListener{
             };
 
             t.start();
-        }*/
+        }
 
     }
 
