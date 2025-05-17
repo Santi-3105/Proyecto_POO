@@ -1,4 +1,5 @@
 package clasesCompartidas;
+import pong.MenuPong;
 import java.awt.*;
 import java.awt.event.*;
 import javax.sound.sampled.*;
@@ -9,6 +10,7 @@ import java.net.URL;
 import com.entropyinteractive.*;
 import lemmings.Lemming;
 import pong.Pong;
+
 
 public class LanzadorJuego extends Frame implements ActionListener{
     protected JGame juego;
@@ -150,14 +152,9 @@ public class LanzadorJuego extends Frame implements ActionListener{
 
         if (e.getActionCommand().equals("Jugar Pong")){
             juego = new Pong("Pong",800,600);
+            // Nuevo Crear el menú y pasar la instancia del juego
+            MenuPong menu = new MenuPong((Pong) juego);
 
-            t = new Thread() {
-                public void run() {
-                    juego.run(1.0 / 60.0);
-                }
-            };
-
-            t.start();
         }
 
         if (e.getActionCommand().equals("Jugar Lemmings")){
