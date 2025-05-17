@@ -11,8 +11,8 @@ class Arco extends ObjetoGrafico {
         this.posicionX = posicionX;
 
         // Determina la posición del marcador según la posición del arco
-        int marcadorX = esIzquierdo ? 100 : 500;
-        this.MarcadorAsociado = new Marcador(marcadorX, 50);
+        int marcadorX = esIzquierdo ? 550 : 250;
+        this.MarcadorAsociado = new Marcador(marcadorX, 80);
     }
 
     public boolean detectaGol(Pelota pelota) {
@@ -32,6 +32,10 @@ class Arco extends ObjetoGrafico {
         }
 
         return gol;
+    }
+
+    public Marcador getMarcador() {
+        return this.MarcadorAsociado;
     }
 
     @Override
