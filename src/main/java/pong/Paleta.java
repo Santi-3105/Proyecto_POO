@@ -30,6 +30,15 @@ public class Paleta extends ObjetoGrafico{
     @Override
     public void update(double delta) {
         // Controles para jugador izquierdo (W/S)
+
+        // Limitar movimiento de la paleta dentro de la ventana
+        if (posicionY < 37) {
+            posicionY = 37;
+        }
+        if (posicionY + alto > 600) {
+            posicionY = 600 - alto;
+        }
+
         if (posicionX < 400) {
             if (keyboard.isKeyPressed(KeyEvent.VK_W)) {
                 setVelocidadY(-200);
@@ -38,6 +47,7 @@ public class Paleta extends ObjetoGrafico{
             } else {
                 setVelocidadY(0);
             }
+
         }
 
         // Controles para jugador derecho (Arriba/Abajo)
