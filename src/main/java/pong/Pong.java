@@ -13,11 +13,11 @@ import static com.sun.java.accessibility.util.AWTEventMonitor.addKeyListener;
 import static com.sun.java.accessibility.util.AWTEventMonitor.addWindowListener;
 
 public class Pong extends JGame {
-    Pelota pelota;
-    Paleta paletaIzquierda;
-    Paleta paletaDerecha;
-    Arco arcoIzquierdo;
-    Arco arcoDerecho;
+    protected Pelota pelota;
+    protected Paleta paletaIzquierda;
+    protected Paleta paletaDerecha;
+    protected Arco arcoIzquierdo;
+    protected Arco arcoDerecho;
 
     public static void main(String[] args) {
         Pong game = new Pong("Pong",800,600);

@@ -17,8 +17,10 @@ public class MenuPong implements ActionListener {
     protected JPanel tarjeta;
     protected CardLayout cardLayout;
     protected JPanel panelPrincipal;
+    protected Pong juego;
 
-    public MenuPong() {
+    public MenuPong(Pong juego) {
+        this.juego = juego;
         frame = new JFrame();
         frame.setTitle("Pong");
         frame.setSize(800, 600);
@@ -56,6 +58,7 @@ public class MenuPong implements ActionListener {
         dosJugador = new JButton("Dos jugadores");
         options = new JButton("Configuración");
         options.addActionListener(this);
+        dosJugador.addActionListener(this);
 
         // Configurar botones
         Font buttonFont = new Font("Arial", Font.BOLD, 20);
@@ -101,8 +104,6 @@ public class MenuPong implements ActionListener {
         // Añadir tarjeta al frame
         frame.add(tarjeta);
         frame.setVisible(true);
-
-        //Termina constructor
     }
 
     public void mostrarMenuPrincipal() {
@@ -113,10 +114,19 @@ public class MenuPong implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == options) {
             cardLayout.show(tarjeta, "menuConfig");
+        }else if (e.getSource() == dosJugador) {
+            // Inicializar el estado del juego antes de arrancar
+            juego.gameStartup();
+            frame.dispose();  // Cierra el menú
+            // Ejecutar el juego en un hilo aparte para no bloquear EDT
+            new Thread(() -> {
+                juego.run(1.0 / 60.0);
+            }).start();
         }
     }
 
     public static void main(String[] args) {
-        new MenuPong();
+        Pong game = new Pong("Pong", 800, 600);
+        new MenuPong(game);
     }
 }
