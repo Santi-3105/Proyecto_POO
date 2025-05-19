@@ -1,5 +1,6 @@
 package pong;
 
+import clasesCompartidas.Sonido;
 import com.entropyinteractive.JGame;
 import com.entropyinteractive.Keyboard;
 import com.entropyinteractive.Log;
@@ -15,7 +16,7 @@ public class Pong extends JGame {
     private Arco arcoDerecho;
     private boolean esperandoReinicio = false;
     private double tiempoEspera = 0;
-    private static final double TIEMPO_ESPERA_MAXIMO = 0.5; // medio segundo de espera para volver a poner la pelota al medio
+    private static final double TIEMPO_ESPERA_MAXIMO = 2.0; // dos segundos de espera para volver a poner la pelota al medio
 
 
     public static void main(String[] args) {
@@ -61,28 +62,33 @@ public class Pong extends JGame {
         pelota.update(delta);
         //colisión con paleta izquierda
         if (pelota.colisiona(paletaIzquierda)) {
+            Sonido.reproducir("golpe_audio.wav");
             pelota.setVelocidadX(Math.abs(pelota.getVelocidadX())); // Rebota a la derecha
         }
         //colisión con paleta derecha
         if (pelota.colisiona(paletaDerecha)) {
+            Sonido.reproducir("golpe_audio.wav");
             pelota.setVelocidadX(-Math.abs(pelota.getVelocidadX())); // Rebota a la izquierda
         }
 
         // Colisión de pelota con la parte superior e inferior
         if (pelota.getY() <= 37) {
             // Toca el borde superior
+            Sonido.reproducir("golpe_audio.wav");
             pelota.setY(37);
             pelota.invertirDireccionY();
         }
         //colision de pelota con parte inferior
         if (pelota.getY() + pelota.getAlto() >= getHeight()) {
             // Toca el borde inferior
+            Sonido.reproducir("golpe_audio.wav");
             pelota.setY(getHeight() - pelota.getAlto()); // La pega al borde inferior
             pelota.invertirDireccionY();
         }
 
         //verificar si hubo gol
         if (arcoIzquierdo.detectaGol(pelota) || arcoDerecho.detectaGol(pelota)) {
+            Sonido.reproducir("gol_audio.wav");
             esperandoReinicio = true;
             pelota.setVelocidadX(0); // La detenemos
             pelota.setVelocidadY(0);

@@ -41,9 +41,9 @@ public class Paleta extends ObjetoGrafico{
 
         if (posicionX < 400) {
             if (keyboard.isKeyPressed(KeyEvent.VK_W)) {
-                setVelocidad(-200);
+                setVelocidad(-300);
             } else if (keyboard.isKeyPressed(KeyEvent.VK_S)) {
-                setVelocidad(200);
+                setVelocidad(300);
             } else {
                 setVelocidad(0);
             }
@@ -53,9 +53,9 @@ public class Paleta extends ObjetoGrafico{
         // Controles para jugador derecho (Arriba/Abajo)
         if (posicionX > 400) {
             if (keyboard.isKeyPressed(KeyEvent.VK_UP)) {
-                setVelocidad(-200);
+                setVelocidad(-300);
             } else if (keyboard.isKeyPressed(KeyEvent.VK_DOWN)) {
-                setVelocidad(200);
+                setVelocidad(300);
             } else {
                 setVelocidad(0);
             }
