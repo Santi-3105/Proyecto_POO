@@ -42,4 +42,7 @@ public abstract class ObjetoGrafico implements ObjetoMovible{
     public double getY(){
         return posicionY;
     }
+
+    public void setY(double y) {this.posicionY = y;}
+    public void setX(double x){this.posicionX = x;}
 }

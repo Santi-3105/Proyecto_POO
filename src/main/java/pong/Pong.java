@@ -5,19 +5,18 @@ import com.entropyinteractive.Keyboard;
 import com.entropyinteractive.Log;
 
 import java.awt.*;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 
-
-import static com.sun.java.accessibility.util.AWTEventMonitor.addKeyListener;
-import static com.sun.java.accessibility.util.AWTEventMonitor.addWindowListener;
 
 public class Pong extends JGame {
-    protected Pelota pelota;
-    protected Paleta paletaIzquierda;
-    protected Paleta paletaDerecha;
-    protected Arco arcoIzquierdo;
-    protected Arco arcoDerecho;
+    private Pelota pelota;
+    private Paleta paletaIzquierda;
+    private Paleta paletaDerecha;
+    private Arco arcoIzquierdo;
+    private Arco arcoDerecho;
+    private boolean esperandoReinicio = false;
+    private double tiempoEspera = 0;
+    private static final double TIEMPO_ESPERA_MAXIMO = 0.5; // medio segundo de espera para volver a poner la pelota al medio
+
 
     public static void main(String[] args) {
         Pong game = new Pong("Pong",800,600);
@@ -32,7 +31,7 @@ public class Pong extends JGame {
 
     public void gameStartup(){
         try{
-            pelota = new Pelota(10, 400, 300, 150, 150);
+            pelota = new Pelota(10, 400, 300, 250, 250);
             Keyboard teclado = this.getKeyboard();
             paletaIzquierda = new Paleta(10, 90, 30, 270,teclado);
             paletaDerecha = new Paleta(10, 90, 760, 270,teclado);
@@ -46,10 +45,17 @@ public class Pong extends JGame {
         }
     }
 
-
-
-
     public void gameUpdate(double delta){
+        if (esperandoReinicio) {
+            tiempoEspera += delta;
+            if (tiempoEspera >= TIEMPO_ESPERA_MAXIMO) {
+                pelota.reiniciarPelota();
+                esperandoReinicio = false;
+                tiempoEspera = 0;
+            }
+            return; //No hacer nada más mientras esperamos
+        }
+
         paletaIzquierda.update(delta);
         paletaDerecha.update(delta);
         pelota.update(delta);
@@ -63,16 +69,23 @@ public class Pong extends JGame {
         }
 
         // Colisión de pelota con la parte superior e inferior
-        if (pelota.getY() <= 0) {
+        if (pelota.getY() <= 37) {
             // Toca el borde superior
             pelota.setY(37);
             pelota.invertirDireccionY();
         }
-
+        //colision de pelota con parte inferior
         if (pelota.getY() + pelota.getAlto() >= getHeight()) {
             // Toca el borde inferior
             pelota.setY(getHeight() - pelota.getAlto()); // La pega al borde inferior
             pelota.invertirDireccionY();
+        }
+
+        //verificar si hubo gol
+        if (arcoIzquierdo.detectaGol(pelota) || arcoDerecho.detectaGol(pelota)) {
+            esperandoReinicio = true;
+            pelota.setVelocidadX(0); // La detenemos
+            pelota.setVelocidadY(0);
         }
     }
 
@@ -91,5 +104,6 @@ public class Pong extends JGame {
         Log.info(getClass().getSimpleName(), "Shutting down game");
         System.exit(0);
     }
+
 
 }
