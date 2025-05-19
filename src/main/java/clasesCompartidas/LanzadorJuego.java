@@ -22,9 +22,6 @@ public class LanzadorJuego extends Frame implements ActionListener{
     protected Label titulo;
     protected Panel tarjeta;
     protected Button boton;
-    protected Clip musicaFondo;
-
-
 
     public LanzadorJuego(){
         setTitle("Lanzador de Juegos");
@@ -32,8 +29,7 @@ public class LanzadorJuego extends Frame implements ActionListener{
         setLayout(null);
         setBackground(new Color(30, 30, 30)); // Fondo oscuro
 
-        iniciarMusicaFondo();
-
+        Musica.iniciarMusica("musica_lanzador.wav");
 
         titulo = new Label("Bienvenidos al Lanzador de Juegos", Label.CENTER);
         titulo.setFont(new Font("SansSerif", Font.BOLD, 24));
@@ -126,29 +122,9 @@ public class LanzadorJuego extends Frame implements ActionListener{
         return tarjeta;
     }
 
-    private void iniciarMusicaFondo() {
-        try {
-            URL sonidoURL = getClass().getClassLoader().getResource("sonidos/musica_lanzador.wav");
-            AudioInputStream audioIn = AudioSystem.getAudioInputStream(sonidoURL);
-            musicaFondo = AudioSystem.getClip();
-            musicaFondo.open(audioIn);
-            musicaFondo.loop(Clip.LOOP_CONTINUOUSLY); // Repetir indefinidamente
-        } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void detenerMusicaFondo() {
-        if (musicaFondo != null && musicaFondo.isRunning()) {
-            musicaFondo.stop();
-            musicaFondo.close();
-        }
-    }
-
-
 
     public void actionPerformed(ActionEvent e){
-        detenerMusicaFondo(); // se detiene al empezar a jugar un juego
+        Musica.detenerMusicaFondo();
 
         if (e.getActionCommand().equals("Jugar Pong")){
             juego = new Pong("Pong",800,600);
