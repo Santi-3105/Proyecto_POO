@@ -39,6 +39,9 @@ class Pelota extends ObjetoGrafico {
         return tamanio;
     }
 
+    public void setTamanio(int tamanio){
+        this.tamanio=tamanio;
+    }
     public void setVelocidadY(double velocidadY){
         this.velocidadY=velocidadY;
     }
@@ -62,12 +65,18 @@ class Pelota extends ObjetoGrafico {
                 getY() + getAlto() > b.getY();
     }
 
-    public void setY(double y) {
-        this.posicionY = y;
-    }
-
     void invertirDireccionY() {
         // Multiplicamos por -1 para invertir dirección vertical
         setVelocidadY(-getVelocidadY());
+    }
+
+    public void reiniciarPelota() {
+        this.tamanio=10;
+        //se pone la pelota en el medio
+        posicionX=400;
+        posicionY=300;
+        //seteo la velocidad en 250
+        this.velocidadX=250;
+        this.velocidadY=250;
     }
 }

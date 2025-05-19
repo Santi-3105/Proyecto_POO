@@ -8,7 +8,7 @@ import com.entropyinteractive.Keyboard;
 public class Paleta extends ObjetoGrafico{
     private int ancho;
     private int alto;
-    private double velocidadY;
+    private double velocidad=200;
     private Keyboard keyboard;
 
 
@@ -18,13 +18,13 @@ public class Paleta extends ObjetoGrafico{
         this.alto = alto;
         this.posicionX = xInicial;
         this.posicionY = yInicial;
-        this.velocidadY = 0; // Inicia quieta
+        this.velocidad =0; //inicia quieta
         this.keyboard=keyboard;
     }
 
-    // Para que puedas cambiar la velocidad (por ejemplo, con teclas)
-    public void setVelocidadY(double velocidadY) {
-        this.velocidadY = velocidadY;
+
+    public void setVelocidad(double velocidad) {
+        this.velocidad = velocidad;
     }
 
     @Override
@@ -41,11 +41,11 @@ public class Paleta extends ObjetoGrafico{
 
         if (posicionX < 400) {
             if (keyboard.isKeyPressed(KeyEvent.VK_W)) {
-                setVelocidadY(-200);
+                setVelocidad(-200);
             } else if (keyboard.isKeyPressed(KeyEvent.VK_S)) {
-                setVelocidadY(200);
+                setVelocidad(200);
             } else {
-                setVelocidadY(0);
+                setVelocidad(0);
             }
 
         }
@@ -53,15 +53,15 @@ public class Paleta extends ObjetoGrafico{
         // Controles para jugador derecho (Arriba/Abajo)
         if (posicionX > 400) {
             if (keyboard.isKeyPressed(KeyEvent.VK_UP)) {
-                setVelocidadY(-200);
+                setVelocidad(-200);
             } else if (keyboard.isKeyPressed(KeyEvent.VK_DOWN)) {
-                setVelocidadY(200);
+                setVelocidad(200);
             } else {
-                setVelocidadY(0);
+                setVelocidad(0);
             }
         }
 
-        posicionY += velocidadY * delta;
+        posicionY += velocidad * delta;
     }
 
     @Override
