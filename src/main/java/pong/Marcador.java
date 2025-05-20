@@ -23,4 +23,8 @@ class Marcador {
         g.setFont(new Font("Arial", Font.BOLD, 30));
         g.drawString(String.valueOf(puntaje), posicionX, posicionY);
     }
+
+    public int getPuntaje(){
+        return puntaje;
+    }
 }
