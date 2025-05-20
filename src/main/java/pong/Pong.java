@@ -7,6 +7,7 @@ import com.entropyinteractive.Log;
 import com.entropyinteractive.Mouse;
 
 import java.awt.*;
+import java.awt.event.KeyEvent;
 
 public class Pong extends JGame {
     private Pelota pelota;
@@ -21,6 +22,8 @@ public class Pong extends JGame {
     private static final int ESTADO_MENU = 0;
     private static final int ESTADO_JUEGO = 1;
     private static final int ESTADO_RANKING = 2;
+    private static final int ESTADO_GANADOR = 3;
+    private String ganador;
 
 
     public Pong(String title, int width, int height) {
@@ -44,12 +47,13 @@ public class Pong extends JGame {
                 int x = mouse.getX();
                 int y = mouse.getY();
 
-                if ((x >= 270 && x <= 480) && (y >= 245 && y <= 265)) { //Dos jugadores
+                System.out.println(x+" "+y);
+                if (x >= 270 && x <= 480 && y >= 240 && y <= 265) {
                     iniciarJuego2Jugadores();
-                } else if ((x >= 315 && x <= 465) && (y >= 145 && y <= 170)) { //Un jugador
-                    System.out.println("1 jugador");
-                } else if ((x >= 325 && x <= 445) && (y >= 345 && y <= 370)) { //Ranking
-                    System.out.println("Ranking");
+                } else if (x >= 320 && x <= 480 && y >= 170 && y <= 210) {
+
+                } else if (x >= 330 && x <= 480 && y >= 370 && y <= 410) {
+
                 }
             }
             return; // se saltea si no esta en menú
@@ -62,7 +66,7 @@ public class Pong extends JGame {
                 esperandoReinicio = false;
                 tiempoEspera = 0;
             }
-            return; //No hacer nada más mientras esperamos
+            return; //No hacer nada si espeandoReinicio es false
         }
 
         paletaIzquierda.update(delta);
@@ -101,6 +105,15 @@ public class Pong extends JGame {
             pelota.setVelocidadX(0); // La detenemos
             pelota.setVelocidadY(0);
         }
+
+        //verificar cuando algun marcador llege a 10, se dibuje el estadoGanador
+        if(arcoIzquierdo.getMarcador().getPuntaje() == 10 || arcoDerecho.getMarcador().getPuntaje() == 10){
+            estado=ESTADO_GANADOR;
+        }
+
+        if(this.getKeyboard().isKeyPressed(KeyEvent.VK_ESCAPE)){
+            estado=ESTADO_MENU;
+        }
     }
 
 
@@ -121,6 +134,21 @@ public class Pong extends JGame {
             paletaDerecha.mostrar(dibuje);
             arcoIzquierdo.getMarcador().dibujar(dibuje);
             arcoDerecho.getMarcador().dibujar(dibuje);
+            dibuje.setColor(Color.white);
+            dibuje.setFont(new Font("SansSerif", Font.BOLD, 13));
+            dibuje.drawString("Menu: Esq",12,600);
+        } else if (estado == ESTADO_GANADOR){
+            dibuje.setColor(Color.white);
+            dibuje.setFont(new Font("SansSerif", Font.BOLD, 25));
+            dibuje.drawString("El ganador es: ",200,200);
+            if(arcoIzquierdo.getMarcador().getPuntaje()==10){
+                ganador = "Jugador 2";
+            }else{
+                ganador = "Jugador 1";
+            }
+            dibuje.drawString(ganador,420,200);
+            dibuje.setFont(new Font("SansSerif", Font.BOLD, 16));
+            dibuje.drawString("Presione la tecla Esq para volver al menú",230,550);
         }
 
     }
