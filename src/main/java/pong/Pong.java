@@ -140,4 +140,4 @@ public class Pong extends JGame {
         arcoIzquierdo = new Arco(0, true);
         arcoDerecho = new Arco(getWidth(), false);
     }
-}
+
