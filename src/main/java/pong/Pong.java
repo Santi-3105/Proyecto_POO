@@ -1,12 +1,15 @@
 package pong;
 
 import clasesCompartidas.Sonido;
+import clasesCompartidas.conversorTecla;
+
 import com.entropyinteractive.JGame;
 import com.entropyinteractive.Keyboard;
 import com.entropyinteractive.Log;
 import com.entropyinteractive.Mouse;
 
 import java.awt.*;
+import java.util.Properties;
 
 public class Pong extends JGame {
     private Pelota pelota;
@@ -16,39 +19,46 @@ public class Pong extends JGame {
     private Arco arcoDerecho;
     private boolean esperandoReinicio = false;
     private double tiempoEspera = 0;
-    private static final double TIEMPO_ESPERA_MAXIMO = 2.0; // dos segundos de espera para volver a poner la pelota al medio
+    private int teclaArribaJ1;
+    private int teclaAbajoJ1;
+    private int teclaArribaJ2;
+    private int teclaAbajoJ2;
+    protected Properties appProperties;
+
+    private static final double TIEMPO_ESPERA_MAXIMO = 2.0; // dos segundos de espera para volver a poner la pelota al
+                                                            // medio
     private int estado;
     private static final int ESTADO_MENU = 0;
     private static final int ESTADO_JUEGO = 1;
     private static final int ESTADO_RANKING = 2;
 
-
     public Pong(String title, int width, int height) {
         super(title, width, height);
+        appProperties = new Properties();
+        System.out.println(appProperties.stringPropertyNames());
     }
 
-
-    public void gameStartup(){
-        try{
+    public void gameStartup() {
+        try {
             estado = ESTADO_MENU;
-        }catch(Exception ex){
+        } catch (Exception ex) {
             System.out.println("ERROR en gameStartup");
             ex.printStackTrace();
         }
     }
 
-    public void gameUpdate(double delta){
+    public void gameUpdate(double delta) {
         if (estado == ESTADO_MENU) {
             Mouse mouse = getMouse();
             if (mouse.isLeftButtonPressed()) {
                 int x = mouse.getX();
                 int y = mouse.getY();
 
-                if ((x >= 270 && x <= 480) && (y >= 245 && y <= 265)) { //Dos jugadores
+                if ((x >= 270 && x <= 480) && (y >= 245 && y <= 265)) { // Dos jugadores
                     iniciarJuego2Jugadores();
-                } else if ((x >= 315 && x <= 465) && (y >= 145 && y <= 170)) { //Un jugador
+                } else if ((x >= 315 && x <= 465) && (y >= 145 && y <= 170)) { // Un jugador
                     System.out.println("1 jugador");
-                } else if ((x >= 325 && x <= 445) && (y >= 345 && y <= 370)) { //Ranking
+                } else if ((x >= 325 && x <= 445) && (y >= 345 && y <= 370)) { // Ranking
                     System.out.println("Ranking");
                 }
             }
@@ -62,18 +72,18 @@ public class Pong extends JGame {
                 esperandoReinicio = false;
                 tiempoEspera = 0;
             }
-            return; //No hacer nada más mientras esperamos
+            return; // No hacer nada más mientras esperamos
         }
 
         paletaIzquierda.update(delta);
         paletaDerecha.update(delta);
         pelota.update(delta);
-        //colisión con paleta izquierda
+        // colisión con paleta izquierda
         if (pelota.colisiona(paletaIzquierda)) {
             Sonido.reproducir("golpe_audio.wav");
             pelota.setVelocidadX(Math.abs(pelota.getVelocidadX())); // Rebota a la derecha
         }
-        //colisión con paleta derecha
+        // colisión con paleta derecha
         if (pelota.colisiona(paletaDerecha)) {
             Sonido.reproducir("golpe_audio.wav");
             pelota.setVelocidadX(-Math.abs(pelota.getVelocidadX())); // Rebota a la izquierda
@@ -86,7 +96,7 @@ public class Pong extends JGame {
             pelota.setY(37);
             pelota.invertirDireccionY();
         }
-        //colision de pelota con parte inferior
+        // colision de pelota con parte inferior
         if (pelota.getY() + pelota.getAlto() >= getHeight()) {
             // Toca el borde inferior
             Sonido.reproducir("golpe_audio.wav");
@@ -94,7 +104,7 @@ public class Pong extends JGame {
             pelota.invertirDireccionY();
         }
 
-        //verificar si hubo gol
+        // verificar si hubo gol
         if (arcoIzquierdo.detectaGol(pelota) || arcoDerecho.detectaGol(pelota)) {
             Sonido.reproducir("gol_audio.wav");
             esperandoReinicio = true;
@@ -103,9 +113,7 @@ public class Pong extends JGame {
         }
     }
 
-
-
-    public void gameDraw(Graphics2D dibuje){
+    public void gameDraw(Graphics2D dibuje) {
         dibuje.setColor(Color.BLACK);
         dibuje.fillRect(0, 0, getWidth(), getHeight());
 
@@ -125,7 +133,7 @@ public class Pong extends JGame {
 
     }
 
-    public void gameShutdown(){
+    public void gameShutdown() {
         Log.info(getClass().getSimpleName(), "Shutting down game");
         System.exit(0);
     }
@@ -134,11 +142,27 @@ public class Pong extends JGame {
         estado = ESTADO_JUEGO;
         pelota = new Pelota(10, 400, 300, 250, 250);
         Keyboard teclado = this.getKeyboard();
-        paletaIzquierda = new Paleta(10, 90, 30, 270, teclado);
-        paletaDerecha = new Paleta(10, 90, 760, 270, teclado);
+        // Cargar propiedades desde el archivo default.properties
+        String rutaArchivo = "default.properties";
+        MenuConfig.cargarEnArchivo(appProperties, rutaArchivo);
+        // Leer propiedades de teclas
+        try {
+            String t1Arriba = appProperties.getProperty("movArriba1","W");
+            String t1Abajo = appProperties.getProperty("movAbajo1","S");
+            String t2Arriba = appProperties.getProperty("movArriba2","\u2191");
+            String t2Abajo = appProperties.getProperty("movAbajo2","\u2193");
+            //Las convierto
+            teclaArribaJ1 = conversorTecla.convertirTecla(t1Arriba);
+            teclaAbajoJ1 = conversorTecla.convertirTecla(t1Abajo);
+            teclaArribaJ2 = conversorTecla.convertirTecla(t2Arriba);
+            teclaAbajoJ2 = conversorTecla.convertirTecla(t2Abajo);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        paletaIzquierda = new Paleta(10, 90, 30, 270, teclado, teclaArribaJ1, teclaAbajoJ1);
+        paletaDerecha = new Paleta(10, 90, 760, 270, teclado, teclaArribaJ2, teclaAbajoJ2);
         arcoIzquierdo = new Arco(0, true);
         arcoDerecho = new Arco(getWidth(), false);
-    
+
     }
 }
-

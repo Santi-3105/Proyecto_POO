@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 
 import javax.sound.sampled.Clip;
 import javax.swing.*;
@@ -67,10 +68,10 @@ public class MenuConfig implements ActionListener {
         grupoVentana.add(pantallaCompleta);
         musicaBox = new JCheckBox("", true);
         musicaBox.addActionListener(this);
-        movArriba1 = new JTextField("↑", 5);
-        movAbajo1 = new JTextField("↓", 5);
-        movArriba2 = new JTextField("W", 5);
-        movAbajo2 = new JTextField("S", 5);
+        movArriba2 = new JTextField("↑", 5);
+        movAbajo2 = new JTextField("↓", 5);
+        movArriba1 = new JTextField("W", 5);
+        movAbajo1 = new JTextField("S", 5);
         pistaMusical = new JComboBox<>(new String[] { "Original", "V2", "V3", "V4" });
         pelota = new JComboBox<>(new String[] { "Original", "V2", "V3", "V4" });
         paleta = new JComboBox<>(new String[] { "Original", "V2", "V3", "V4" });
@@ -84,26 +85,26 @@ public class MenuConfig implements ActionListener {
         defaultProps = new Properties();
         componentes = new HashMap<>();
 
-
-        //JComponent el cual engloba todo
-        //Cargo en un mapa las key y los valores
+        // JComponent el cual engloba todo
+        // Cargo en un mapa las key y los valores
         // JRadioButtons
         componentes.put("ventana", ventana);
         componentes.put("pantallaCompleta", pantallaCompleta);
         // JCheckBoxes
         componentes.put("musicaBox", musicaBox);
         // JTextFields
-        componentes.put("movArriba1",movArriba1);
-        componentes.put("movAbajo1",movAbajo1);
-        componentes.put("movArriba2",movArriba2);
-        componentes.put("movAbajo2",movAbajo2);
+        componentes.put("movArriba1", movArriba1);
+        componentes.put("movAbajo1", movAbajo1);
+        componentes.put("movArriba2", movArriba2);
+        componentes.put("movAbajo2", movAbajo2);
         // JComboBox
-        componentes.put("pistaMusical",pistaMusical);
-        componentes.put("pelota",pelota);
-        componentes.put("paleta",paleta);
-        componentes.put("cancha",cancha);
+        componentes.put("pistaMusical", pistaMusical);
+        componentes.put("pelota", pelota);
+        componentes.put("paleta", paleta);
+        componentes.put("cancha", cancha);
 
-        //Iniciara el mapa (cargarConfig) con los datos que le pase el archivo (cargarEnArchivo)
+        // Iniciara el mapa (cargarConfig) con los datos que le pase el archivo
+        // (cargarEnArchivo)
         cargarEnArchivo(defaultProps, archivoConfig);
         cargarConfiguracion(componentes, defaultProps);
 
@@ -268,97 +269,103 @@ public class MenuConfig implements ActionListener {
         frame.setVisible(true);
     }
 
-    public JPanel getPanelConfig() {
-        return panelCompleto;
-    }
-    private void cargarConfiguracion(Map<String, JComponent> componentes, Properties defaultProps)
-    {
-        for(Map.Entry<String, JComponent> entry : componentes.entrySet())
-        {
+    private void cargarConfiguracion(Map<String, JComponent> componentes, Properties defaultProps) {
+        for (Map.Entry<String, JComponent> entry : componentes.entrySet()) {
             String clave = entry.getKey();
             JComponent comp = entry.getValue();
             String valor = defaultProps.getProperty(clave);
 
-            if(valor==null) continue;
+            if (valor == null)
+                continue;
 
-            if(comp instanceof JRadioButton)
-            {
+            if (comp instanceof JRadioButton) {
                 ((JRadioButton) comp).setSelected(Boolean.parseBoolean(valor));
-            }
-            else if (comp instanceof JCheckBox) {
+            } else if (comp instanceof JCheckBox) {
                 ((JCheckBox) comp).setSelected(Boolean.parseBoolean(valor));
-            }
-            else if (comp instanceof JTextField) {
+            } else if (comp instanceof JTextField) {
                 ((JTextField) comp).setText(valor);
-            }
-            else if (comp instanceof JComboBox) {
+            } else if (comp instanceof JComboBox) {
                 ((JComboBox<String>) comp).setSelectedItem(valor);
             }
         }
     }
-    private void guardarConfiguracion(Map<String, JComponent> componentes, Properties defaultProps)
-    {
-        for(Map.Entry<String, JComponent> entry : componentes.entrySet())
-        {
+
+    private void guardarConfiguracion(Map<String, JComponent> componentes, Properties defaultProps) {
+        for (Map.Entry<String, JComponent> entry : componentes.entrySet()) {
             String clave = entry.getKey();
             JComponent comp = entry.getValue();
 
-            if(comp instanceof JRadioButton)
-            {
+            if (comp instanceof JRadioButton) {
                 defaultProps.setProperty(clave, String.valueOf(((JRadioButton) comp).isSelected()));
-            }
-            else if (comp instanceof JCheckBox) {
+            } else if (comp instanceof JCheckBox) {
                 defaultProps.setProperty(clave, String.valueOf(((JCheckBox) comp).isSelected()));
-            }
-            else if (comp instanceof JTextField) {
-                defaultProps.setProperty(clave, ((JTextField)comp).getText());
-            }
-            else if (comp instanceof JComboBox) {
+            } else if (comp instanceof JTextField) {
+                defaultProps.setProperty(clave, ((JTextField) comp).getText());
+            } else if (comp instanceof JComboBox) {
                 defaultProps.setProperty(clave, String.valueOf(((JComboBox<String>) comp).getSelectedItem()));
             }
         }
     }
-    private void guardarEnArchivo(Properties defaultProps, String rutaArchivo)
-    {
-        try(FileOutputStream out = new FileOutputStream(rutaArchivo))
-        {
+
+    private void guardarEnArchivo(Properties defaultProps, String rutaArchivo) {
+        try (FileOutputStream out = new FileOutputStream(rutaArchivo)) {
             defaultProps.store(out, "ConfgUsuario");
             String currentDirectory = System.getProperty("user.dir");
             System.out.println("El directorio actual es: " + currentDirectory);
-        }
-        catch(Exception e)
-        {
+        } catch (Exception e) {
             System.out.println("No se pudo encontrar la ruta");
             e.printStackTrace();
         }
     }
-    private void cargarEnArchivo(Properties defaultProps, String rutaArchivo)
-    {
-        try(FileInputStream in = new FileInputStream(rutaArchivo))
-        {
+
+    protected static void cargarEnArchivo(Properties defaultProps, String rutaArchivo) {
+        try (FileInputStream in = new FileInputStream(rutaArchivo)) {
             defaultProps.load(in);
-        }
-        catch(Exception e)
-        {
-            //Lo normal seria que a la primera tire error
+        } catch (Exception e) {
+            // Lo normal seria que a la primera tire error
             System.out.println("No se pudo cargar configuración previa.");
         }
     }
+
+    // Método genérico para convertir un string en el keycode correspondiente
+    private int convertirTecla(String nombreTecla) {
+        nombreTecla = nombreTecla.trim();
+
+        // Traducir flechas Unicode a teclas reales
+        switch (nombreTecla) {
+            case "↑":
+                return KeyEvent.VK_UP;
+            case "↓":
+                return KeyEvent.VK_DOWN;
+        }
+
+        // Tecla simple (una letra o número)
+        if (nombreTecla.length() == 1) {
+            return KeyEvent.getExtendedKeyCodeForChar(nombreTecla.toUpperCase().charAt(0));
+        }
+
+        // Tecla especial como "UP", "SPACE", etc.
+        try {
+            return KeyEvent.class.getField("VK_" + nombreTecla.toUpperCase()).getInt(null);
+        } catch (Exception e) {
+            System.out.println("Tecla inválida: " + nombreTecla + ". Se usará VK_UNDEFINED.");
+            return KeyEvent.VK_UNDEFINED;
+        }
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == guardar) {
             guardarConfiguracion(componentes, defaultProps);
             guardarEnArchivo(defaultProps, archivoConfig);
-        }
-        else if(e.getSource() == reset)
-        {
-            //Reestablece botones
+        } else if (e.getSource() == reset) {
+            // Reestablece botones
             musicaBox.setSelected(true);
             ventana.setSelected(true);
-            movArriba1.setText("↑");
-            movAbajo1.setText("↓");
-            movArriba2.setText("W");
-            movAbajo2.setText("S");
+            movArriba2.setText("↑");
+            movAbajo2.setText("↓");
+            movArriba1.setText("W");
+            movAbajo1.setText("S");
             pistaMusical.setSelectedIndex(0);
             pelota.setSelectedIndex(0);
             paleta.setSelectedIndex(0);

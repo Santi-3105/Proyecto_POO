@@ -1,6 +1,5 @@
 package pong;
 import java.awt.*;
-import java.awt.event.KeyEvent;
 
 import clasesCompartidas.ObjetoGrafico;
 import com.entropyinteractive.Keyboard;
@@ -10,9 +9,11 @@ public class Paleta extends ObjetoGrafico{
     private int alto;
     private double velocidad=200;
     private Keyboard keyboard;
+    private int teclaArriba;
+    private int teclaAbajo;
 
 
-    public Paleta(int ancho, int alto, double xInicial, double yInicial,Keyboard keyboard) {
+    public Paleta(int ancho, int alto, double xInicial, double yInicial,Keyboard keyboard, int teclaArriba, int teclaAbajo) {
         super(); // No usamos imagen
         this.ancho = ancho;
         this.alto = alto;
@@ -20,6 +21,9 @@ public class Paleta extends ObjetoGrafico{
         this.posicionY = yInicial;
         this.velocidad =0; //inicia quieta
         this.keyboard=keyboard;
+        //Seteo los movimientos de las paletas
+        this.teclaArriba=teclaArriba;
+        this.teclaAbajo=teclaAbajo;
     }
 
 
@@ -40,9 +44,9 @@ public class Paleta extends ObjetoGrafico{
         }
 
         if (posicionX < 400) {
-            if (keyboard.isKeyPressed(KeyEvent.VK_W)) {
+            if (keyboard.isKeyPressed(teclaArriba)) {
                 setVelocidad(-300);
-            } else if (keyboard.isKeyPressed(KeyEvent.VK_S)) {
+            } else if (keyboard.isKeyPressed(teclaAbajo)) {
                 setVelocidad(300);
             } else {
                 setVelocidad(0);
@@ -52,9 +56,9 @@ public class Paleta extends ObjetoGrafico{
 
         // Controles para jugador derecho (Arriba/Abajo)
         if (posicionX > 400) {
-            if (keyboard.isKeyPressed(KeyEvent.VK_UP)) {
+            if (keyboard.isKeyPressed(teclaArriba)) {
                 setVelocidad(-300);
-            } else if (keyboard.isKeyPressed(KeyEvent.VK_DOWN)) {
+            } else if (keyboard.isKeyPressed(teclaAbajo)) {
                 setVelocidad(300);
             } else {
                 setVelocidad(0);
