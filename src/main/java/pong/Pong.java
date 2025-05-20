@@ -44,13 +44,12 @@ public class Pong extends JGame {
                 int x = mouse.getX();
                 int y = mouse.getY();
 
-                System.out.println(x+" "+y);
-                if (x >= 270 && x <= 480 && y >= 240 && y <= 265) {
+                if ((x >= 270 && x <= 480) && (y >= 245 && y <= 265)) { //Dos jugadores
                     iniciarJuego2Jugadores();
-                } else if (x >= 320 && x <= 480 && y >= 170 && y <= 210) {
-
-                } else if (x >= 330 && x <= 480 && y >= 370 && y <= 410) {
-
+                } else if ((x >= 315 && x <= 465) && (y >= 145 && y <= 170)) { //Un jugador
+                    System.out.println("1 jugador");
+                } else if ((x >= 325 && x <= 445) && (y >= 345 && y <= 370)) { //Ranking
+                    System.out.println("Ranking");
                 }
             }
             return; // se saltea si no esta en menú
