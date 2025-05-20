@@ -2,6 +2,11 @@ package pong;
 
 import java.awt.*;
 import java.awt.event.ActionListener;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
 import java.awt.event.ActionEvent;
 
 import javax.sound.sampled.Clip;
@@ -21,17 +26,23 @@ public class MenuConfig implements ActionListener {
     protected JTextField movArriba2;
     protected JTextField movAbajo2;
     protected JButton reset;
-    protected JButton atras;
+    protected JButton guardar;
     protected JPanel config;
     protected JPanel panelConfigBot;
     protected JFrame frame;
-    protected MenuPong menuPong;
     protected JPanel panelCompleto;
+    protected String archivoConfig = "default.properties";
+    protected Properties defaultProps;
+    protected Map<String, JComponent> componentes;
+    protected String rutaArchivo;
 
-    public MenuConfig(JFrame frame, MenuPong menuPong) {
+    public MenuConfig() {
 
-        this.frame = frame;
-        this.menuPong = menuPong;
+        frame = new JFrame();
+        frame.setTitle("Configuracion");
+        frame.setSize(800, 600);
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        frame.setLocationRelativeTo(null);
 
         // Crear el panel principal del menú de configuración
         // Crear el panel principal del menú de configuración con fondo de imagen
@@ -67,11 +78,34 @@ public class MenuConfig implements ActionListener {
         reset = new JButton("Restablecer");
         reset.addActionListener(this);
         reset.setVisible(true);
-        atras = new JButton("←");
-        atras.addActionListener(this);
-        atras.setVisible(true);
+        guardar = new JButton("Guardar");
+        guardar.addActionListener(this);
+        guardar.setVisible(true);
+        defaultProps = new Properties();
+        componentes = new HashMap<>();
 
-        frame.setVisible(true);
+
+        //JComponent el cual engloba todo
+        //Cargo en un mapa las key y los valores
+        // JRadioButtons
+        componentes.put("ventana", ventana);
+        componentes.put("pantallaCompleta", pantallaCompleta);
+        // JCheckBoxes
+        componentes.put("musicaBox", musicaBox);
+        // JTextFields
+        componentes.put("movArriba1",movArriba1);
+        componentes.put("movAbajo1",movAbajo1);
+        componentes.put("movArriba2",movArriba2);
+        componentes.put("movAbajo2",movAbajo2);
+        // JComboBox
+        componentes.put("pistaMusical",pistaMusical);
+        componentes.put("pelota",pelota);
+        componentes.put("paleta",paleta);
+        componentes.put("cancha",cancha);
+
+        //Iniciara el mapa (cargarConfig) con los datos que le pase el archivo (cargarEnArchivo)
+        cargarEnArchivo(defaultProps, archivoConfig);
+        cargarConfiguracion(componentes, defaultProps);
 
         // Creo el menu configuracion
         // Añado sus botones
@@ -149,7 +183,7 @@ public class MenuConfig implements ActionListener {
 
         // Config panel botones
         panelConfigBot = new JPanel();
-        panelConfigBot.add(atras);
+        panelConfigBot.add(guardar);
         panelConfigBot.add(reset);
         panelConfigBot.setOpaque(false);
         // Configuro los botones con color blanco y fondo transparente
@@ -214,10 +248,10 @@ public class MenuConfig implements ActionListener {
         reset.setBackground(Color.BLACK);
         reset.setBorder(BorderFactory.createLineBorder(Color.GRAY, 3, true));
 
-        atras.setFont(buttonFontConfg);
-        atras.setForeground(Color.WHITE);
-        atras.setBackground(Color.BLACK);
-        atras.setBorder(BorderFactory.createLineBorder(Color.GRAY, 3, true));
+        guardar.setFont(buttonFontConfg);
+        guardar.setForeground(Color.WHITE);
+        guardar.setBackground(Color.BLACK);
+        guardar.setBorder(BorderFactory.createLineBorder(Color.GRAY, 3, true));
         // Cambiar color de todos los JLabel en el panel de configuración
         Component[] components = config.getComponents();
         for (Component component : components) {
@@ -230,16 +264,105 @@ public class MenuConfig implements ActionListener {
 
         panelCompleto.add(config, BorderLayout.CENTER);
         panelCompleto.add(panelConfigBot, BorderLayout.SOUTH);
-        // frame.add(panelCompleto);
+        frame.add(panelCompleto);
+        frame.setVisible(true);
     }
 
     public JPanel getPanelConfig() {
         return panelCompleto;
     }
+    private void cargarConfiguracion(Map<String, JComponent> componentes, Properties defaultProps)
+    {
+        for(Map.Entry<String, JComponent> entry : componentes.entrySet())
+        {
+            String clave = entry.getKey();
+            JComponent comp = entry.getValue();
+            String valor = defaultProps.getProperty(clave);
+
+            if(valor==null) continue;
+
+            if(comp instanceof JRadioButton)
+            {
+                ((JRadioButton) comp).setSelected(Boolean.parseBoolean(valor));
+            }
+            else if (comp instanceof JCheckBox) {
+                ((JCheckBox) comp).setSelected(Boolean.parseBoolean(valor));
+            }
+            else if (comp instanceof JTextField) {
+                ((JTextField) comp).setText(valor);
+            }
+            else if (comp instanceof JComboBox) {
+                ((JComboBox<String>) comp).setSelectedItem(valor);
+            }
+        }
+    }
+    private void guardarConfiguracion(Map<String, JComponent> componentes, Properties defaultProps)
+    {
+        for(Map.Entry<String, JComponent> entry : componentes.entrySet())
+        {
+            String clave = entry.getKey();
+            JComponent comp = entry.getValue();
+
+            if(comp instanceof JRadioButton)
+            {
+                defaultProps.setProperty(clave, String.valueOf(((JRadioButton) comp).isSelected()));
+            }
+            else if (comp instanceof JCheckBox) {
+                defaultProps.setProperty(clave, String.valueOf(((JCheckBox) comp).isSelected()));
+            }
+            else if (comp instanceof JTextField) {
+                defaultProps.setProperty(clave, ((JTextField)comp).getText());
+            }
+            else if (comp instanceof JComboBox) {
+                defaultProps.setProperty(clave, String.valueOf(((JComboBox<String>) comp).getSelectedItem()));
+            }
+        }
+    }
+    private void guardarEnArchivo(Properties defaultProps, String rutaArchivo)
+    {
+        try(FileOutputStream out = new FileOutputStream(rutaArchivo))
+        {
+            defaultProps.store(out, "ConfgUsuario");
+            String currentDirectory = System.getProperty("user.dir");
+            System.out.println("El directorio actual es: " + currentDirectory);
+        }
+        catch(Exception e)
+        {
+            System.out.println("No se pudo encontrar la ruta");
+            e.printStackTrace();
+        }
+    }
+    private void cargarEnArchivo(Properties defaultProps, String rutaArchivo)
+    {
+        try(FileInputStream in = new FileInputStream(rutaArchivo))
+        {
+            defaultProps.load(in);
+        }
+        catch(Exception e)
+        {
+            //Lo normal seria que a la primera tire error
+            System.out.println("No se pudo cargar configuración previa.");
+        }
+    }
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == atras) {
-            menuPong.mostrarMenuPrincipal();
+        if (e.getSource() == guardar) {
+            guardarConfiguracion(componentes, defaultProps);
+            guardarEnArchivo(defaultProps, archivoConfig);
+        }
+        else if(e.getSource() == reset)
+        {
+            //Reestablece botones
+            musicaBox.setSelected(true);
+            ventana.setSelected(true);
+            movArriba1.setText("↑");
+            movAbajo1.setText("↓");
+            movArriba2.setText("W");
+            movAbajo2.setText("S");
+            pistaMusical.setSelectedIndex(0);
+            pelota.setSelectedIndex(0);
+            paleta.setSelectedIndex(0);
+            cancha.setSelectedIndex(0);
         }
     }
 }
