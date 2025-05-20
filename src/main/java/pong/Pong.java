@@ -139,5 +139,7 @@ public class Pong extends JGame {
         paletaDerecha = new Paleta(10, 90, 760, 270, teclado);
         arcoIzquierdo = new Arco(0, true);
         arcoDerecho = new Arco(getWidth(), false);
+    
     }
+}
 

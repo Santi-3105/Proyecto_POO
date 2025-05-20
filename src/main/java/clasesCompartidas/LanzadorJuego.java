@@ -125,6 +125,7 @@ public class LanzadorJuego extends JFrame implements ActionListener {
                 JOptionPane.showMessageDialog(LanzadorJuego.this, "Error, seleccione un juego para configurar");
             } else if (juegoSeleccionado == "Lemmings") {
                 // new MenuConfig();
+                // Hacer nuevo MenuConfig();
             } else if (juegoSeleccionado == "Pong") {
                 new MenuConfig();
             } else if (juegoSeleccionado == "Counter-Strike") {
