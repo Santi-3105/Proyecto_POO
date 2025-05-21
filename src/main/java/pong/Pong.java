@@ -151,8 +151,8 @@ public class Pong extends JGame {
             pelota.mostrar(dibuje);
             paletaIzquierda.mostrar(dibuje);
             paletaDerecha.mostrar(dibuje);
-            arcoIzquierdo.getMarcador().dibujar(dibuje);
-            arcoDerecho.getMarcador().dibujar(dibuje);
+            arcoIzquierdo.getMarcador().mostrar(dibuje);
+            arcoDerecho.getMarcador().mostrar(dibuje);
             dibuje.setColor(Color.white);
             dibuje.setFont(new Font("SansSerif", Font.BOLD, 13));
             dibuje.drawString("Menu: Esq", 12, 600);
