@@ -1,18 +1,17 @@
 package pong;
 
-import clasesCompartidas.Sonido;
-import clasesCompartidas.conversorTecla;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics2D;
+import java.awt.event.KeyEvent;
+import java.util.Properties;
 
 import com.entropyinteractive.JGame;
 import com.entropyinteractive.Keyboard;
 import com.entropyinteractive.Log;
-import com.entropyinteractive.Mouse;
 
-import java.awt.*;
-
-import java.util.Properties;
-
-import java.awt.event.KeyEvent;
+import clasesCompartidas.Sonido;
+import clasesCompartidas.conversorTecla;
 
 
 public class Pong extends JGame {
@@ -55,27 +54,15 @@ public class Pong extends JGame {
 
     public void gameUpdate(double delta) {
         if (estado == ESTADO_MENU) {
-            Mouse mouse = getMouse();
-            if (mouse.isLeftButtonPressed()) {
-                int x = mouse.getX();
-                int y = mouse.getY();
-
-
-                if ((x >= 270 && x <= 480) && (y >= 245 && y <= 265)) { // Dos jugadores
-                    iniciarJuego2Jugadores();
-                } else if ((x >= 315 && x <= 465) && (y >= 145 && y <= 170)) { // Un jugador
-                    System.out.println("1 jugador");
-                } else if ((x >= 325 && x <= 445) && (y >= 345 && y <= 370)) { // Ranking
-                    System.out.println("Ranking");
-                    System.out.println(x + " " + y);
-                    if (x >= 270 && x <= 480 && y >= 240 && y <= 265) {
-                        iniciarJuego2Jugadores();
-                    } else if (x >= 320 && x <= 480 && y >= 170 && y <= 210) {
-
-                    } else if (x >= 330 && x <= 480 && y >= 370 && y <= 410) {
-
-                    }
-                }
+            Keyboard key = this.getKeyboard(); // Inicializa el teclado
+            if (key.isKeyPressed(KeyEvent.VK_1)) { 
+                // Un jugador
+            }
+            else if (key.isKeyPressed(KeyEvent.VK_2)) {
+                iniciarJuego2Jugadores();
+            }
+            else if (key.isKeyPressed(KeyEvent.VK_R)) {
+                //Ranking
             }
             return; // se saltea si no esta en menú
         }
@@ -104,12 +91,12 @@ public class Pong extends JGame {
         // colisión con paleta izquierda
         if (pelota.colisiona(paletaIzquierda)) {
             Sonido.reproducir("golpe_audio.wav");
-            pelota.setVelocidadX(Math.abs(pelota.getVelocidadX())); // Rebota a la derecha
+            pelota.setVelocidadX((Math.abs(pelota.getVelocidadX()))*1.15); // Rebota a la derecha y aumenta velocidad
         }
         // colisión con paleta derecha
         if (pelota.colisiona(paletaDerecha)) {
             Sonido.reproducir("golpe_audio.wav");
-            pelota.setVelocidadX(-Math.abs(pelota.getVelocidadX())); // Rebota a la izquierda
+            pelota.setVelocidadX((-Math.abs(pelota.getVelocidadX()))*1.15); // Rebota a la izquierda y aumenta velocidad
         }
 
         // Colisión de pelota con la parte superior e inferior
