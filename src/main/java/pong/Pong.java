@@ -140,9 +140,13 @@ public class Pong extends JGame {
         if (estado == ESTADO_MENU) {
             dibuje.setColor(Color.WHITE);
             dibuje.setFont(new Font("SansSerif", Font.BOLD, 32));
-            dibuje.drawString("1 Jugador", 320, 200);
-            dibuje.drawString("2 Jugadores", 300, 300);
-            dibuje.drawString("Ranking", 330, 400);
+            dibuje.drawString("1 Jugador", 330, 200);
+            dibuje.drawString("2 Jugadores", 312, 300);
+            dibuje.drawString("Ranking", 344, 400);
+            dibuje.setFont(new Font("SansSerif", Font.BOLD, 16));
+            dibuje.drawString("Presione 1", 366, 225);
+            dibuje.drawString("Presione 2", 366, 325);
+            dibuje.drawString("Presione R", 365, 425);
         } else if (estado == ESTADO_JUEGO) {
             pelota.mostrar(dibuje);
             paletaIzquierda.mostrar(dibuje);
