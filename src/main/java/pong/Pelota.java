@@ -1,8 +1,10 @@
 package pong;
+
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.*;
+
 import javax.swing.ImageIcon;
 
 import clasesCompartidas.ObjetoGrafico;
@@ -52,7 +54,8 @@ class Pelota extends ObjetoGrafico {
             g2.drawImage(imagenPelota, (int) posicionX, (int) posicionY, tamanio, tamanio, null);
         } else {
             g2.setColor(Color.WHITE); // fallback
-            g2.fillRect((int) posicionX, (int) posicionY, tamanio, tamanio);
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g2.fillOval((int) posicionX, (int) posicionY, tamanio, tamanio);
         }
     }
 

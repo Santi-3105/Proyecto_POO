@@ -71,6 +71,18 @@ public class Pong extends JGame {
             }
             return; // se saltea si no esta en menú
         }
+    public void gameUpdate(double delta) {
+        if (estado == ESTADO_MENU) {
+            Keyboard key = this.getKeyboard(); // Inicializa el teclado
+            if (key.isKeyPressed(KeyEvent.VK_1)) { 
+                // Un jugador
+            }
+            else if (key.isKeyPressed(KeyEvent.VK_2)) {
+                iniciarJuego2Jugadores();
+            }
+            else if (key.isKeyPressed(KeyEvent.VK_R)) {
+                //Ranking
+            }
 
         if (estado != ESTADO_JUEGO) {
             if (this.getKeyboard().isKeyPressed(KeyEvent.VK_ESCAPE)) {
@@ -247,7 +259,5 @@ public class Pong extends JGame {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
         }    
 }
-    
