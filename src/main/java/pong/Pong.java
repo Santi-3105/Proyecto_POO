@@ -10,6 +10,8 @@
     import com.entropyinteractive.Log;
     import com.entropyinteractive.Mouse;
     import javax.swing.JFrame;
+    import java.awt.event.KeyEvent;
+
 
     import java.awt.*;
     import java.util.Properties;
@@ -131,7 +133,8 @@
 
         if (this.getKeyboard().isKeyPressed(KeyEvent.VK_ESCAPE)) {
             estado = ESTADO_MENU;
-        }
+        }}
+    }
 
 
         public void gameDraw(Graphics2D dibuje) {
@@ -156,8 +159,8 @@
                 pelota.mostrar(dibuje);
                 paletaIzquierda.mostrar(dibuje);
                 paletaDerecha.mostrar(dibuje);
-                arcoIzquierdo.getMarcador().dibujar(dibuje);
-                arcoDerecho.getMarcador().dibujar(dibuje);
+                arcoIzquierdo.getMarcador().mostrar(dibuje);
+                arcoDerecho.getMarcador().mostrar(dibuje);
                 dibuje.setColor(Color.white);
                 dibuje.setFont(new Font("SansSerif", Font.BOLD, 13));
                 dibuje.drawString("Menu: Esq", 12, 600);
