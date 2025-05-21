@@ -1,10 +1,11 @@
 package pong;
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
+import java.awt.*;
+import javax.swing.ImageIcon;
 
 import clasesCompartidas.ObjetoGrafico;
-
-import java.awt.*;
-
-import javax.swing.ImageIcon;
 
 class Pelota extends ObjetoGrafico {
     private int tamanio;
@@ -27,7 +28,6 @@ class Pelota extends ObjetoGrafico {
         posicionX += velocidadX * delta;
         posicionY += velocidadY * delta;
     }
-
     public void setEstilo(String estilo) {
         this.estilo = estilo;
         String ruta = "/pong/";
@@ -56,6 +56,7 @@ class Pelota extends ObjetoGrafico {
         }
     }
 
+
     @Override
     public int getAncho() {
         return tamanio;
@@ -66,23 +67,22 @@ class Pelota extends ObjetoGrafico {
         return tamanio;
     }
 
-    public void setTamanio(int tamanio) {
-        this.tamanio = tamanio;
+    public void setTamanio(int tamanio){
+        this.tamanio=tamanio;
+    }
+    public void setVelocidadY(double velocidadY){
+        this.velocidadY=velocidadY;
     }
 
-    public void setVelocidadY(double velocidadY) {
-        this.velocidadY = velocidadY;
-    }
-
-    public double getVelocidadY() {
+    public double getVelocidadY(){
         return this.velocidadY;
     }
 
-    public void setVelocidadX(double velocidadX) {
-        this.velocidadX = velocidadX;
+    public void setVelocidadX(double velocidadX){
+        this.velocidadX=velocidadX;
     }
 
-    public double getVelocidadX() {
+    public double getVelocidadX(){
         return this.velocidadX;
     }
 
@@ -100,11 +100,21 @@ class Pelota extends ObjetoGrafico {
 
     public void reiniciarPelota() {
         this.tamanio = 10;
-        // se pone la pelota en el medio
-        posicionX = 400;
-        posicionY = 300;
-        // seteo la velocidad en 250
-        this.velocidadX = 250;
-        this.velocidadY = 250;
+        posicionX = 400;  // Centro horizontal
+        posicionY = 300;  // Centro vertical
+    
+        // Dirección aleatoria en X (izquierda o derecha)
+        if (Math.random() < 0.5) {
+            this.velocidadX = 250;  // Derecha
+        } else {
+         this.velocidadX = -250; // Izquierda
+        }
+    
+        // Dirección aleatoria en Y (arriba o abajo)
+        if (Math.random() < 0.5) {
+            this.velocidadY = 250;  // Abajo
+        } else {
+            this.velocidadY = -250; // Arriba
+        }
     }
 }

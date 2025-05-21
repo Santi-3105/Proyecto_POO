@@ -1,14 +1,12 @@
 package pong;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Graphics;
+import clasesCompartidas.ObjetoGrafico;
 
-class Marcador {
+import java.awt.*;
+
+class Marcador extends ObjetoGrafico {
     private int puntaje;
-    private int posicionX;
-    private int posicionY;
-    public Marcador(int posicionX, int posicionY){
+    public Marcador(double posicionX, double posicionY){
         puntaje = 0;
         this.posicionX = posicionX;
         this.posicionY = posicionY;
@@ -18,9 +16,14 @@ class Marcador {
         puntaje++;
     }
 
-    public void dibujar(Graphics g) {
-        g.setColor(Color.WHITE);
-        g.setFont(new Font("Arial", Font.BOLD, 30));
-        g.drawString(String.valueOf(puntaje), posicionX, posicionY);
+    public void mostrar(Graphics2D g2) {
+        g2.setColor(Color.WHITE);
+        g2.setFont(new Font("Arial", Font.BOLD, 30));
+        g2.drawString(String.valueOf(puntaje), (int)posicionX, (int)posicionY);
     }
+
+    public int getPuntaje(){
+        return puntaje;
+    }
+    public void update(double delta){}
 }

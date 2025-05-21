@@ -3,8 +3,8 @@ package pong;
 import clasesCompartidas.ObjetoGrafico;
 
 class Arco extends ObjetoGrafico {
-    protected final int posicionX;
-    protected final Marcador MarcadorAsociado;
+    private final int posicionX;
+    private final Marcador MarcadorAsociado;
 
     public Arco(int posicionX, boolean esIzquierdo) {
 
