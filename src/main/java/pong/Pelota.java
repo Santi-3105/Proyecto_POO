@@ -3,10 +3,11 @@ package pong;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
-
-import clasesCompartidas.ObjetoGrafico;
+import java.awt.*;
 
 import javax.swing.ImageIcon;
+
+import clasesCompartidas.ObjetoGrafico;
 
 class Pelota extends ObjetoGrafico {
     private int tamanio;
@@ -29,7 +30,6 @@ class Pelota extends ObjetoGrafico {
         posicionX += velocidadX * delta;
         posicionY += velocidadY * delta;
     }
-
     public void setEstilo(String estilo) {
         this.estilo = estilo;
         String ruta = "/pong/";
@@ -59,6 +59,7 @@ class Pelota extends ObjetoGrafico {
         }
     }
 
+
     @Override
     public int getAncho() {
         return tamanio;
@@ -69,23 +70,22 @@ class Pelota extends ObjetoGrafico {
         return tamanio;
     }
 
-    public void setTamanio(int tamanio) {
-        this.tamanio = tamanio;
+    public void setTamanio(int tamanio){
+        this.tamanio=tamanio;
+    }
+    public void setVelocidadY(double velocidadY){
+        this.velocidadY=velocidadY;
     }
 
-    public void setVelocidadY(double velocidadY) {
-        this.velocidadY = velocidadY;
-    }
-
-    public double getVelocidadY() {
+    public double getVelocidadY(){
         return this.velocidadY;
     }
 
-    public void setVelocidadX(double velocidadX) {
-        this.velocidadX = velocidadX;
+    public void setVelocidadX(double velocidadX){
+        this.velocidadX=velocidadX;
     }
 
-    public double getVelocidadX() {
+    public double getVelocidadX(){
         return this.velocidadX;
     }
 

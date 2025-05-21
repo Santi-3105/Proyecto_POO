@@ -1,10 +1,9 @@
 package pong;
 import java.awt.*;
 
-import javax.swing.ImageIcon;
-
 import clasesCompartidas.ObjetoGrafico;
 import com.entropyinteractive.Keyboard;
+import javax.swing.ImageIcon;
 
 public class Paleta extends ObjetoGrafico{
     private int ancho;
@@ -71,7 +70,6 @@ public class Paleta extends ObjetoGrafico{
 
         posicionY += velocidad * delta;
     }
-
     public void setEstilo(String estilo) {
         this.estilo = estilo;
         String ruta = "/pong/";
@@ -89,7 +87,8 @@ public class Paleta extends ObjetoGrafico{
                 break;
         }
     }
-    @Override
+
+     @Override
     public void mostrar(Graphics2D g2) {
         if (imagenPaleta != null) {
             g2.drawImage(imagenPaleta, (int) posicionX, (int) posicionY, ancho, alto, null);
@@ -98,6 +97,7 @@ public class Paleta extends ObjetoGrafico{
             g2.fillRect((int) posicionX, (int) posicionY, ancho, alto);
         }
     }
+
 
     @Override
     public int getAncho() {

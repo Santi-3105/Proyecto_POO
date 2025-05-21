@@ -1,59 +1,75 @@
+package pong;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics2D;
+import java.awt.event.KeyEvent;
+import java.util.Properties;
+import java.awt.*;
+import java.util.Set;
 
-    package pong;
+import com.entropyinteractive.JGame;
+import com.entropyinteractive.Keyboard;
+import com.entropyinteractive.Log;
 
-    import clasesCompartidas.Musica;
-    import clasesCompartidas.Sonido;
-    import clasesCompartidas.conversorTecla;
+import clasesCompartidas.Sonido;
+import clasesCompartidas.Musica;
+import clasesCompartidas.conversorTecla;
 
-    import com.entropyinteractive.JGame;
-    import com.entropyinteractive.Keyboard;
-    import com.entropyinteractive.Log;
-    import com.entropyinteractive.Mouse;
-    import javax.swing.JFrame;
 
-    import java.awt.*;
-    import java.util.Properties;
-    import java.util.Set;
+public class Pong extends JGame {
+    private Pelota pelota;
+    private Paleta paletaIzquierda;
+    private Paleta paletaDerecha;
+    private Arco arcoIzquierdo;
+    private Arco arcoDerecho;
+    private boolean esperandoReinicio = false;
+    private double tiempoEspera = 0;
+    private int teclaArribaJ1;
+    private int teclaAbajoJ1;
+    private int teclaArribaJ2;
+    private int teclaAbajoJ2;
+    protected Properties appProperties;
+    private Properties appProperties2;
+    private Cancha cancha;
 
-    public class Pong extends JGame {
-        private Pelota pelota;
-        private Paleta paletaIzquierda;
-        private Paleta paletaDerecha;
-        private Arco arcoIzquierdo;
-        private Arco arcoDerecho;
-        private boolean esperandoReinicio = false;
-        private double tiempoEspera = 0;
-        private int teclaArribaJ1;
-        private int teclaAbajoJ1;
-        private int teclaArribaJ2;
-        private int teclaAbajoJ2;
-        private Properties appProperties;
-        private Properties appProperties2;
-        private Cancha cancha;
-        private static final int ESTADO_GANADOR = 3;
-        private String ganador;
+    private static final double TIEMPO_ESPERA_MAXIMO = 2.0; // dos segundos de espera para volver a poner la pelota al
+    // medio
+    private int estado;
+    private static final int ESTADO_MENU = 0;
+    private static final int ESTADO_JUEGO = 1;
+    private static final int ESTADO_RANKING = 2;
+    private static final int ESTADO_GANADOR = 3;
+    private String ganador;
 
-        private static final double TIEMPO_ESPERA_MAXIMO = 2.0; // dos segundos de espera para volver a poner la pelota al
-                                                                // medio
-        private int estado;
-        private static final int ESTADO_MENU = 0;
-        private static final int ESTADO_JUEGO = 1;
-        private static final int ESTADO_RANKING = 2;
+    public Pong(String title, int width, int height) {
+        super(title, width, height);
+        appProperties = new Properties();
+        appProperties2 = new Properties();
+        System.out.println(appProperties.stringPropertyNames());
+    }
 
-        public Pong(String title, int width, int height) {
-            super(title, width, height);
-            appProperties = new Properties();
-            appProperties2 = new Properties();
-            System.out.println(appProperties.stringPropertyNames());
+    public void gameStartup() {
+        try {
+            estado = ESTADO_MENU;
+        } catch (Exception ex) {
+            System.out.println("ERROR en gameStartup");
+            ex.printStackTrace();
         }
+    }
 
-        public void gameStartup() {
-            try {
-                estado = ESTADO_MENU;
-            } catch (Exception ex) {
-                System.out.println("ERROR en gameStartup");
-                ex.printStackTrace();
+    public void gameUpdate(double delta) {
+        if (estado == ESTADO_MENU) {
+            Keyboard key = this.getKeyboard(); // Inicializa el teclado
+            if (key.isKeyPressed(KeyEvent.VK_1)) { 
+                // Un jugador
             }
+            else if (key.isKeyPressed(KeyEvent.VK_2)) {
+                iniciarJuego2Jugadores();
+            }
+            else if (key.isKeyPressed(KeyEvent.VK_R)) {
+                //Ranking
+            }
+            return; // se saltea si no esta en menú
         }
     public void gameUpdate(double delta) {
         if (estado == ESTADO_MENU) {
@@ -100,20 +116,20 @@
             pelota.setVelocidadX((-Math.abs(pelota.getVelocidadX()))*1.15); // Rebota a la izquierda y aumenta velocidad
         }
 
-            // Colisión de pelota con la parte superior e inferior
-            if (pelota.getY() <= 37) {
-                // Toca el borde superior
-                Sonido.reproducir("golpe_audio.wav");
-                pelota.setY(37);
-                pelota.invertirDireccionY();
-            }
-            // colision de pelota con parte inferior
-            if (pelota.getY() + pelota.getAlto() >= getHeight()) {
-                // Toca el borde inferior
-                Sonido.reproducir("golpe_audio.wav");
-                pelota.setY(getHeight() - pelota.getAlto()); // La pega al borde inferior
-                pelota.invertirDireccionY();
-            }
+        // Colisión de pelota con la parte superior e inferior
+        if (pelota.getY() <= 37) {
+            // Toca el borde superior
+            Sonido.reproducir("golpe_audio.wav");
+            pelota.setY(37);
+            pelota.invertirDireccionY();
+        }
+        // colision de pelota con parte inferior
+        if (pelota.getY() + pelota.getAlto() >= getHeight()) {
+            // Toca el borde inferior
+            Sonido.reproducir("golpe_audio.wav");
+            pelota.setY(getHeight() - pelota.getAlto()); // La pega al borde inferior
+            pelota.invertirDireccionY();
+        }
 
         // verificar si hubo gol
         if (arcoIzquierdo.detectaGol(pelota) || arcoDerecho.detectaGol(pelota)) {
@@ -132,39 +148,39 @@
         if (this.getKeyboard().isKeyPressed(KeyEvent.VK_ESCAPE)) {
             estado = ESTADO_MENU;
         }
+    }
 
+    public void gameDraw(Graphics2D dibuje) {
+        dibuje.setColor(Color.BLACK);
+        dibuje.fillRect(0, 0, getWidth(), getHeight());
 
-        public void gameDraw(Graphics2D dibuje) {
-            dibuje.setColor(Color.BLACK);
-            dibuje.fillRect(0, 0, getWidth(), getHeight());
-
-            if (estado == ESTADO_MENU) {
-                dibuje.setColor(Color.WHITE);
-                dibuje.setFont(new Font("SansSerif", Font.BOLD, 32));
-                dibuje.drawString("1 Jugador", 330, 200);
-                dibuje.drawString("2 Jugadores", 312, 300);
-                dibuje.drawString("Ranking", 334, 400);
-                dibuje.setFont(new Font("SansSerif", Font.BOLD, 16));
-                dibuje.drawString("Presione 1", 366, 225);
-                dibuje.drawString("Presione 2", 366, 325);
-                dibuje.drawString("Presione R", 365, 425);
-            } else if (estado == ESTADO_JUEGO) {
-                // Agrego un if por si se produce un error la cancha quedara negra (default)
-                if (cancha != null) {
-                    cancha.mostrar(dibuje, getWidth(), getHeight());
-                }
-                pelota.mostrar(dibuje);
-                paletaIzquierda.mostrar(dibuje);
-                paletaDerecha.mostrar(dibuje);
-                arcoIzquierdo.getMarcador().dibujar(dibuje);
-                arcoDerecho.getMarcador().dibujar(dibuje);
-                dibuje.setColor(Color.white);
-                dibuje.setFont(new Font("SansSerif", Font.BOLD, 13));
-                dibuje.drawString("Menu: Esq", 12, 600);
-            } else if (estado == ESTADO_GANADOR) {
-                dibuje.setColor(Color.white);
-                dibuje.setFont(new Font("SansSerif", Font.BOLD, 25));
-                dibuje.drawString("El ganador es: ", 200, 200);
+        if (estado == ESTADO_MENU) {
+            dibuje.setColor(Color.WHITE);
+            dibuje.setFont(new Font("SansSerif", Font.BOLD, 32));
+            dibuje.drawString("1 Jugador", 330, 200);
+            dibuje.drawString("2 Jugadores", 312, 300);
+            dibuje.drawString("Ranking", 344, 400);
+            dibuje.setFont(new Font("SansSerif", Font.BOLD, 16));
+            dibuje.drawString("Presione 1", 366, 225);
+            dibuje.drawString("Presione 2", 366, 325);
+            dibuje.drawString("Presione R", 365, 425);
+        } else if (estado == ESTADO_JUEGO) {
+            // Agrego un if por si se produce un error la cancha quedara negra (default)
+            if (cancha != null) {
+                cancha.mostrar(dibuje, getWidth(), getHeight());
+            }
+            pelota.mostrar(dibuje);
+            paletaIzquierda.mostrar(dibuje);
+            paletaDerecha.mostrar(dibuje);
+            arcoIzquierdo.getMarcador().mostrar(dibuje);
+            arcoDerecho.getMarcador().mostrar(dibuje);
+            dibuje.setColor(Color.white);
+            dibuje.setFont(new Font("SansSerif", Font.BOLD, 13));
+            dibuje.drawString("Menu: Esq", 12, 600);
+        } else if (estado == ESTADO_GANADOR) {
+            dibuje.setColor(Color.white);
+            dibuje.setFont(new Font("SansSerif", Font.BOLD, 25));
+            dibuje.drawString("El ganador es: ", 200, 200);
             if (arcoIzquierdo.getMarcador().getPuntaje() == 10) {
                 ganador = "Jugador 2";
             } else {
@@ -173,10 +189,10 @@
             dibuje.drawString(ganador, 420, 200);
             dibuje.setFont(new Font("SansSerif", Font.BOLD, 16));
             dibuje.drawString("Presione la tecla Esq para volver al menú", 230, 550);
-            }
         }
 
-        public void gameShutdown() {
+    }
+    public void gameShutdown() {
             Log.info(getClass().getSimpleName(), "Shutting down game");
             System.exit(0);
         }
@@ -243,5 +259,5 @@
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }
-    }
+        }    
+}
