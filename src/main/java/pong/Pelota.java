@@ -1,8 +1,10 @@
 package pong;
 
-import clasesCompartidas.ObjetoGrafico;
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 
-import java.awt.*;
+import clasesCompartidas.ObjetoGrafico;
 
 import javax.swing.ImageIcon;
 
@@ -52,7 +54,8 @@ class Pelota extends ObjetoGrafico {
             g2.drawImage(imagenPelota, (int) posicionX, (int) posicionY, tamanio, tamanio, null);
         } else {
             g2.setColor(Color.WHITE); // fallback
-            g2.fillRect((int) posicionX, (int) posicionY, tamanio, tamanio);
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g2.fillOval((int) posicionX, (int) posicionY, tamanio, tamanio);
         }
     }
 
@@ -100,11 +103,21 @@ class Pelota extends ObjetoGrafico {
 
     public void reiniciarPelota() {
         this.tamanio = 10;
-        // se pone la pelota en el medio
-        posicionX = 400;
-        posicionY = 300;
-        // seteo la velocidad en 250
-        this.velocidadX = 250;
-        this.velocidadY = 250;
+        posicionX = 400;  // Centro horizontal
+        posicionY = 300;  // Centro vertical
+    
+        // Dirección aleatoria en X (izquierda o derecha)
+        if (Math.random() < 0.5) {
+            this.velocidadX = 250;  // Derecha
+        } else {
+         this.velocidadX = -250; // Izquierda
+        }
+    
+        // Dirección aleatoria en Y (arriba o abajo)
+        if (Math.random() < 0.5) {
+            this.velocidadY = 250;  // Abajo
+        } else {
+            this.velocidadY = -250; // Arriba
+        }
     }
 }
