@@ -30,7 +30,7 @@ public class Pong extends JGame {
     protected Properties appProperties;
 
     private static final double TIEMPO_ESPERA_MAXIMO = 2.0; // dos segundos de espera para volver a poner la pelota al
-                                                            // medio
+    // medio
     private int estado;
     private static final int ESTADO_MENU = 0;
     private static final int ESTADO_JUEGO = 1;
@@ -67,31 +67,35 @@ public class Pong extends JGame {
                     System.out.println("1 jugador");
                 } else if ((x >= 325 && x <= 445) && (y >= 345 && y <= 370)) { // Ranking
                     System.out.println("Ranking");
-                System.out.println(x+" "+y);
-                if (x >= 270 && x <= 480 && y >= 240 && y <= 265) {
-                    iniciarJuego2Jugadores();
-                } else if (x >= 320 && x <= 480 && y >= 170 && y <= 210) {
+                    System.out.println(x + " " + y);
+                    if (x >= 270 && x <= 480 && y >= 240 && y <= 265) {
+                        iniciarJuego2Jugadores();
+                    } else if (x >= 320 && x <= 480 && y >= 170 && y <= 210) {
 
-                } else if (x >= 330 && x <= 480 && y >= 370 && y <= 410) {
+                    } else if (x >= 330 && x <= 480 && y >= 370 && y <= 410) {
 
-
+                    }
                 }
             }
             return; // se saltea si no esta en menú
         }
 
+        if (estado != ESTADO_JUEGO) {
+            if (this.getKeyboard().isKeyPressed(KeyEvent.VK_ESCAPE)) {
+                estado = ESTADO_MENU;
+            }
+            return;
+        }
+        //Solo se sigue si esta en estado_juego, para dejar de dibujar
+
         if (esperandoReinicio) {
             tiempoEspera += delta;
             if (tiempoEspera >= TIEMPO_ESPERA_MAXIMO) {
-                pelota.reiniciarPelota();
-                esperandoReinicio = false;
-                tiempoEspera = 0;
+                    pelota.reiniciarPelota();
+                    esperandoReinicio = false;
+                    tiempoEspera = 0;
             }
-
-            return; // No hacer nada más mientras esperamos
-
             return; //No hacer nada si espeandoReinicio es false
-
         }
 
         paletaIzquierda.update(delta);
@@ -129,15 +133,16 @@ public class Pong extends JGame {
             esperandoReinicio = true;
             pelota.setVelocidadX(0); // La detenemos
             pelota.setVelocidadY(0);
+
+            //verificar cuando algun marcador llege a 10, se dibuje el estadoGanador
+            if(arcoIzquierdo.getMarcador().getPuntaje() == 10 || arcoDerecho.getMarcador().getPuntaje() == 10){
+                estado=ESTADO_GANADOR;
+                return; //cortar para no seguir ejecutando audio
+            }
         }
 
-        //verificar cuando algun marcador llege a 10, se dibuje el estadoGanador
-        if(arcoIzquierdo.getMarcador().getPuntaje() == 10 || arcoDerecho.getMarcador().getPuntaje() == 10){
-            estado=ESTADO_GANADOR;
-        }
-
-        if(this.getKeyboard().isKeyPressed(KeyEvent.VK_ESCAPE)){
-            estado=ESTADO_MENU;
+        if (this.getKeyboard().isKeyPressed(KeyEvent.VK_ESCAPE)) {
+            estado = ESTADO_MENU;
         }
     }
 
@@ -159,19 +164,19 @@ public class Pong extends JGame {
             arcoDerecho.getMarcador().dibujar(dibuje);
             dibuje.setColor(Color.white);
             dibuje.setFont(new Font("SansSerif", Font.BOLD, 13));
-            dibuje.drawString("Menu: Esq",12,600);
-        } else if (estado == ESTADO_GANADOR){
+            dibuje.drawString("Menu: Esq", 12, 600);
+        } else if (estado == ESTADO_GANADOR) {
             dibuje.setColor(Color.white);
             dibuje.setFont(new Font("SansSerif", Font.BOLD, 25));
-            dibuje.drawString("El ganador es: ",200,200);
-            if(arcoIzquierdo.getMarcador().getPuntaje()==10){
+            dibuje.drawString("El ganador es: ", 200, 200);
+            if (arcoIzquierdo.getMarcador().getPuntaje() == 10) {
                 ganador = "Jugador 2";
-            }else{
+            } else {
                 ganador = "Jugador 1";
             }
-            dibuje.drawString(ganador,420,200);
+            dibuje.drawString(ganador, 420, 200);
             dibuje.setFont(new Font("SansSerif", Font.BOLD, 16));
-            dibuje.drawString("Presione la tecla Esq para volver al menú",230,550);
+            dibuje.drawString("Presione la tecla Esq para volver al menú", 230, 550);
         }
 
     }
@@ -190,10 +195,10 @@ public class Pong extends JGame {
         MenuConfig.cargarEnArchivo(appProperties, rutaArchivo);
         // Leer propiedades de teclas
         try {
-            String t1Arriba = appProperties.getProperty("movArriba1","W");
-            String t1Abajo = appProperties.getProperty("movAbajo1","S");
-            String t2Arriba = appProperties.getProperty("movArriba2","\u2191");
-            String t2Abajo = appProperties.getProperty("movAbajo2","\u2193");
+            String t1Arriba = appProperties.getProperty("movArriba1", "W");
+            String t1Abajo = appProperties.getProperty("movAbajo1", "S");
+            String t2Arriba = appProperties.getProperty("movArriba2", "\u2191");
+            String t2Abajo = appProperties.getProperty("movAbajo2", "\u2193");
             //Las convierto
             teclaArribaJ1 = conversorTecla.convertirTecla(t1Arriba);
             teclaAbajoJ1 = conversorTecla.convertirTecla(t1Abajo);
