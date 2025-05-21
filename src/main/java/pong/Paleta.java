@@ -1,6 +1,8 @@
 package pong;
 import java.awt.*;
 
+import javax.swing.ImageIcon;
+
 import clasesCompartidas.ObjetoGrafico;
 import com.entropyinteractive.Keyboard;
 
@@ -11,6 +13,8 @@ public class Paleta extends ObjetoGrafico{
     private Keyboard keyboard;
     private int teclaArriba;
     private int teclaAbajo;
+    private Image imagenPaleta;
+    private String estilo = "Original";
 
 
     public Paleta(int ancho, int alto, double xInicial, double yInicial,Keyboard keyboard, int teclaArriba, int teclaAbajo) {
@@ -68,10 +72,31 @@ public class Paleta extends ObjetoGrafico{
         posicionY += velocidad * delta;
     }
 
+    public void setEstilo(String estilo) {
+        this.estilo = estilo;
+        String ruta = "/pong/";
+
+        switch (estilo) {
+            case "Paleta azul":
+                imagenPaleta = new ImageIcon(getClass().getResource(ruta + "01-Breakout-Tiles.png")).getImage();
+                break;
+            case "Paleta roja":
+                imagenPaleta = new ImageIcon(getClass().getResource(ruta + "07-Breakout-Tiles.png")).getImage();
+                break;
+            case "Original":
+            default:
+                imagenPaleta = null;
+                break;
+        }
+    }
     @Override
     public void mostrar(Graphics2D g2) {
-        g2.setColor(Color.WHITE);
-        g2.fillRect((int) posicionX, (int) posicionY, ancho, alto);
+        if (imagenPaleta != null) {
+            g2.drawImage(imagenPaleta, (int) posicionX, (int) posicionY, ancho, alto, null);
+        } else {
+            g2.setColor(Color.WHITE);
+            g2.fillRect((int) posicionX, (int) posicionY, ancho, alto);
+        }
     }
 
     @Override

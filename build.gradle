@@ -4,7 +4,8 @@ plugins {
 }
 
 version = '0.1.0'
-mainClassName = 'poo.Main'
+//mainClassName = 'poo.Main'
+mainClassName = 'clasesCompartidas.LanzadorJuego'
 
 repositories {
 	mavenCentral()
