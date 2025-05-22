@@ -188,7 +188,7 @@ public class Pong extends JGame {
             pelota = new Pelota(10, 400, 300, 250, 250);
             Keyboard teclado = this.getKeyboard();
             // Cargar propiedades desde el archivo default.properties
-            String rutaArchivo = "default.properties";
+            String rutaArchivo = "defaultPong.properties";
             MenuConfig.cargarEnArchivo(appProperties, rutaArchivo);
             // Cargo las propiedades desde el archivo JGame
             String rutaArchivo2 = "jgame.properties";

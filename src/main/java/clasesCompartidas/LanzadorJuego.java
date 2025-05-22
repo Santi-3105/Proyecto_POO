@@ -1,6 +1,7 @@
 package clasesCompartidas;
 
 import pong.MenuConfig;
+import lemmings.MenuConfigLem;
 import java.awt.*;
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -124,8 +125,7 @@ public class LanzadorJuego extends JFrame implements ActionListener {
             if (juegoSeleccionado == null) {
                 JOptionPane.showMessageDialog(LanzadorJuego.this, "Error, seleccione un juego para configurar");
             } else if (juegoSeleccionado == "Lemmings") {
-                // new MenuConfig();
-                // Hacer nuevo MenuConfig();
+                new MenuConfigLem();
             } else if (juegoSeleccionado == "Pong") {
                 new MenuConfig();
             } else if (juegoSeleccionado == "Counter-Strike") {
