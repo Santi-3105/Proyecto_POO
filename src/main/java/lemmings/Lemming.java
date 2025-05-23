@@ -11,6 +11,7 @@ public class Lemming extends JGame {
     private Keyboard teclado = this.getKeyboard(); // Inicializa el teclado
     private int estado;
     private Bichito bichito;
+    private Paracaidista paracaidista;
     private final int ESTADO_MENU = 0;
     private final int ESTADO_ELEGIR_MAPA = 1;
     private final int ESTADO_MAPA_1 = 2;
@@ -70,9 +71,12 @@ public class Lemming extends JGame {
         if (estado == ESTADO_MAPA_2) {
             if (bichito != null) {
                 bichito.setDireccion(true); // hacia la derecha
-                bichito.update(delta);
                 bichito.moverX(1); // mueve un píxel por frame para caminar
+                bichito.update(delta);
             }
+            if (paracaidista != null) {
+            paracaidista.update(delta);
+            paracaidista.moverY(1); // Simula caída lenta con el paracaídas
             // actualizar mapa 2
             return; // se saltea si no esta en mapa 2
         }
@@ -82,8 +86,9 @@ public class Lemming extends JGame {
             return; // se saltea si no esta en mapa 3
         }
     }
+    }
 
-    public void gameDraw(Graphics2D dibuje) {
+    public void gameDraw(Graphics2D dibuje) {   
         dibuje.setColor(Color.BLACK);
         dibuje.fillRect(0, 0, getWidth(), getHeight());
 
@@ -113,6 +118,9 @@ public class Lemming extends JGame {
             if (bichito != null) {
                 bichito.mostrar(dibuje);
             }
+            if (paracaidista != null) {
+                paracaidista.mostrar(dibuje);
+            }
         } else if (estado == ESTADO_MAPA_3) {
             // dibujar mapa 3
         }
@@ -127,9 +135,12 @@ public class Lemming extends JGame {
     }
 
     private void jugarMapa2() {
+        paracaidista = new Paracaidista();
+        paracaidista.setPosicion(100, 0); // Empieza cayendo desde arriba
+        paracaidista.setDireccion(false); //Mira a la izquierda
         bichito = new Bichito(""); // usamos el constructor que carga los sprites
         bichito.setPosicion(100, 300); // posición inicial para probar
-        estado = ESTADO_MAPA_2;  // Esto faltaba
+        estado = ESTADO_MAPA_2;
     }
 
     private void jugarMapa3() {

@@ -27,25 +27,28 @@ public class Bichito extends ObjetoGrafico {
             e.printStackTrace();
         }
     }
-
     private void cargarFramesCaminar(BufferedImage spriteSheet) {
         int ancho = 16;
-        int alto = 16;
+        int alto = 11;
         int cantidadFrames = 8;
+        int escala = 2;
 
         caminarDerechaFrames = new BufferedImage[cantidadFrames];
         caminarIzquierdaFrames = new BufferedImage[cantidadFrames];
 
         for (int i = 0; i < cantidadFrames; i++) {
-            caminarDerechaFrames[i] = spriteSheet.getSubimage(i * ancho, 0, ancho, alto); // fila 0
-            caminarIzquierdaFrames[i] = spriteSheet.getSubimage(i * ancho, alto, ancho, alto); // fila 1
+            BufferedImage frameDerecha = spriteSheet.getSubimage(i * ancho, 0, ancho, alto);
+            BufferedImage frameIzquierda = spriteSheet.getSubimage(i * ancho, alto, ancho, alto);
+
+            caminarDerechaFrames[i] = escalarImagen(frameDerecha, ancho * escala, alto * escala);
+            caminarIzquierdaFrames[i] = escalarImagen(frameIzquierda, ancho * escala, alto * escala);
         }
     }
 
     public void caminar() {
         BufferedImage[] frames = mirandoDerecha ? caminarDerechaFrames : caminarIzquierdaFrames;
-        this.setImagen(frames[frameActual]);
         frameActual = (frameActual + 1) % frames.length;
+        this.setImagen(frames[frameActual]);
     }
 
     public void setDireccion(boolean derecha) {
@@ -55,6 +58,9 @@ public class Bichito extends ObjetoGrafico {
     public void setPosicion(int x, int y) {
         this.x = x;
         this.y = y;
+    }
+    public int getAncho() {
+    return (getImagen() != null) ? getImagen().getWidth() : 0;
     }
 
     public void moverX(int dx) {
@@ -83,12 +89,19 @@ public class Bichito extends ObjetoGrafico {
 
     }
 
+    private BufferedImage escalarImagen(BufferedImage imagenOriginal, int nuevaAncho, int nuevaAlto) {
+        BufferedImage imagenEscalada = new BufferedImage(nuevaAncho, nuevaAlto, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2d = imagenEscalada.createGraphics();
+        g2d.drawImage(imagenOriginal, 0, 0, nuevaAncho, nuevaAlto, null);
+        g2d.dispose();
+    return imagenEscalada;
+    }
     @Override
     public void update(double delta) {
         tiempoAnimacion += delta;
         if (tiempoAnimacion > 0.1) {
             caminar();
-            tiempoAnimacion = 0;
+            tiempoAnimacion -= 0.1;
         }
     }
 }
