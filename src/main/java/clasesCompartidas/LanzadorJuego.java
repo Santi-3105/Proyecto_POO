@@ -11,6 +11,7 @@ import java.awt.event.*;
 
 import com.entropyinteractive.*;
 import pong.Pong;
+import lemmings.Lemming; //Nuevo
 
 public class LanzadorJuego extends JFrame implements ActionListener {
     protected JGame juego;
@@ -52,6 +53,9 @@ public class LanzadorJuego extends JFrame implements ActionListener {
         scrollPane = new JScrollPane(juegos);
         add(scrollPane, BorderLayout.WEST);
 
+        //Nuevo agregue el panelImg antes porque hacia conflicto
+        // Creo el panel de la imagen
+        panelImg = new JPanel();
         //Cargo las imagenes segun aprete los juegos de la lista 
         juegos.addListSelectionListener(new ListSelectionListener() {
             @Override
@@ -75,9 +79,6 @@ public class LanzadorJuego extends JFrame implements ActionListener {
             }
         });
 
-        // Creo el panel de la imagen
-        panelImg = new JPanel();
-
         // Meto el panel al frame
         add(panelImg, BorderLayout.CENTER);
 
@@ -93,13 +94,13 @@ public class LanzadorJuego extends JFrame implements ActionListener {
 
     public void actionPerformed(ActionEvent e) {
         Musica.detenerMusicaFondo();
-
+        
         if (e.getSource() == botonIniciar) {
             // Agarra el valor del juego seleccionado en la barra
             String juegoSeleccionado = juegos.getSelectedValue();
             if (juegoSeleccionado == null) {
                 JOptionPane.showMessageDialog(LanzadorJuego.this, "Error, seleccione un juego para jugar");
-            }else if (juegos.getSelectedValue() == "Pong") {
+            }else if ("Pong".equals(juegoSeleccionado)) {
                 juego = new Pong("Pong", 800, 600);
                 t = new Thread() {
                     public void run() {
@@ -107,17 +108,17 @@ public class LanzadorJuego extends JFrame implements ActionListener {
                     }
                 };
                 t.start();
-            } else if (juegos.getSelectedValue() == "Lemmings") {
-                /*
-                 * juego = new Lemming("Lemming",800,600);
-                 * t = new Thread() {
-                 * public void run() {
-                 * juego.run(1.0 / 60.0);
-                 * }
-                 * };
-                 * t.start();
-                 */
+            } else if ("Lemmings".equals(juegoSeleccionado)) {
+                //Nuevo (modifique lo de adentro del else if por equals para mas mejor)
+                juego = new Lemming("Lemming",800,600);
+                t = new Thread() {
+                    public void run() {
+                        juego.run(1.0 / 60.0);
+                    }
+                };
+                t.start();
             }
+            //Nuevo
         }
         if (e.getSource() == botonConfig) {
             // Agarra el valor del juego seleccionado en la barra

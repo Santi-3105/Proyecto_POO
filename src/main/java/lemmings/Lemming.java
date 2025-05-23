@@ -1,6 +1,6 @@
 package lemmings;
 
-import clasesCompartidas.LanzadorJuego;
+
 import com.entropyinteractive.JGame;
 import com.entropyinteractive.Keyboard;
 
@@ -10,22 +10,21 @@ import java.awt.event.KeyEvent;
 public class Lemming extends JGame {
     private Keyboard teclado = this.getKeyboard(); // Inicializa el teclado
     private int estado;
-    private final int ESTADO_MENU=0;
-    private final int ESTADO_ELEGIR_MAPA=1;
-    private final int ESTADO_MAPA_1=2;
-    private final int ESTADO_MAPA_2=3;
-    private final int ESTADO_MAPA_3=4;
-    private final int ESTADO_RANKING=5;
-
-
+    private Bichito bichito;
+    private final int ESTADO_MENU = 0;
+    private final int ESTADO_ELEGIR_MAPA = 1;
+    private final int ESTADO_MAPA_1 = 2;
+    private final int ESTADO_MAPA_2 = 3;
+    private final int ESTADO_MAPA_3 = 4;
+    private final int ESTADO_RANKING = 5;
 
     public static void main(String[] args) {
-        Lemming game = new Lemming("Lemmings",800,600);
+        Lemming game = new Lemming("Lemmings", 800, 600);
         game.run(1.0 / 60.0);
         System.exit(0);
     }
 
-    public Lemming(String title, int width, int height){
+    public Lemming(String title, int width, int height) {
         super(title, width, height);
     }
 
@@ -40,41 +39,46 @@ public class Lemming extends JGame {
 
     public void gameUpdate(double delta) {
 
-        if(estado==ESTADO_MENU){
+        if (estado == ESTADO_MENU) {
             if (teclado.isKeyPressed(KeyEvent.VK_1)) {
-                estado=ESTADO_ELEGIR_MAPA;
+                estado = ESTADO_ELEGIR_MAPA;
             }
-            if(teclado.isKeyPressed(KeyEvent.VK_R)){
-                estado=ESTADO_RANKING;
+            if (teclado.isKeyPressed(KeyEvent.VK_R)) {
+                estado = ESTADO_RANKING;
             }
             return;
         }
 
-        if(estado==ESTADO_ELEGIR_MAPA){
+        if (estado == ESTADO_ELEGIR_MAPA) {
             if (teclado.isKeyPressed(KeyEvent.VK_1)) {
                 jugarMapa1();
             } else if (teclado.isKeyPressed(KeyEvent.VK_2)) {
                 jugarMapa2();
             } else if (teclado.isKeyPressed(KeyEvent.VK_3)) {
                 jugarMapa3();
-            }else if(teclado.isKeyPressed(KeyEvent.VK_ESCAPE)){
-                estado=ESTADO_MENU;
+            } else if (teclado.isKeyPressed(KeyEvent.VK_ESCAPE)) {
+                estado = ESTADO_MENU;
             }
             return; // se saltea si no esta en menú
         }
 
-        if(estado==ESTADO_MAPA_1){
-            //actualizar mapa 1
+        if (estado == ESTADO_MAPA_1) {
+            // actualizar mapa 1
             return; // se saltea si no esta en mapa 1
         }
 
-        if(estado==ESTADO_MAPA_2){
-            //actualizar mapa 2
+        if (estado == ESTADO_MAPA_2) {
+            if (bichito != null) {
+                bichito.setDireccion(true); // hacia la derecha
+                bichito.update(delta);
+                bichito.moverX(1); // mueve un píxel por frame para caminar
+            }
+            // actualizar mapa 2
             return; // se saltea si no esta en mapa 2
         }
 
-        if(estado==ESTADO_MAPA_3){
-            //actualizar mapa 3
+        if (estado == ESTADO_MAPA_3) {
+            // actualizar mapa 3
             return; // se saltea si no esta en mapa 3
         }
     }
@@ -102,25 +106,33 @@ public class Lemming extends JGame {
             dibuje.drawString("Presione 2", 376, 325);
             dibuje.drawString("Presione 3", 376, 425);
             dibuje.drawString("Volver menú: Esq", 12, 600);
-        }else if (estado==ESTADO_MAPA_1){
-            //dibujar mapa 1
-        }else if (estado==ESTADO_MAPA_2){
-            //dibujar mapa 2
-        }else if (estado==ESTADO_MAPA_3){
-            //dibujar mapa 3
+        } else if (estado == ESTADO_MAPA_1) {
+            // dibujar mapa 1
+        } else if (estado == ESTADO_MAPA_2) {
+            // dibujar mapa 2
+            if (bichito != null) {
+                bichito.mostrar(dibuje);
+            }
+        } else if (estado == ESTADO_MAPA_3) {
+            // dibujar mapa 3
         }
 
     }
 
-    public void gameShutdown(){}
+    public void gameShutdown() {
+    }
 
-    private void jugarMapa1(){
+    private void jugarMapa1() {
 
     }
-    private void jugarMapa2(){
 
+    private void jugarMapa2() {
+        bichito = new Bichito(""); // usamos el constructor que carga los sprites
+        bichito.setPosicion(100, 300); // posición inicial para probar
+        estado = ESTADO_MAPA_2;  // Esto faltaba
     }
-    private void jugarMapa3(){
+
+    private void jugarMapa3() {
 
     }
 }
