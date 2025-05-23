@@ -42,6 +42,15 @@ public abstract class ObjetoGrafico implements ObjetoMovible{
     public double getY(){
         return posicionY;
     }
+    //Nuevo
+    public void setImagen(BufferedImage imagen) {
+    this.imagen = imagen;
+    }
+
+    public BufferedImage getImagen() {
+        return this.imagen;
+    }
+    //Nuevo
 
     public void setY(double y) {this.posicionY = y;}
     public void setX(double x){this.posicionX = x;}
