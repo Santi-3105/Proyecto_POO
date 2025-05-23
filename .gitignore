@@ -1,7 +1,8 @@
 bin/
 build/
 .gradle/
-default.properties
+defaultLemmings.properties
+defaultPong.properties
 
 # Compiled class file
 *.class
