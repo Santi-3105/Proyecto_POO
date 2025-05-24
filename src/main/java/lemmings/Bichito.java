@@ -2,6 +2,7 @@ package lemmings;
 
 import java.io.IOException;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
 
@@ -14,8 +15,6 @@ public class Bichito extends ObjetoGrafico {
     private int frameActual = 0;
     private double tiempoAnimacion = 0;
     private boolean mirandoDerecha = true;
-    private int x = 0;
-    private int y = 0;
 
     public Bichito(String filename) {
         super("");
@@ -54,23 +53,34 @@ public class Bichito extends ObjetoGrafico {
     public void setDireccion(boolean derecha) {
         this.mirandoDerecha = derecha;
     }
-
-    public void setPosicion(int x, int y) {
-        this.x = x;
-        this.y = y;
+    public boolean estaMirandoDerecha() {
+        return mirandoDerecha;
     }
     public int getAncho() {
-    return (getImagen() != null) ? getImagen().getWidth() : 0;
+        return getImagen().getWidth();
     }
 
+    public int getAlto() {
+        return getImagen().getHeight();
+    }
+
+    public void setPosicion(int x, int y) {
+        setX(x);
+        setY(y);
+    }
     public void moverX(int dx) {
-        this.x += dx;
+        setX(getX() + dx);
     }
     @Override
     public void mostrar(Graphics2D g) {
-        if (this.getImagen() != null) {
-            g.drawImage(this.getImagen(), x, y, null);
+        if (getImagen() != null) {
+            g.drawImage(getImagen(), (int) getX(), (int) getY(), null);
         }
+    }
+    public boolean colisionaCon(Bloqueador bloqueador) {
+        Rectangle rectBichito = new Rectangle((int)getX(), (int)getY(), getAncho(), getAlto());
+        Rectangle rectBloqueador = new Rectangle((int) bloqueador.getX(), (int) bloqueador.getY(), bloqueador.getAncho(), bloqueador.getAlto());
+        return rectBichito.intersects(rectBloqueador);
     }
 
     public void aparecer() {
