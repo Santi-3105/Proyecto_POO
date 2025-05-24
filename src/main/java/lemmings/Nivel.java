@@ -3,14 +3,18 @@ package lemmings;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Nivel {
     private HashMap<Character, Estructura> estructuras; // Relación carácter -> estructura
-    private char[][] mapa; // Matriz que define el nivel
-    private int anchoEstructura;
-    private int altoEstructura;
+    private Estructura[][] mapaEstructuras;
+    private int anchoEstructura = 32;
+    private int altoEstructura = 32;
 
     public Nivel(String archivoMapa, String archivoEstructura) {
         estructuras = new HashMap<>();
@@ -20,6 +24,9 @@ public class Nivel {
 
     private void cargarEstructura(String archivoConfig) {
         try {
+            InputStream is = getClass().getResourceAsStream("/lemmings/" + archivoConfig);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+
             // Bloques indestructibles
             estructuras.put('M', new Estructura(
                     ImageIO.read(getClass().getResource("/lemmings/bloques/metal1.png")),
@@ -71,11 +78,11 @@ public class Nivel {
                     false,
                     false
             ));
-            /*estructuras.put('S', new Estructura(
+            estructuras.put('S', new Estructura(
                     ImageIO.read(getClass().getResource("/lemmings/bloques/spawn.png")),
                     false,
                     false
-            ));*/
+            ));
             estructuras.put('G', new Estructura(
                     ImageIO.read(getClass().getResource("/lemmings/bloques/meta.png")),
                     false,
@@ -99,45 +106,73 @@ public class Nivel {
     }
 
     private void cargarMapa(String archivoMapa) {
-        // Ejemplo simplificado: carga desde un archivo de texto
-        // (Implementación real puede usar BufferedReader)
-        String[] filas = {
-                "BBBBBBBBBBBBBBBBBBBB",
-                "B                  B",
-                "B    DD     DD     B",
-                "B                  B",
-                "B   DDDD   DDDD   B",
-                "BBBBBBBBBBBBBBBBBBBB"
-        };
-
-        mapa = new char[filas.length][filas[0].length()];
-        for (int y = 0; y < filas.length; y++) {
-            for (int x = 0; x < filas[y].length(); x++) {
-                mapa[y][x] = filas[y].charAt(x);
+        try {
+            InputStream is = getClass().getResourceAsStream("/lemmings/mapas/" + archivoMapa);
+            if (is == null) {
+                System.err.println("No se encontró el archivo del mapa: " + archivoMapa);
+                return;
             }
+
+            BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+            ArrayList<String> lineas = new ArrayList<>();
+            String linea;
+            while ((linea = reader.readLine()) != null) {
+                linea = linea.trim();
+                if (!linea.isEmpty()) {
+                    lineas.add(linea);
+                }
+            }
+
+            if (lineas.isEmpty()) {
+                System.err.println("El archivo del mapa está vacío.");
+                return;
+            }
+
+            int filas = lineas.size();
+            int columnas = lineas.get(0).length();
+
+            // Validar que todas las filas tengan el mismo largo
+            for (int i = 0; i < filas; i++) {
+                if (lineas.get(i).length() != columnas) {
+                    System.err.println("La fila " + i + " no tiene la misma longitud que la primera.");
+                    return;
+                }
+            }
+
+            mapaEstructuras = new Estructura[filas][columnas];
+
+            for (int fila = 0; fila < filas; fila++) {
+                String filaTexto = lineas.get(fila);
+                for (int col = 0; col < columnas; col++) {
+                    char simbolo = filaTexto.charAt(col);
+                    Estructura estructura = estructuras.get(simbolo);
+                    if (estructura == null) {
+                        System.err.println("Símbolo '" + simbolo + "' no mapeado en estructuras.");
+                        continue;
+                    }
+                    mapaEstructuras[fila][col] = estructura;
+                }
+            }
+
+        } catch (IOException e) {
+            System.err.println("Error cargando mapa: " + e.getMessage());
         }
     }
 
-    public void dibujar(Graphics2D g) {
-        for (int y = 0; y < mapa.length; y++) {
-            for (int x = 0; x < mapa[y].length; x++) {
-                char tile = mapa[y][x];
-                Estructura estructura = estructuras.get(tile);
+
+    public void mostrar(Graphics2D g) {
+        if (mapaEstructuras == null) return;
+
+        for (int fila = 0; fila < mapaEstructuras.length; fila++) {
+            for (int col = 0; col < mapaEstructuras[0].length; col++) {
+                Estructura estructura = mapaEstructuras[fila][col];
                 if (estructura != null) {
-                    estructura.mostrar(g, x * anchoEstructura, y * altoEstructura);
+                    estructura.mostrar(g, col * anchoEstructura, fila * altoEstructura);
                 }
             }
         }
     }
 
-    // Para colisiones
-    public boolean esPosicionSolida(int x, int y) {
-        int estructuraX = x / anchoEstructura;
-        int estructuraY = y / altoEstructura;
-        if (estructuraX >= 0 && estructuraY >= 0 && estructuraY < mapa.length && estructuraX < mapa[estructuraY].length) {
-            Estructura estructura = estructuras.get(mapa[estructuraY][estructuraX]);
-            return estructura != null && estructura.esSolida();
-        }
-        return true; // Fuera de límites = sólido
-    }
+
+
 }
