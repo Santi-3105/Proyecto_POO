@@ -13,6 +13,7 @@ public class Lemming extends JGame {
     private Paracaidista paracaidista;
     private Bloqueador bloqueador;
     private Bloqueador bloqueador2;
+    private Nivel nivel1;
     private final int ESTADO_MENU = 0;
     private final int ESTADO_ELEGIR_MAPA = 1;
     private final int ESTADO_MAPA_1 = 2;
@@ -66,6 +67,8 @@ public class Lemming extends JGame {
 
         if (estado == ESTADO_MAPA_1) {
             // actualizar mapa 1
+            if (teclado.isKeyPressed(KeyEvent.VK_ESCAPE)) {
+                estado = ESTADO_MENU;}
             return; // se saltea si no esta en mapa 1
         }
 
@@ -100,6 +103,9 @@ public class Lemming extends JGame {
             if (bloqueador != null) {
                 bloqueador.update(delta); // NUEVO
                 bloqueador2.update(delta); //PRUEBA
+            }
+            if (teclado.isKeyPressed(KeyEvent.VK_ESCAPE)) {
+                estado = ESTADO_MENU;
             }
             // actualizar mapa 2
             return; // se saltea si no esta en mapa 2
@@ -136,6 +142,7 @@ public class Lemming extends JGame {
             dibuje.drawString("Volver menú: Esq", 12, 600);
         } else if (estado == ESTADO_MAPA_1) {
             // dibujar mapa 1
+            nivel1.mostrar(dibuje);
         } else if (estado == ESTADO_MAPA_2) {
             // dibujar mapa 2
             if (bichito != null) {
@@ -158,7 +165,8 @@ public class Lemming extends JGame {
     }
 
     private void jugarMapa1() {
-
+        nivel1=new Nivel("mapa1.txt","estructurasSet.config");
+        estado=ESTADO_MAPA_1;
     }
 
     private void jugarMapa2() {
