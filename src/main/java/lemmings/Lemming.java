@@ -54,7 +54,7 @@ public class Lemming extends JGame {
 
         if (estado == ESTADO_ELEGIR_MAPA) {
             if (teclado.isKeyPressed(KeyEvent.VK_1)) {
-                jugarMapa1();
+                //jugarMapa1();
             } else if (teclado.isKeyPressed(KeyEvent.VK_2)) {
                 jugarMapa2();
             } else if (teclado.isKeyPressed(KeyEvent.VK_3)) {
@@ -173,7 +173,7 @@ public class Lemming extends JGame {
         paracaidista = new Paracaidista();
         paracaidista.setPosicion(100, 0); // Empieza cayendo desde arriba
         paracaidista.setDireccion(false); // Mira a la izquierda
-        bichito = new Bichito(""); // usamos el constructor que carga los sprites
+        bichito = new Bichito(); // usamos el constructor que carga los sprites
         bichito.setPosicion(100, 300); // posición inicial para probar
         bloqueador = new Bloqueador(); // NUEVO
         bloqueador.setPosicion(300, 300); // posición fija de prueba

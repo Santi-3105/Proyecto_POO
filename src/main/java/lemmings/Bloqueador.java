@@ -1,29 +1,27 @@
 package lemmings;
 
-import clasesCompartidas.ObjetoGrafico;
 
 import javax.imageio.ImageIO;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
-public class Bloqueador extends ObjetoGrafico {
+public class Bloqueador extends Bichito {
     private BufferedImage[] frames;
     private int frameActual = 0;
     private double tiempoAnimacion = 0;
 
     public Bloqueador() {
-        super("");
         try {
             BufferedImage spriteSheet = ImageIO.read(getClass().getResource("/lemmings/LemmingsSprite.png"));
-            cargarFramesBloqueador(spriteSheet);
+            cargarFrames(spriteSheet);
             this.setImagen(frames[0]);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    private void cargarFramesBloqueador(BufferedImage spriteSheet) {
+    private void cargarFrames(BufferedImage spriteSheet) {
         int ancho = 16;
         int alto = 12; // altura estimada del Lemming bloqueador
         int cantidadFrames = 16;
@@ -33,7 +31,7 @@ public class Bloqueador extends ObjetoGrafico {
         frames = new BufferedImage[cantidadFrames];
 
         for (int i = 0; i < cantidadFrames; i++) {
-            BufferedImage frame = spriteSheet.getSubimage(i * ancho, fila * alto + 4, ancho, alto);
+            BufferedImage frame = spriteSheet.getSubimage((i + 1) * ancho, fila * alto + 4, ancho, alto);
             frames[i] = escalarImagen(frame, ancho * escala, alto * escala);
         }
     }
