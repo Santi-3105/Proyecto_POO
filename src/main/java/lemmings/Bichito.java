@@ -9,24 +9,23 @@ import javax.imageio.ImageIO;
 
 import clasesCompartidas.ObjetoGrafico;
 
-public class Bichito extends ObjetoGrafico {
+public class Bichito extends ObjetoGrafico implements Habilidad{
     private BufferedImage[] caminarDerechaFrames;
     private BufferedImage[] caminarIzquierdaFrames;
     private int frameActual = 0;
     private double tiempoAnimacion = 0;
     private boolean mirandoDerecha = true;
 
-    public Bichito(String filename) {
-        super("");
+    public Bichito() {
         try {
             BufferedImage spriteSheet = ImageIO.read(getClass().getResource("/lemmings/LemmingsSprite.png"));
-            cargarFramesCaminar(spriteSheet);
+            cargarFrames(spriteSheet);
             this.setImagen(caminarDerechaFrames[0]); // imagen inicial
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-    private void cargarFramesCaminar(BufferedImage spriteSheet) {
+    private void cargarFrames(BufferedImage spriteSheet) {
         int ancho = 16;
         int alto = 11;
         int cantidadFrames = 8;
@@ -36,8 +35,8 @@ public class Bichito extends ObjetoGrafico {
         caminarIzquierdaFrames = new BufferedImage[cantidadFrames];
 
         for (int i = 0; i < cantidadFrames; i++) {
-            BufferedImage frameDerecha = spriteSheet.getSubimage(i * ancho, 0, ancho, alto);
-            BufferedImage frameIzquierda = spriteSheet.getSubimage(i * ancho, alto, ancho, alto);
+            BufferedImage frameDerecha = spriteSheet.getSubimage((i + 1) * ancho, 0, ancho, alto);
+            BufferedImage frameIzquierda = spriteSheet.getSubimage((i + 1) * ancho, alto - 1, ancho, alto);
 
             caminarDerechaFrames[i] = escalarImagen(frameDerecha, ancho * escala, alto * escala);
             caminarIzquierdaFrames[i] = escalarImagen(frameIzquierda, ancho * escala, alto * escala);
@@ -113,5 +112,20 @@ public class Bichito extends ObjetoGrafico {
             caminar();
             tiempoAnimacion -= 0.1;
         }
+    }
+    @Override
+    public void guardarHabilidad() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'activarHabilidad'");
+    }
+    @Override
+    public void iniciarHabilidad() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'iniciarHabilidad'");
+    }
+    @Override
+    public void detenerHabilidad() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'detenerHabilidad'");
     }
 }

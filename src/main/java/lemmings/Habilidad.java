@@ -2,7 +2,7 @@ package lemmings;
 
 public interface Habilidad {
 
-    void activarHabilidad(); 
+    public void guardarHabilidad(); 
 
     // Métodos abstractos que cada habilidad debe implementar
     public abstract void iniciarHabilidad();
