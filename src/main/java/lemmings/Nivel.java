@@ -147,7 +147,7 @@ public class Nivel {
                     char simbolo = filaTexto.charAt(col);
                     Estructura estructura = estructuras.get(simbolo);
                     if (estructura == null) {
-                        System.err.println("Símbolo '" + simbolo + "' no mapeado en estructuras.");
+                        //System.err.println("Símbolo '" + simbolo + "' no mapeado en estructuras.");
                         continue;
                     }
                     mapaEstructuras[fila][col] = estructura;
@@ -172,6 +172,27 @@ public class Nivel {
             }
         }
     }
+
+    public int getFilas() {
+        return mapaEstructuras.length;
+    }
+
+    public int getColumnas() {
+        return mapaEstructuras[0].length;
+    }
+
+    public int getAnchoEstructura() {
+        return anchoEstructura;
+    }
+
+    public int getAltoEstructura() {
+        return altoEstructura;
+    }
+
+    public Estructura getEstructura(int fila, int columna) {
+        return mapaEstructuras[fila][columna];
+    }
+
 
 
 
