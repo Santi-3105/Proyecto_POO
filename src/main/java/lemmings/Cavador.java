@@ -6,7 +6,9 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
-import clasesCompartidas.ObjetoGrafico;
+
+
+
 
 public class Cavador extends Bichito{
     private BufferedImage[] frames;
@@ -59,8 +61,6 @@ public class Cavador extends Bichito{
             tiempoAnimacion = 0;
         }
     }
-
-
     // Resto de métodos existentes...
     public void setPosicion(int x, int y) {
         setX(x);
