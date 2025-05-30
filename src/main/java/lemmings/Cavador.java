@@ -8,6 +8,8 @@ import javax.imageio.ImageIO;
 
 
 
+
+
 public class Cavador extends Bichito{
     private BufferedImage[] frames;
     private int frameActual = 0;
@@ -59,7 +61,6 @@ public class Cavador extends Bichito{
             tiempoAnimacion = 0;
         }
     }
-
     // Resto de métodos existentes...
     public void setPosicion(int x, int y) {
         setX(x);

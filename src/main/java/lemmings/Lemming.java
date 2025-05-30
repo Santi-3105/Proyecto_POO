@@ -5,7 +5,10 @@ import com.entropyinteractive.Keyboard;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
+
 import javax.imageio.ImageIO;
+import java.util.ArrayList;
+
 
 public class Lemming extends JGame {
     private Keyboard teclado = this.getKeyboard(); // Inicializa el teclado
@@ -15,6 +18,8 @@ public class Lemming extends JGame {
     private Bloqueador bloqueador;
     private Bloqueador bloqueador2;
     private Nivel nivel1;
+    //definicion de arreglo de lemmings
+    private ArrayList<Bichito>arrBichito;
     private final int ESTADO_MENU = 0;
     private final int ESTADO_ELEGIR_MAPA = 1;
     private final int ESTADO_MAPA_1 = 2;
@@ -66,7 +71,7 @@ public class Lemming extends JGame {
     public void gameUpdate(double delta) {
 
         if (estado == ESTADO_MENU) {
-            if (teclado.isKeyPressed(KeyEvent.VK_1)) {
+            if (teclado.isKeyPressed(KeyEvent.VK_J)) {
                 estado = ESTADO_ELEGIR_MAPA;
             }
             if (teclado.isKeyPressed(KeyEvent.VK_R)) {
@@ -90,6 +95,22 @@ public class Lemming extends JGame {
 
         if (estado == ESTADO_MAPA_1) {
             // actualizar mapa 1
+            if(arrBichito!=null){
+                for(Bichito bichi:arrBichito){
+                    bichi.caminar();
+                    if(bichi.estaMirandoDerecha()){
+                        bichi.moverX(1);
+                    }else{
+                        bichi.moverX(-1);
+                    }
+                    if (!bichi.detectarColisionMapa(bichi.estaMirandoDerecha() ? 1 : -1, 0)) {
+                        bichi.moverX(bichi.estaMirandoDerecha() ? 1 : -1);
+                    } else {
+                        bichi.setDireccion(!bichi.estaMirandoDerecha());
+                    }
+                }
+            }
+
             if (teclado.isKeyPressed(KeyEvent.VK_ESCAPE)) {
                 estado = ESTADO_MENU;
             }
@@ -148,7 +169,7 @@ public class Lemming extends JGame {
         if (estado == ESTADO_MENU) {
             dibuje.setColor(Color.WHITE);
             dibuje.setFont(new Font("SansSerif", Font.BOLD, 32));
-            dibuje.drawString("[1] Elegir mapa", 310, 200);
+            dibuje.drawString("[J] Elegir mapa", 310, 200);
             dibuje.drawString("[R] Raking", 310, 300);
             dibuje.setFont(new Font("SansSerif", Font.BOLD, 10));
             dibuje.drawString("Presione 1", 379, 225);
@@ -215,6 +236,10 @@ public class Lemming extends JGame {
                 dibuje.drawString(texto, xTexto + 1, yTexto + 1);
                 dibuje.setColor(Color.WHITE);
                 dibuje.drawString(texto, xTexto, yTexto);
+                for(Bichito bichi:arrBichito){
+                if(bichi!=null){
+                    bichi.mostrar(dibuje);
+                }
             }
         } else if (estado == ESTADO_MAPA_2) {
             // dibujar mapa 2
@@ -238,8 +263,18 @@ public class Lemming extends JGame {
     }
 
     private void jugarMapa1() {
-        nivel1 = new Nivel("mapa1.txt", "estructurasSet.config");
-        estado = ESTADO_MAPA_1;
+        estado=ESTADO_MAPA_1;
+        nivel1=new Nivel("mapa1.txt","estructurasSet.config");
+        arrBichito=new ArrayList<>(20);
+        arrBichito.add(new Bichito());
+        arrBichito.add(new Bichito());
+        arrBichito.add(new Bichito());
+        int i=10;
+        for(Bichito bichi:arrBichito){
+            bichi.setPosicion(300+i,204);
+            i=i+20;
+            bichi.setNivel(nivel1);
+        }
     }
 
     private void jugarMapa2() {

@@ -15,6 +15,7 @@ public class Bichito extends ObjetoGrafico implements Habilidad{
     private int frameActual = 0;
     private double tiempoAnimacion = 0;
     private boolean mirandoDerecha = true;
+    private Nivel nivel;
 
     public Bichito() {
         try {
@@ -128,4 +129,30 @@ public class Bichito extends ObjetoGrafico implements Habilidad{
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'detenerHabilidad'");
     }
+
+    public void setNivel(Nivel nivel) {
+        this.nivel = nivel;
+    }
+    public boolean detectarColisionMapa(int dx, int dy) {
+        if (nivel == null) {
+            return false;
+        }
+
+        int nuevoX = (int)getX() + dx;
+        int nuevoY = (int)getY() + dy;
+
+        // Coordenadas del mapa en filas/columnas
+        int fila = nuevoY / nivel.getAltoEstructura();
+        int columna = nuevoX / nivel.getAnchoEstructura();
+
+        // Asegurarse de que esté dentro de los límites del mapa
+        if (fila < 0 || fila >= nivel.getFilas() || columna < 0 || columna >= nivel.getColumnas()) {
+            return true; // Colisiona con el borde
+        }
+
+        Estructura estructura = nivel.getEstructura(fila, columna);
+        return estructura != null && estructura.esSolida();
+    }
+
+
 }
