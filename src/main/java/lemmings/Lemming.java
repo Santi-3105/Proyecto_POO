@@ -26,6 +26,11 @@ public class Lemming extends JGame {
     private final int ESTADO_MAPA_2 = 3;
     private final int ESTADO_MAPA_3 = 4;
     private final int ESTADO_RANKING = 5;
+    //variable para el tiempo de caida de lemming
+    private double tiempoUltimoSpawn = 0;
+    private final double tiempoIntervalo = 1.0; // cada segundo va a aparecer un lemming en el spawn
+    private final int maxLemmingsNivel1 = 10;
+
     private int xBoton;
     private int hudAlto;
     private int botonAncho;
@@ -95,18 +100,21 @@ public class Lemming extends JGame {
 
         if (estado == ESTADO_MAPA_1) {
             // actualizar mapa 1
+            aparicionLemmings(nivel1,delta);
+
             if(arrBichito!=null){
                 for(Bichito bichi:arrBichito){
                     bichi.caminar();
-                    if(bichi.estaMirandoDerecha()){
-                        bichi.moverX(1);
-                    }else{
-                        bichi.moverX(-1);
+                    if(bichi.detectarCaida()){
+                        bichi.moverY(2);
                     }
-                    if (!bichi.detectarColisionMapa(bichi.estaMirandoDerecha() ? 1 : -1, 0)) {
-                        bichi.moverX(bichi.estaMirandoDerecha() ? 1 : -1);
-                    } else {
-                        bichi.setDireccion(!bichi.estaMirandoDerecha());
+                    else {
+                        int direccion=bichi.estaMirandoDerecha()? 1:-1;
+                        if (!bichi.detectarColisionMapa(direccion, 0)) {
+                            bichi.moverX(direccion);
+                        } else {
+                            bichi.setDireccion(!bichi.estaMirandoDerecha());
+                        }
                     }
                 }
             }
@@ -236,9 +244,10 @@ public class Lemming extends JGame {
                 dibuje.drawString(texto, xTexto + 1, yTexto + 1);
                 dibuje.setColor(Color.WHITE);
                 dibuje.drawString(texto, xTexto, yTexto);
-                for(Bichito bichi:arrBichito){
-                if(bichi!=null){
-                    bichi.mostrar(dibuje);
+                for (Bichito bichi : arrBichito) {
+                    if (bichi != null) {
+                        bichi.mostrar(dibuje);
+                    }
                 }
             }
         } else if (estado == ESTADO_MAPA_2) {
@@ -265,16 +274,7 @@ public class Lemming extends JGame {
     private void jugarMapa1() {
         estado=ESTADO_MAPA_1;
         nivel1=new Nivel("mapa1.txt","estructurasSet.config");
-        arrBichito=new ArrayList<>(20);
-        arrBichito.add(new Bichito());
-        arrBichito.add(new Bichito());
-        arrBichito.add(new Bichito());
-        int i=10;
-        for(Bichito bichi:arrBichito){
-            bichi.setPosicion(300+i,204);
-            i=i+20;
-            bichi.setNivel(nivel1);
-        }
+        arrBichito=new ArrayList<>();
     }
 
     private void jugarMapa2() {
@@ -292,5 +292,17 @@ public class Lemming extends JGame {
 
     private void jugarMapa3() {
 
+    }
+
+    private void aparicionLemmings(Nivel nivel,double delta){
+        tiempoUltimoSpawn += delta;
+        //spawnear nuevo lemming
+        if(arrBichito.size() <= maxLemmingsNivel1 && tiempoUltimoSpawn >= tiempoIntervalo && nivel.getSpawnX()!=-1 && nivel1.getSpawnY()!=-1){
+            Bichito nuevoLemming = new Bichito();
+            nuevoLemming.setPosicion(nivel.getSpawnX(),nivel.getSpawnY());
+            nuevoLemming.setNivel(nivel);
+            arrBichito.add(nuevoLemming);
+            tiempoUltimoSpawn = 0; // se reiniciara el temporizador
+        }
     }
 }

@@ -71,6 +71,9 @@ public class Bichito extends ObjetoGrafico implements Habilidad{
     public void moverX(int dx) {
         setX(getX() + dx);
     }
+    public void moverY(int dy) {
+        setY(getY()+dy);
+    }
     @Override
     public void mostrar(Graphics2D g) {
         if (getImagen() != null) {
@@ -152,6 +155,44 @@ public class Bichito extends ObjetoGrafico implements Habilidad{
 
         Estructura estructura = nivel.getEstructura(fila, columna);
         return estructura != null && estructura.esSolida();
+    }
+
+    public boolean detectarCaida() {
+        if (nivel == null) {
+            return false;
+        }
+
+        // Verificar ambos bordes inferiores (izquierdo y derecho)
+        int xIzquierdo = (int)getX() + 5; // Pequeño margen desde el borde izquierdo
+        int xDerecho = (int)getX() + getAncho() - 5; // Pequeño margen desde el borde derecho
+        int yInferior = (int)getY() + getAlto() + 1; // Justo debajo del lemming
+
+        // Convertir a coordenadas de mapa
+        int filaDebajo = yInferior / nivel.getAltoEstructura();
+        int columnaIzquierda = xIzquierdo / nivel.getAnchoEstructura();
+        int columnaDerecha = xDerecho / nivel.getAnchoEstructura();
+
+        // Verificar si está dentro de los límites del mapa
+        if (filaDebajo >= nivel.getFilas()) {
+            return true; // Está cayendo fuera del mapa
+        }
+
+        // Verificar ambos lados
+        boolean haySoporteIzquierdo = false;
+        boolean haySoporteDerecho = false;
+
+        if (columnaIzquierda >= 0 && columnaIzquierda < nivel.getColumnas()) {
+            Estructura estructuraIzquierda = nivel.getEstructura(filaDebajo, columnaIzquierda);
+            haySoporteIzquierdo = estructuraIzquierda != null && estructuraIzquierda.esSolida();
+        }
+
+        if (columnaDerecha >= 0 && columnaDerecha < nivel.getColumnas()) {
+            Estructura estructuraDerecha = nivel.getEstructura(filaDebajo, columnaDerecha);
+            haySoporteDerecho = estructuraDerecha != null && estructuraDerecha.esSolida();
+        }
+
+        // Solo hay caída si ambos puntos no tienen soporte
+        return !(haySoporteIzquierdo || haySoporteDerecho);
     }
 
 

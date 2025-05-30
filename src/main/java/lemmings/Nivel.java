@@ -15,6 +15,8 @@ public class Nivel {
     private Estructura[][] mapaEstructuras;
     private int anchoEstructura = 32;
     private int altoEstructura = 32;
+    private int spawnX = 1;
+    private int spawnY = -1;
 
     public Nivel(String archivoMapa, String archivoEstructura) {
         estructuras = new HashMap<>();
@@ -146,6 +148,12 @@ public class Nivel {
                 for (int col = 0; col < columnas; col++) {
                     char simbolo = filaTexto.charAt(col);
                     Estructura estructura = estructuras.get(simbolo);
+                    if(simbolo == 'S'){
+                        //averiguamos donde está el spawn para cargar a los lemmings
+                        spawnX = col*anchoEstructura;
+                        spawnY = fila*altoEstructura;
+                    }
+
                     if (estructura == null) {
                         //System.err.println("Símbolo '" + simbolo + "' no mapeado en estructuras.");
                         continue;
@@ -193,7 +201,7 @@ public class Nivel {
         return mapaEstructuras[fila][columna];
     }
 
-
-
+    public int getSpawnX(){return spawnX+30;}
+    public int getSpawnY(){return spawnY+10;}
 
 }
