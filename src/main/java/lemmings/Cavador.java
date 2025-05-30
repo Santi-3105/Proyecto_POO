@@ -6,9 +6,9 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
-import clasesCompartidas.ObjetoGrafico;
 
-public class Cavador extends ObjetoGrafico implements Habilidad{
+
+public class Cavador extends Bichito{
     private BufferedImage[] frames;
     private int frameActual = 0;
     private double tiempoAnimacion = 0;
@@ -58,29 +58,6 @@ public class Cavador extends ObjetoGrafico implements Habilidad{
             this.setImagen(frames[frameActual]);
             tiempoAnimacion = 0;
         }
-    }
-
-    @Override
-    public void activarHabilidad() {
-        if(!estaActiva){
-            estaActiva= true;
-            iniciarHabilidad(); //Hay que ver si queremos que se inicie cuando se activa o no
-        }
-    }
-
-    @Override
-    public void iniciarHabilidad() {
-        frameActual = 0;
-        this.setImagen(frames[0]);
-        //A implementar
-    }
-
-    @Override
-    public void detenerHabilidad() {
-        if(estaActiva){
-            estaActiva= false;
-        }
-        //A implementar
     }
 
     // Resto de métodos existentes...
