@@ -1,21 +1,17 @@
 NNNNNNNNNNNNNNNNNNNNNNNNN
-MMMMMMMMMMMMMMMMMMMMMMMMM
-M                       M
-M  S                    M
-M                       M
-M                       M
-M                       M
-MNNNNNNNNN              M
-M                       M
-M                       M
-M                       M
-M                       M
-M                       M
-M                       M
-M                       M
-M                       M
-M G                     M
-MMMMMMMMMMMMMMMMMML     M
-MMMMMMMMMMMMMMMMMMMMMMMMM
-MMMMMMMMMMMMMMMMMMMMMMMMM
-MMMMMMMMMMMMMMMMMMMMMMMMM
+N                       N
+N                       N
+N  S                    N
+N                       N
+N                       N
+N                       N
+MMMMMMMMMMM             N
+N                       N
+N                       N
+N                       N
+N                       N
+N                       N
+N                       N
+N  G                    N
+MMMMMMMMMMMMMMMMMMLLLLLLM
+NNNNNNNNNNNNNNNNNNNNNNNNM
