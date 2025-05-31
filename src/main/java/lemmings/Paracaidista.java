@@ -6,7 +6,7 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
-public class Paracaidista extends Bichito {
+public class Paracaidista extends Bichito implements Habilidad{
     private BufferedImage[] paracaidasDerechaFrames;
     private BufferedImage[] paracaidasIzquierdaFrames;
     private int frameActual = 0;
@@ -16,15 +16,22 @@ public class Paracaidista extends Bichito {
     private boolean faseRepeticionActiva = false;
     private int[] cicloFrames = { 5, 6, 7 };
     private int indiceCiclo = 0;
+    private boolean habilidadActiva = false;
+    private boolean yaEstabaEnAire = false;
+    private boolean ultimaDireccionAntesDeHabilidad = true;
 
-    public Paracaidista() {
+    public Paracaidista(Bichito b) {
         try {
+            setPosicion(b.getX(), b.getY());
+            this.setNivel(b.getNivel()); // Copiar el nivel
             BufferedImage spriteSheet = ImageIO.read(getClass().getResource("/lemmings/LemmingsSprite.png"));
             cargarFrames(spriteSheet);
-            this.setImagen(paracaidasDerechaFrames[0]);
+            setDireccion(b.estaMirandoDerecha());
+            this.setImagen(b.estaMirandoDerecha() ? paracaidasDerechaFrames[0] : paracaidasIzquierdaFrames[0]);
         } catch (IOException e) {
             e.printStackTrace();
         }
+
     }
 
 
@@ -58,57 +65,89 @@ public class Paracaidista extends Bichito {
     }
 
     public void setDireccion(boolean derecha) {
-        this.mirandoDerecha = derecha;
-        // Reset frame para iniciar la animación desde el principio si querés
-        frameActual = 0;
-        if (mirandoDerecha) {
-            this.setImagen(paracaidasDerechaFrames[0]);
-        } else {
-            this.setImagen(paracaidasIzquierdaFrames[0]);
-        }
+        super.setDireccion(derecha);
+        this.setImagen(derecha ? paracaidasDerechaFrames[0] : paracaidasIzquierdaFrames[0]);
     }
 
     public void moverY(int dy) {
-        this.y += dy;
+        setY(getY() + dy); // caída lenta
     }
 
     public void update(double delta) {
+        boolean estaEnAire = detectarCaida();
+
+        // Si aún no empezó a caer, no se activa la habilidad
+        if (!habilidadActiva) {
+            if (estaEnAire && !yaEstabaEnAire) {
+                iniciarHabilidad(this);
+            } else {
+                yaEstabaEnAire = estaEnAire;
+                super.update(delta); // permite que siga su comportamiento normal
+                return;
+            }
+        }
+
+        // Animación y caída lenta
         tiempoAnimacion += delta;
         if (tiempoAnimacion > 0.1) {
-
             if (!faseRepeticionActiva) {
-                // Fase 1: animación desde 0 hasta 6
                 if (frameActual < 6) {
                     frameActual++;
                 } else {
-                    // Entramos a la fase de repetición: 6,7,8,...
                     faseRepeticionActiva = true;
                     indiceCiclo = 0;
                     frameActual = cicloFrames[indiceCiclo];
                 }
             } else {
-                // Fase 2: repetir 6 → 7 → 8 → 6 ...
                 indiceCiclo = (indiceCiclo + 1) % cicloFrames.length;
                 frameActual = cicloFrames[indiceCiclo];
             }
 
-            // Actualizar imagen
-            if (mirandoDerecha) {
-                this.setImagen(paracaidasDerechaFrames[frameActual]);
+            if (estaMirandoDerecha()) {
+                setImagen(paracaidasDerechaFrames[frameActual]);
             } else {
-                this.setImagen(paracaidasIzquierdaFrames[frameActual]);
+                setImagen(paracaidasIzquierdaFrames[frameActual]);
             }
 
             tiempoAnimacion = 0;
         }
 
-        y += 1; // caída lenta
+        moverY(1); // caída lenta
+
+        // Si tocó el suelo, detenemos la habilidad
+        if (!estaEnAire) {
+            detenerHabilidad();
+        }
+
     }
 
-    public void setPosicion(int x, int y) {
-        this.x = x;
-        this.y = y;
+    @Override
+    public void guardarHabilidad() {
+        // No hace nada. La usamos para indicar que la habilidad fue "asignada"
     }
+
+    @Override
+    public void iniciarHabilidad(Bichito b) {
+        ultimaDireccionAntesDeHabilidad = b.estaMirandoDerecha();
+        this.habilidadActiva = true;
+        this.yaEstabaEnAire = true;
+    }
+
+    @Override
+    public void detenerHabilidad() {
+        habilidadActiva = false;
+        yaEstabaEnAire = false;
+        frameActual = 0;
+        faseRepeticionActiva = false;
+        setDireccion(ultimaDireccionAntesDeHabilidad);
+    }
+
+    @Override
+    public void setPosicion(int x, int y) {
+        setX(x);
+        setY(y);
+    }
+
 
     public void mostrar(Graphics2D g) {
         if (getImagen() != null) {

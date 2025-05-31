@@ -33,16 +33,23 @@ public class Nivel {
 
             // Bloques indestructibles
             estructuras.put('M', new Estructura(
-                    ImageIO.read(getClass().getResource("/lemmings/bloques/metal1.png")),
+                    ImageIO.read(getClass().getResource("/lemmings/bloques/cuadradoMetal.png")),
                     true,
                     false
             ));
 
+            estructuras.put('L',new Estructura(
+                    ImageIO.read(getClass().getResource("/lemmings/bloques/lava.png")),
+                    false,
+                    false
+            ));
+
             estructuras.put('N', new Estructura(
-                    ImageIO.read(getClass().getResource("/lemmings/bloques/metal2.png")),
+                    ImageIO.read(getClass().getResource("/lemmings/bloques/dobleCuadradoMetal.png")),
                     true,
                     false
             ));
+
 
             // Bloques destructibles
             estructuras.put('P', new Estructura(

@@ -10,7 +10,7 @@ import javax.imageio.ImageIO;
 import clasesCompartidas.ObjetoGrafico;
 import clasesCompartidas.Sonido;
 
-public class Bichito extends ObjetoGrafico implements Habilidad{
+public class Bichito extends ObjetoGrafico{
     private BufferedImage[] caminarDerechaFrames;
     private BufferedImage[] caminarIzquierdaFrames;
     private int frameActual = 0;
@@ -94,13 +94,6 @@ public class Bichito extends ObjetoGrafico implements Habilidad{
 
     public boolean estaMuerto(){return estaMuerto;}
 
-    public void aparecer() {
-
-    }
-
-    public void llegarPortal() {
-
-    }
 
     public void morir() {
         estaMuerto=true;
@@ -123,12 +116,23 @@ public class Bichito extends ObjetoGrafico implements Habilidad{
     @Override
     public void update(double delta) {
         if(estaMuerto)return;
-
+        /*
         tiempoAnimacion += delta;
         if (tiempoAnimacion > 0.1) {
             caminar();
             tiempoAnimacion -= 0.1;
+        }*/
+        if (detectarCaida()) {
+            moverY(2);
+        } else {
+            int direccion = estaMirandoDerecha() ? 1 : -1;
+            if (!detectarColisionMapa(direccion, 0)) {
+                moverX(direccion);
+            } else {
+                setDireccion(!estaMirandoDerecha());
+            }
         }
+
         actualizarCaida(delta);
     }
 
@@ -149,25 +153,14 @@ public class Bichito extends ObjetoGrafico implements Habilidad{
         }
     }
 
-    @Override
-    public void guardarHabilidad() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'activarHabilidad'");
-    }
-    @Override
-    public void iniciarHabilidad() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'iniciarHabilidad'");
-    }
-    @Override
-    public void detenerHabilidad() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'detenerHabilidad'");
-    }
-
     public void setNivel(Nivel nivel) {
         this.nivel = nivel;
     }
+    public Nivel getNivel()
+    {
+        return this.nivel;
+    }
+
     public boolean detectarColisionMapa(int dx, int dy) {
         if (nivel == null) {
             return false;
