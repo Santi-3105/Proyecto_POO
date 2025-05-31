@@ -8,6 +8,7 @@ import javax.imageio.ImageIO;
 
 
 import clasesCompartidas.ObjetoGrafico;
+import clasesCompartidas.Sonido;
 
 public class Bichito extends ObjetoGrafico implements Habilidad{
     private BufferedImage[] caminarDerechaFrames;
@@ -17,7 +18,10 @@ public class Bichito extends ObjetoGrafico implements Habilidad{
     private boolean mirandoDerecha = true;
     private Nivel nivel;
     private boolean estaMuerto = false;
-    private double alturaCaida = 0;
+    private double alturaCaidaAcumulada = 0;
+    private boolean estabaCayendo = false;
+    private final double altura_maxima_caida = 100;
+
 
     public Bichito() {
         try {
@@ -88,6 +92,8 @@ public class Bichito extends ObjetoGrafico implements Habilidad{
         return rectBichito.intersects(rectBloqueador);
     }
 
+    public boolean estaMuerto(){return estaMuerto;}
+
     public void aparecer() {
 
     }
@@ -97,6 +103,9 @@ public class Bichito extends ObjetoGrafico implements Habilidad{
     }
 
     public void morir() {
+        estaMuerto=true;
+        Sonido.reproducir("die.wav");
+        //añadir animación de muerte
 
     }
 
@@ -113,12 +122,33 @@ public class Bichito extends ObjetoGrafico implements Habilidad{
     }
     @Override
     public void update(double delta) {
+        if(estaMuerto)return;
+
         tiempoAnimacion += delta;
         if (tiempoAnimacion > 0.1) {
             caminar();
             tiempoAnimacion -= 0.1;
         }
+        actualizarCaida(delta);
     }
+
+    private void actualizarCaida(double delta){
+        boolean estaCayendoAhora = detectarCaida();
+        if(estaCayendoAhora){
+            alturaCaidaAcumulada += 2;
+            moverY(2);
+            estabaCayendo=true;
+        }else{
+            // si dejó de caer, se verifica si la caída fue mortal
+            if(estabaCayendo && alturaCaidaAcumulada > altura_maxima_caida){
+                morir();
+            }
+            //resetea valores de caídas
+            alturaCaidaAcumulada = 0;
+            estabaCayendo = false;
+        }
+    }
+
     @Override
     public void guardarHabilidad() {
         // TODO Auto-generated method stub

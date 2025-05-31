@@ -106,23 +106,8 @@ public class Lemming extends JGame {
             // actualizar mapa 1
             aparicionLemmings(nivel1,delta);
             salidaLemmings(nivel1);
-
-            if(arrBichito!=null){
-                for(Bichito bichi:arrBichito){
-                    bichi.caminar();
-                    if(bichi.detectarCaida()){
-                        bichi.moverY(2);
-                    }
-                    else {
-                        int direccion=bichi.estaMirandoDerecha()? 1:-1;
-                        if (!bichi.detectarColisionMapa(direccion, 0)) {
-                            bichi.moverX(direccion);
-                        } else {
-                            bichi.setDireccion(!bichi.estaMirandoDerecha());
-                        }
-                    }
-                }
-            }
+            lemmingsMuertos(nivel1,delta);
+            actualizarMovimientoLemmings();
 
             if (teclado.isKeyPressed(KeyEvent.VK_ESCAPE)) {
                 estado = ESTADO_MENU;
@@ -329,6 +314,38 @@ public class Lemming extends JGame {
                 iterator.remove(); // se elimina del mapa
                 bichitosRescatados++;
                 continue; // se pasa al siguiente lemming
+            }
+        }
+    }
+
+    private void lemmingsMuertos(Nivel nivel,double delta){
+        Iterator<Bichito> iterator = arrBichito.iterator();
+        while (iterator.hasNext()) {
+            Bichito bichi = iterator.next();
+
+            // Eliminar lemmings muertos
+            if (bichi.estaMuerto()) {
+                iterator.remove();
+                continue;
+            }
+            bichi.update(delta);
+        }
+    }
+
+    private void actualizarMovimientoLemmings() {
+        if(arrBichito != null) {
+            for(Bichito bichi : arrBichito) {
+                bichi.caminar();
+
+                // Movimiento horizontal solo si no está cayendo
+                if (!bichi.detectarCaida()) {
+                    int direccion = bichi.estaMirandoDerecha() ? 1 : -1;
+                    if (!bichi.detectarColisionMapa(direccion, 0)) {
+                        bichi.moverX(direccion);
+                    } else {
+                        bichi.setDireccion(!bichi.estaMirandoDerecha());
+                    }
+                }
             }
         }
     }
