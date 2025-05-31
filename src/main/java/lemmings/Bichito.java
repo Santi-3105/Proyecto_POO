@@ -16,6 +16,8 @@ public class Bichito extends ObjetoGrafico implements Habilidad{
     private double tiempoAnimacion = 0;
     private boolean mirandoDerecha = true;
     private Nivel nivel;
+    private boolean estaMuerto = false;
+    private double alturaCaida = 0;
 
     public Bichito() {
         try {
@@ -193,6 +195,16 @@ public class Bichito extends ObjetoGrafico implements Habilidad{
 
         // Solo hay caída si ambos puntos no tienen soporte
         return !(haySoporteIzquierdo || haySoporteDerecho);
+    }
+
+    public boolean detectarMeta(Nivel nivel){
+        if(nivel==null || nivel.getMetaX()==-1){
+            return false;
+        }
+        Rectangle rectLemming = new Rectangle((int)getX(),(int)getY(),getAncho(),getAlto());
+        //Rectangle rectMeta = new Rectangle(nivel.getMetaX(),nivel.getMetaY(),nivel.getAnchoEstructura(),nivel.getAltoEstructura());
+
+        return rectLemming.intersects(nivel.getMetaX(),nivel.getMetaY(),nivel.getAnchoEstructura(),nivel.getAltoEstructura());
     }
 
 

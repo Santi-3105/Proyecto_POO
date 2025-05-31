@@ -1,5 +1,6 @@
 package lemmings;
 
+import clasesCompartidas.Sonido;
 import com.entropyinteractive.JGame;
 import com.entropyinteractive.Keyboard;
 
@@ -8,6 +9,7 @@ import java.awt.event.KeyEvent;
 
 import javax.imageio.ImageIO;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 
 public class Lemming extends JGame {
@@ -30,6 +32,8 @@ public class Lemming extends JGame {
     private double tiempoUltimoSpawn = 0;
     private final double tiempoIntervalo = 1.0; // cada segundo va a aparecer un lemming en el spawn
     private final int maxLemmingsNivel1 = 10;
+    private int lemmingsGenerados = 0;
+    private int bichitosRescatados = 0;
 
     private int xBoton;
     private int hudAlto;
@@ -101,6 +105,7 @@ public class Lemming extends JGame {
         if (estado == ESTADO_MAPA_1) {
             // actualizar mapa 1
             aparicionLemmings(nivel1,delta);
+            salidaLemmings(nivel1);
 
             if(arrBichito!=null){
                 for(Bichito bichi:arrBichito){
@@ -196,6 +201,7 @@ public class Lemming extends JGame {
         } else if (estado == ESTADO_MAPA_1) {
             // Dibujar mapa 1
             nivel1.mostrar(dibuje);
+            dibujarLemmingsRescatados(dibuje);
             // Dibujar fondo del HUD con degradado gris oscuro a negro
             hudAlto = 100; // fijo
             GradientPaint gradiente = new GradientPaint(0, getHeight() - hudAlto, new Color(40, 40, 40), 0, getHeight(),Color.BLACK);
@@ -297,12 +303,33 @@ public class Lemming extends JGame {
     private void aparicionLemmings(Nivel nivel,double delta){
         tiempoUltimoSpawn += delta;
         //spawnear nuevo lemming
-        if(arrBichito.size() <= maxLemmingsNivel1 && tiempoUltimoSpawn >= tiempoIntervalo && nivel.getSpawnX()!=-1 && nivel1.getSpawnY()!=-1){
+        if(lemmingsGenerados < maxLemmingsNivel1 && tiempoUltimoSpawn >= tiempoIntervalo && nivel.getSpawnX()!=-1 && nivel1.getSpawnY()!=-1){
             Bichito nuevoLemming = new Bichito();
             nuevoLemming.setPosicion(nivel.getSpawnX(),nivel.getSpawnY());
             nuevoLemming.setNivel(nivel);
             arrBichito.add(nuevoLemming);
+            lemmingsGenerados++;
             tiempoUltimoSpawn = 0; // se reiniciara el temporizador
+        }
+    }
+
+    private void dibujarLemmingsRescatados(Graphics2D g){
+        g.setColor(Color.WHITE);
+        g.setFont(new Font("SansSerif",Font.BOLD,16));
+        g.drawString("Rescatados: "+bichitosRescatados,670,500);
+    }
+
+    private void salidaLemmings(Nivel nivel){
+        Iterator<Bichito>iterator = arrBichito.iterator();
+        while (iterator.hasNext()){
+            Bichito bichi = iterator.next();
+            //verificar si llegó a la meta
+            if(bichi.detectarMeta(nivel)){
+                Sonido.reproducir("yippee.wav");
+                iterator.remove(); // se elimina del mapa
+                bichitosRescatados++;
+                continue; // se pasa al siguiente lemming
+            }
         }
     }
 }
