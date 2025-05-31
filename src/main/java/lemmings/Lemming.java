@@ -3,6 +3,7 @@ package lemmings;
 import clasesCompartidas.Sonido;
 import com.entropyinteractive.JGame;
 import com.entropyinteractive.Keyboard;
+import com.entropyinteractive.Mouse;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -19,7 +20,7 @@ public class Lemming extends JGame {
     private Paracaidista paracaidista;
     private Bloqueador bloqueador;
     private Bloqueador bloqueador2;
-    private Nivel nivel1;
+    private Nivel nivel1,nivel2;
     //definicion de arreglo de lemmings
     private ArrayList<Bichito>arrBichito;
     private final int ESTADO_MENU = 0;
@@ -34,6 +35,9 @@ public class Lemming extends JGame {
     private final int maxLemmingsNivel1 = 10;
     private int lemmingsGenerados = 0;
     private int bichitosRescatados = 0;
+
+    private boolean mouseFuePresionado = false;
+    private Bichito lemmingSeleccionado = null;
 
     private int xBoton;
     private int hudAlto;
@@ -102,6 +106,17 @@ public class Lemming extends JGame {
             return; // se saltea si no esta en menú
         }
 
+        //Cargo el mouse
+        Mouse mouse = this.getMouse();
+        int mouseX = mouse.getX();
+        int mouseY = mouse.getY();
+        boolean clicked = mouse.isLeftButtonPressed();
+        if (clicked && !mouseFuePresionado) {
+            seleccionarLemmingEn(mouseX, mouseY);
+        }
+        mouseFuePresionado = clicked;
+
+
         if (estado == ESTADO_MAPA_1) {
             // actualizar mapa 1
             aparicionLemmings(nivel1,delta);
@@ -112,6 +127,16 @@ public class Lemming extends JGame {
             if (teclado.isKeyPressed(KeyEvent.VK_ESCAPE)) {
                 estado = ESTADO_MENU;
             }
+            if (teclado.isKeyPressed(KeyEvent.VK_4)) {
+                int index = arrBichito.indexOf(lemmingSeleccionado);
+                if (index != -1) {
+                    Bichito original = arrBichito.get(index);
+                    Paracaidista nuevo = new Paracaidista(original);
+                    arrBichito.set(index, nuevo); // Reemplaza solo la referencia, misma posición en pantalla
+                    lemmingSeleccionado = nuevo; // Actualiza también la referencia seleccionada
+                }
+            }
+
             return; // se saltea si no esta en mapa 1
         }
 
@@ -187,72 +212,23 @@ public class Lemming extends JGame {
             // Dibujar mapa 1
             nivel1.mostrar(dibuje);
             dibujarLemmingsRescatados(dibuje);
-            // Dibujar fondo del HUD con degradado gris oscuro a negro
-            hudAlto = 100; // fijo
-            GradientPaint gradiente = new GradientPaint(0, getHeight() - hudAlto, new Color(40, 40, 40), 0, getHeight(),Color.BLACK);
-            dibuje.setPaint(gradiente);
-            dibuje.fillRect(0, getHeight() - hudAlto, getWidth(), hudAlto);
-            // Dibujar borde blanco alrededor del HUD
-            dibuje.setColor(Color.WHITE);
-            dibuje.setStroke(new BasicStroke(2));
-            dibuje.drawRect(0, getHeight() - hudAlto, getWidth() - 1, hudAlto - 1);
+            creadHUD(dibuje);
 
-            // Dimensiones de botones e imágenes
-            botonAncho = 50;
-            botonAlto = 50;
-            espacio = 30;
-            yBoton = getHeight() - hudAlto + 5; // margen superior
-            Font fuenteTexto = new Font("SansSerif", Font.BOLD, 11);
-            dibuje.setFont(fuenteTexto);
-            FontMetrics metrics = dibuje.getFontMetrics(fuenteTexto);
-
-            for (int i = 0; i < 6; i++) {
-                xBoton = 50 + i * (botonAncho + espacio);
-
-                // Imagen (centrada arriba)
-                dibuje.drawImage(imagenesHabilidades[i], xBoton, yBoton, botonAncho, botonAlto, null);
-
-                // Coordenadas para los textos (más abajo)
-                int yTextoBase = yBoton + botonAlto + 10;
-
-                // Texto de número [n] con sombra
-                String tecla = "[" + (i + 1) + "]";
-                int anchoTecla = metrics.stringWidth(tecla);
-                int xTecla = xBoton + (botonAncho - anchoTecla) / 2;
-
-                dibuje.setColor(Color.BLACK);
-                dibuje.drawString(tecla, xTecla + 1, yTextoBase + 1);
-                dibuje.setColor(Color.WHITE);
-                dibuje.drawString(tecla, xTecla, yTextoBase);
-
-                // Texto de habilidad con sombra, debajo del número
-                String texto = etiquetas[i];
-                int textoAncho = metrics.stringWidth(texto);
-                int xTexto = xBoton + (botonAncho - textoAncho) / 2;
-                int yTexto = yTextoBase + 12;
-
-                dibuje.setColor(Color.BLACK);
-                dibuje.drawString(texto, xTexto + 1, yTexto + 1);
-                dibuje.setColor(Color.WHITE);
-                dibuje.drawString(texto, xTexto, yTexto);
-                for (Bichito bichi : arrBichito) {
-                    if (bichi != null) {
-                        bichi.mostrar(dibuje);
-                    }
+            for (Bichito bichi : arrBichito) {
+                if (bichi != null) {
+                    bichi.mostrar(dibuje);
                 }
             }
+            if (lemmingSeleccionado != null) {
+                dibuje.setColor(Color.YELLOW);
+                dibuje.drawRect((int) lemmingSeleccionado.getX() - 2, (int) lemmingSeleccionado.getY() - 2,
+                        lemmingSeleccionado.getAncho() + 4, lemmingSeleccionado.getAlto() + 4);
+
+            }
+
         } else if (estado == ESTADO_MAPA_2) {
             // dibujar mapa 2
-            if (bichito != null) {
-                bichito.mostrar(dibuje);
-            }
-            if (paracaidista != null) {
-                paracaidista.mostrar(dibuje);
-            }
-            if (bloqueador != null) {
-                bloqueador.mostrar(dibuje); // NUEVO
-                bloqueador2.mostrar(dibuje);
-            }
+            nivel2.mostrar(dibuje);
         } else if (estado == ESTADO_MAPA_3) {
             // dibujar mapa 3
         }
@@ -269,16 +245,8 @@ public class Lemming extends JGame {
     }
 
     private void jugarMapa2() {
-        paracaidista = new Paracaidista();
-        paracaidista.setPosicion(100, 0); // Empieza cayendo desde arriba
-        paracaidista.setDireccion(false); // Mira a la izquierda
-        bichito = new Bichito(); // usamos el constructor que carga los sprites
-        bichito.setPosicion(100, 300); // posición inicial para probar
-        bloqueador = new Bloqueador(); // NUEVO
-        bloqueador.setPosicion(300, 300); // posición fija de prueba
-        bloqueador2 = new Bloqueador(); // NUEVO
-        bloqueador2.setPosicion(50, 300); // posición fija de prueba
         estado = ESTADO_MAPA_2;
+        nivel2=new Nivel("mapa2.txt","estructurasSet.config");
     }
 
     private void jugarMapa3() {
@@ -349,4 +317,75 @@ public class Lemming extends JGame {
             }
         }
     }
+
+    private void creadHUD(Graphics2D dibuje) {
+        // Dibujar fondo del HUD con degradado gris oscuro a negro
+        hudAlto = 100; // fijo
+        GradientPaint gradiente = new GradientPaint(0, getHeight() - hudAlto, new Color(40, 40, 40), 0, getHeight(),
+                Color.BLACK);
+        dibuje.setPaint(gradiente);
+        dibuje.fillRect(0, getHeight() - hudAlto, getWidth(), hudAlto);
+        // Dibujar borde blanco alrededor del HUD
+        dibuje.setColor(Color.WHITE);
+        dibuje.setStroke(new BasicStroke(2));
+        dibuje.drawRect(0, getHeight() - hudAlto, getWidth() - 1, hudAlto - 1);
+
+        // Dimensiones de botones e imágenes
+        botonAncho = 50;
+        botonAlto = 50;
+        espacio = 30;
+        yBoton = getHeight() - hudAlto + 5; // margen superior
+        Font fuenteTexto = new Font("SansSerif", Font.BOLD, 11);
+        dibuje.setFont(fuenteTexto);
+        FontMetrics metrics = dibuje.getFontMetrics(fuenteTexto);
+
+        for (int i = 0; i < 6; i++) {
+            xBoton = 50 + i * (botonAncho + espacio);
+
+            // Imagen (centrada arriba)
+            dibuje.drawImage(imagenesHabilidades[i], xBoton, yBoton, botonAncho, botonAlto, null);
+
+            // Coordenadas para los textos (más abajo)
+            int yTextoBase = yBoton + botonAlto + 10;
+
+            // Texto de número [n] con sombra
+            String tecla = "[" + (i + 1) + "]";
+            int anchoTecla = metrics.stringWidth(tecla);
+            int xTecla = xBoton + (botonAncho - anchoTecla) / 2;
+
+            dibuje.setColor(Color.BLACK);
+            dibuje.drawString(tecla, xTecla + 1, yTextoBase + 1);
+            dibuje.setColor(Color.WHITE);
+            dibuje.drawString(tecla, xTecla, yTextoBase);
+
+            // Texto de habilidad con sombra, debajo del número
+            String texto = etiquetas[i];
+            int textoAncho = metrics.stringWidth(texto);
+            int xTexto = xBoton + (botonAncho - textoAncho) / 2;
+            int yTexto = yTextoBase + 12;
+
+            dibuje.setColor(Color.BLACK);
+            dibuje.drawString(texto, xTexto + 1, yTexto + 1);
+            dibuje.setColor(Color.WHITE);
+            dibuje.drawString(texto, xTexto, yTexto);
+        }
+    }
+
+    private void seleccionarLemmingEn(int mouseX, int mouseY) {
+        for (Bichito lemming : arrBichito) {
+            double lx = lemming.getX();
+            double ly = lemming.getY();
+            int lw = lemming.getAncho();
+            int lh = lemming.getAlto();
+            int offset = 30; // o el valor que veas que lo corrige
+
+            // Verificar si el mouse está dentro del área del lemming
+            if (mouseX >= lx && mouseX <= lx + lw && mouseY >= ly - offset && mouseY <= ly + lh - offset) {
+                lemmingSeleccionado = lemming;
+                System.out.println("Lemming seleccionado: " + lemming);
+                break; // Parar cuando encontró uno
+            }
+        }
+    }
+
 }
