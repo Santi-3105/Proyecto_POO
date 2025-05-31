@@ -17,6 +17,8 @@ public class Nivel {
     private int altoEstructura = 32;
     private int spawnX = 1;
     private int spawnY = -1;
+    private int metaX = 1;
+    private int metaY = -1;
 
     public Nivel(String archivoMapa, String archivoEstructura) {
         estructuras = new HashMap<>();
@@ -154,6 +156,12 @@ public class Nivel {
                         spawnY = fila*altoEstructura;
                     }
 
+                    if (simbolo == 'G') {
+                        //averiguamos donde está la meta para sacar a los lemmings
+                        metaX = col * anchoEstructura;
+                        metaY = fila * altoEstructura;
+                    }
+
                     if (estructura == null) {
                         //System.err.println("Símbolo '" + simbolo + "' no mapeado en estructuras.");
                         continue;
@@ -203,5 +211,6 @@ public class Nivel {
 
     public int getSpawnX(){return spawnX+30;}
     public int getSpawnY(){return spawnY+10;}
-
+    public int getMetaX(){return metaX+30;}
+    public int getMetaY(){return metaY+30;}
 }

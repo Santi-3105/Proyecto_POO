@@ -3,6 +3,8 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.Properties;
 
 
@@ -177,12 +179,11 @@ public class Pong extends JGame {
         }
 
     }
+    @Override
     public void gameShutdown() {
-            Log.info(getClass().getSimpleName(), "Shutting down game");
-            System.exit(0);
-        }
+    }
 
-        private void iniciarJuego2Jugadores() {
+    private void iniciarJuego2Jugadores() {
             estado = ESTADO_JUEGO;
             cancha = new Cancha();
             pelota = new Pelota(10, 400, 300, 250, 250);
@@ -244,5 +245,5 @@ public class Pong extends JGame {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }    
+    }
 }
