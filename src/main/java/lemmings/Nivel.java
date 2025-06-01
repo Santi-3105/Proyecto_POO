@@ -19,6 +19,9 @@ public class Nivel {
     private int spawnY = -1;
     private int metaX = 1;
     private int metaY = -1;
+    private ArrayList<Rectangle> pinches = new ArrayList<>();  // Lista para múltiples pinches
+    private int pincheX = -1;
+    private int pincheY = -1;
 
     public Nivel(String archivoMapa, String archivoEstructura) {
         estructuras = new HashMap<>();
@@ -38,8 +41,14 @@ public class Nivel {
                     false
             ));
 
+            estructuras.put('Y', new Estructura(
+                    ImageIO.read(getClass().getResource("/lemmings/bloques/cuadradoMetalv2.png")),
+                    true,
+                    false
+            ));
+
             estructuras.put('L',new Estructura(
-                    ImageIO.read(getClass().getResource("/lemmings/bloques/lava.png")),
+                    ImageIO.read(getClass().getResource("/lemmings/bloques/pinche.png")),
                     false,
                     false
             ));
@@ -169,6 +178,15 @@ public class Nivel {
                         metaY = fila * altoEstructura;
                     }
 
+                    if(simbolo == 'L'){
+                        pinches.add(new Rectangle(
+                                col * anchoEstructura,
+                                fila * altoEstructura,
+                                anchoEstructura,
+                                altoEstructura
+                        ));
+                    }
+
                     if (estructura == null) {
                         //System.err.println("Símbolo '" + simbolo + "' no mapeado en estructuras.");
                         continue;
@@ -220,4 +238,9 @@ public class Nivel {
     public int getSpawnY(){return spawnY+10;}
     public int getMetaX(){return metaX+30;}
     public int getMetaY(){return metaY+30;}
+    public int getPincheX(){return pincheX+30;}
+    public int getPincheY(){return pincheY+30;}
+    public ArrayList<Rectangle> getPinches() {
+        return pinches;
+    }
 }

@@ -10,7 +10,7 @@ import javax.imageio.ImageIO;
 import clasesCompartidas.ObjetoGrafico;
 import clasesCompartidas.Sonido;
 
-public class Bichito extends ObjetoGrafico{
+public class Bichito extends ObjetoGrafico {
     private BufferedImage[] caminarDerechaFrames;
     private BufferedImage[] caminarIzquierdaFrames;
     private int frameActual = 0;
@@ -32,6 +32,7 @@ public class Bichito extends ObjetoGrafico{
             e.printStackTrace();
         }
     }
+
     private void cargarFrames(BufferedImage spriteSheet) {
         int ancho = 16;
         int alto = 11;
@@ -59,9 +60,11 @@ public class Bichito extends ObjetoGrafico{
     public void setDireccion(boolean derecha) {
         this.mirandoDerecha = derecha;
     }
+
     public boolean estaMirandoDerecha() {
         return mirandoDerecha;
     }
+
     public int getAncho() {
         return getImagen().getWidth();
     }
@@ -74,29 +77,35 @@ public class Bichito extends ObjetoGrafico{
         setX(x);
         setY(y);
     }
+
     public void moverX(int dx) {
         setX(getX() + dx);
     }
+
     public void moverY(int dy) {
-        setY(getY()+dy);
+        setY(getY() + dy);
     }
+
     @Override
     public void mostrar(Graphics2D g) {
         if (getImagen() != null) {
             g.drawImage(getImagen(), (int) getX(), (int) getY(), null);
         }
     }
+
     public boolean colisionaCon(Bloqueador bloqueador) {
-        Rectangle rectBichito = new Rectangle((int)getX(), (int)getY(), getAncho(), getAlto());
+        Rectangle rectBichito = new Rectangle((int) getX(), (int) getY(), getAncho(), getAlto());
         Rectangle rectBloqueador = new Rectangle((int) bloqueador.getX(), (int) bloqueador.getY(), bloqueador.getAncho(), bloqueador.getAlto());
         return rectBichito.intersects(rectBloqueador);
     }
 
-    public boolean estaMuerto(){return estaMuerto;}
+    public boolean estaMuerto() {
+        return estaMuerto;
+    }
 
 
     public void morir() {
-        estaMuerto=true;
+        estaMuerto = true;
         Sonido.reproducir("die.wav");
         //añadir animación de muerte
 
@@ -111,17 +120,23 @@ public class Bichito extends ObjetoGrafico{
         Graphics2D g2d = imagenEscalada.createGraphics();
         g2d.drawImage(imagenOriginal, 0, 0, nuevaAncho, nuevaAlto, null);
         g2d.dispose();
-    return imagenEscalada;
+        return imagenEscalada;
     }
+
     @Override
     public void update(double delta) {
-        if(estaMuerto)return;
+        if (estaMuerto) return;
         /*
         tiempoAnimacion += delta;
         if (tiempoAnimacion > 0.1) {
             caminar();
             tiempoAnimacion -= 0.1;
         }*/
+        if (detectarPinche(nivel)) {
+            morir();
+            return;
+        }
+
         if (detectarCaida()) {
             moverY(2);
         } else {
@@ -136,15 +151,15 @@ public class Bichito extends ObjetoGrafico{
         actualizarCaida(delta);
     }
 
-    private void actualizarCaida(double delta){
+    private void actualizarCaida(double delta) {
         boolean estaCayendoAhora = detectarCaida();
-        if(estaCayendoAhora){
+        if (estaCayendoAhora) {
             alturaCaidaAcumulada += 2;
             moverY(2);
-            estabaCayendo=true;
-        }else{
+            estabaCayendo = true;
+        } else {
             // si dejó de caer, se verifica si la caída fue mortal
-            if(estabaCayendo && alturaCaidaAcumulada > altura_maxima_caida){
+            if (estabaCayendo && alturaCaidaAcumulada > altura_maxima_caida) {
                 morir();
             }
             //resetea valores de caídas
@@ -156,8 +171,8 @@ public class Bichito extends ObjetoGrafico{
     public void setNivel(Nivel nivel) {
         this.nivel = nivel;
     }
-    public Nivel getNivel()
-    {
+
+    public Nivel getNivel() {
         return this.nivel;
     }
 
@@ -166,8 +181,8 @@ public class Bichito extends ObjetoGrafico{
             return false;
         }
 
-        int nuevoX = (int)getX() + dx;
-        int nuevoY = (int)getY() + dy;
+        int nuevoX = (int) getX() + dx;
+        int nuevoY = (int) getY() + dy;
 
         // Coordenadas del mapa en filas/columnas
         int fila = nuevoY / nivel.getAltoEstructura();
@@ -188,9 +203,9 @@ public class Bichito extends ObjetoGrafico{
         }
 
         // Verificar ambos bordes inferiores (izquierdo y derecho)
-        int xIzquierdo = (int)getX() + 5; // Pequeño margen desde el borde izquierdo
-        int xDerecho = (int)getX() + getAncho() - 5; // Pequeño margen desde el borde derecho
-        int yInferior = (int)getY() + getAlto() + 1; // Justo debajo del lemming
+        int xIzquierdo = (int) getX() + 5; // Pequeño margen desde el borde izquierdo
+        int xDerecho = (int) getX() + getAncho() - 5; // Pequeño margen desde el borde derecho
+        int yInferior = (int) getY() + getAlto() + 1; // Justo debajo del lemming
 
         // Convertir a coordenadas de mapa
         int filaDebajo = yInferior / nivel.getAltoEstructura();
@@ -220,15 +235,29 @@ public class Bichito extends ObjetoGrafico{
         return !(haySoporteIzquierdo || haySoporteDerecho);
     }
 
-    public boolean detectarMeta(Nivel nivel){
-        if(nivel==null || nivel.getMetaX()==-1){
+    public boolean detectarMeta(Nivel nivel) {
+        if (nivel == null || nivel.getMetaX() == -1) {
             return false;
         }
-        Rectangle rectLemming = new Rectangle((int)getX(),(int)getY(),getAncho(),getAlto());
+        Rectangle rectLemming = new Rectangle((int) getX(), (int) getY(), getAncho(), getAlto());
         //Rectangle rectMeta = new Rectangle(nivel.getMetaX(),nivel.getMetaY(),nivel.getAnchoEstructura(),nivel.getAltoEstructura());
 
-        return rectLemming.intersects(nivel.getMetaX(),nivel.getMetaY(),nivel.getAnchoEstructura(),nivel.getAltoEstructura());
+        return rectLemming.intersects(nivel.getMetaX(), nivel.getMetaY(), nivel.getAnchoEstructura(), nivel.getAltoEstructura());
     }
 
+    public boolean detectarPinche(Nivel nivel) {
+        if (nivel == null || nivel.getPincheX() == -1) {
+            return false;
+        }
+        Rectangle rectLemming = new Rectangle((int) getX(), (int) getY(), getAncho(), getAlto());
+        // Verificar colisión con todos los pinches del nivel
+        for (Rectangle pinche : nivel.getPinches()) {
+            if (rectLemming.intersects(pinche)) {
+                return true;
+            }
+        }
+        return false;
+
+    }
 
 }
