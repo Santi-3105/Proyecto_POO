@@ -11,7 +11,6 @@ public class Paracaidista extends Bichito implements Habilidad{
     private BufferedImage[] paracaidasIzquierdaFrames;
     private int frameActual = 0;
     private double tiempoAnimacion = 0;
-    private int x, y;
     private boolean mirandoDerecha = true;
     private boolean faseRepeticionActiva = false;
     private int[] cicloFrames = { 5, 6, 7 };
@@ -117,6 +116,7 @@ public class Paracaidista extends Bichito implements Habilidad{
         // Si tocó el suelo, detenemos la habilidad
         if (!estaEnAire) {
             detenerHabilidad();
+            super.update(delta);
         }
 
     }
@@ -148,10 +148,10 @@ public class Paracaidista extends Bichito implements Habilidad{
         setY(y);
     }
 
-
+    @Override
     public void mostrar(Graphics2D g) {
         if (getImagen() != null) {
-            g.drawImage(getImagen(), x, y, null);
+            g.drawImage(getImagen(), (int)getX(), (int)getY(), null);
         }
     }
 }

@@ -126,12 +126,11 @@ public class Bichito extends ObjetoGrafico {
     @Override
     public void update(double delta) {
         if (estaMuerto) return;
-        /*
         tiempoAnimacion += delta;
         if (tiempoAnimacion > 0.1) {
             caminar();
             tiempoAnimacion -= 0.1;
-        }*/
+        }
         if (detectarPinche(nivel)) {
             morir();
             return;

@@ -122,8 +122,12 @@ public class Lemming extends JGame {
             aparicionLemmings(nivel1,delta);
             salidaLemmings(nivel1);
             lemmingsMuertos(nivel1,delta);
-            actualizarMovimientoLemmings();
 
+            if (arrBichito != null) {
+                for (Bichito bichi : arrBichito) {
+                    bichi.update(delta);  // Llama al update del tipo actual (caminar, paracaidista, etc.)
+                }
+            }
             if (teclado.isKeyPressed(KeyEvent.VK_ESCAPE)) {
                 estado = ESTADO_MENU;
             }
@@ -144,7 +148,12 @@ public class Lemming extends JGame {
             aparicionLemmings(nivel2,delta);
             salidaLemmings(nivel2);
             lemmingsMuertos(nivel2,delta);
-            actualizarMovimientoLemmings();
+            
+            if (arrBichito != null) {
+                for (Bichito bichi : arrBichito) {
+                    bichi.update(delta);  // Llama al update del tipo actual (caminar, paracaidista, etc.)
+                }
+            }
 
             if (teclado.isKeyPressed(KeyEvent.VK_4)) {
                 int index = arrBichito.indexOf(lemmingSeleccionado);
@@ -295,24 +304,6 @@ public class Lemming extends JGame {
         }
     }
 
-    private void actualizarMovimientoLemmings() {
-        if(arrBichito != null) {
-            for(Bichito bichi : arrBichito) {
-                bichi.caminar();
-
-                // Movimiento horizontal solo si no está cayendo
-                if (!bichi.detectarCaida()) {
-                    int direccion = bichi.estaMirandoDerecha() ? 1 : -1;
-                    if (!bichi.detectarColisionMapa(direccion, 0)) {
-                        bichi.moverX(direccion);
-                    } else {
-                        bichi.setDireccion(!bichi.estaMirandoDerecha());
-                    }
-                }
-            }
-        }
-    }
-
     private void creadHUD(Graphics2D dibuje) {
         // Dibujar fondo del HUD con degradado gris oscuro a negro
         hudAlto = 100; // fijo
@@ -364,7 +355,7 @@ public class Lemming extends JGame {
             dibuje.setColor(Color.WHITE);
             dibuje.drawString(texto, xTexto, yTexto);
         }
-        dibujarLemmingsRescatados(dibuje);
+        dibuje.drawString("Rescatados: "+bichitosRescatados,700,600);
     }
 
     private void seleccionarLemmingEn(int mouseX, int mouseY) {
@@ -378,7 +369,6 @@ public class Lemming extends JGame {
             // Verificar si el mouse está dentro del área del lemming
             if (mouseX >= lx && mouseX <= lx + lw && mouseY >= ly - offset && mouseY <= ly + lh - offset) {
                 lemmingSeleccionado = lemming;
-                System.out.println("Lemming seleccionado: " + lemming);
                 break; // Parar cuando encontró uno
             }
         }
