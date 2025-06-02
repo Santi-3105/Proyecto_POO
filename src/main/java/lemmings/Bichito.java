@@ -1,11 +1,11 @@
 package lemmings;
 
-import java.io.IOException;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
-import javax.imageio.ImageIO;
+import java.io.IOException;
 
+import javax.imageio.ImageIO;
 
 import clasesCompartidas.ObjetoGrafico;
 import clasesCompartidas.Sonido;
@@ -34,8 +34,30 @@ public class Bichito extends ObjetoGrafico {
     }
 
     private void cargarFrames(BufferedImage spriteSheet) {
-        int ancho = 16;
-        int alto = 11;
+        //Matriz de coordenadas para los sprites
+        //Coordenadas iniciales, ancho, alto.
+        int[][] coordenadasDerecha = {
+            {21,1,4,9},
+            {37,0,5,10},
+            {52,1,6,9},
+            {68,1,5,9},
+            {85,1,4,9},
+            {101,0,5,10},
+            {116,1,6,9},
+            {132,1,5,9}
+        };
+
+        int[][] coordenadasIzquierda = {
+            {21, 11, 4, 9}, // Frame 1
+            {37, 11, 5, 10}, // Frame 2
+            {52, 11, 6, 9}, // Frame 3
+            {68, 10, 5, 9}, // Frame 4 
+            {85, 11, 4, 9}, // Frame 5 
+            {101, 11, 5, 10}, // Frame 6
+            {116, 11, 6, 9}, // Frame 7
+            {132, 10, 5, 9} // Frame 8
+        };
+
         int cantidadFrames = 8;
         int escala = 2;
 
@@ -43,11 +65,29 @@ public class Bichito extends ObjetoGrafico {
         caminarIzquierdaFrames = new BufferedImage[cantidadFrames];
 
         for (int i = 0; i < cantidadFrames; i++) {
-            BufferedImage frameDerecha = spriteSheet.getSubimage((i + 1) * ancho, 0, ancho, alto);
-            BufferedImage frameIzquierda = spriteSheet.getSubimage((i + 1) * ancho, alto - 1, ancho, alto);
+            int x = coordenadasDerecha[i][0];
+            int y = coordenadasDerecha[i][1];
+            int ancho = coordenadasDerecha[i][2];
+            int alto = coordenadasDerecha[i][3];
 
-            caminarDerechaFrames[i] = escalarImagen(frameDerecha, ancho * escala, alto * escala);
-            caminarIzquierdaFrames[i] = escalarImagen(frameIzquierda, ancho * escala, alto * escala);
+            caminarDerechaFrames[i] = escalarImagen(
+                    spriteSheet.getSubimage(x, y, ancho, alto),
+                    ancho * escala,
+                    alto * escala
+            );
+        }
+
+        for (int i = 0; i < cantidadFrames; i++) {
+            int x = coordenadasIzquierda[i][0];
+            int y = coordenadasIzquierda[i][1];
+            int ancho = coordenadasIzquierda[i][2];
+            int alto = coordenadasIzquierda[i][3];
+
+            caminarIzquierdaFrames[i] = escalarImagen(
+                    spriteSheet.getSubimage(x, y, ancho, alto),
+                    ancho * escala,
+                    alto * escala
+            );
         }
     }
 
