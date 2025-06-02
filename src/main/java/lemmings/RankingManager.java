@@ -1,5 +1,6 @@
 package lemmings;
 
+import java.io.File;
 import java.sql.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -30,6 +31,7 @@ public class RankingManager {
         } catch (SQLException e) {
             System.err.println("Error al crear tabla: " + e.getMessage());
         }
+        System.out.println("Ruta de la DB: " + new File("lemming_ranking.db").getAbsolutePath());
     }
 
     public void guardarJugador(Jugador jugador) {
