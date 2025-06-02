@@ -1,0 +1,19 @@
+111111111111111111111111111
+1                         N
+1    S                    N
+1                     G   N
+1                  NNNNNNNN
+122222222222       NNNNNNNN
+122222222222       NNNNNNNN
+1          2       NNNNNNNN
+1          2       NNNNNNNN
+122222222222       NNNNNNNN
+122222222222       NNNNNNNN
+1          2       NNNNNNNN
+1          2       NNNNNNNN
+122222222222       NNNNNNNN
+1                  NNNNNNNN
+1                  NNNNNNNN
+1                  NNNNNNNN
+1111111111111111111NNNNNNNN
+1111111111111111111NNNNNNNN
