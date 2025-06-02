@@ -26,10 +26,12 @@ public class EstadoNombreJugador {
 
         // Manejar entrada de texto
         for (KeyEvent event : teclado.getEvents()){
-            char c = event.getKeyChar();
-            if (Character.isLetterOrDigit(c) || c == ' ') {
-                if (nombreJugador.length() < 15) {
-                    nombreJugador += c;
+            if (event.getID() == KeyEvent.KEY_TYPED) {
+                char c = event.getKeyChar();
+                if (Character.isLetterOrDigit(c)) {
+                    if (nombreJugador.length() < 15) {
+                        nombreJugador += c;
+                    }
                 }
             }
         }
