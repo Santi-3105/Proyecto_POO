@@ -1,0 +1,70 @@
+package lemmings;
+
+import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.io.IOException;
+
+import com.entropyinteractive.Keyboard;
+
+import javax.imageio.ImageIO;
+
+public class EstadoNombreJugador {
+    private Lemming juego;
+    private String nombreJugador = "";
+    private boolean nombreCompletado = false;
+    private Image img_cavador = ImageIO.read(getClass().getResource("/lemmings/cavador.png"));
+    private Image img_paracaida = ImageIO.read(getClass().getResource("/lemmings/paracaida.png"));
+    private Image img_bloqueador = ImageIO.read(getClass().getResource("/lemmings/bloqueador.png"));
+
+
+    public EstadoNombreJugador(Lemming juego) throws IOException {
+        this.juego = juego;
+    }
+
+    public void actualizar() {
+        Keyboard teclado = juego.getKeyboard();
+
+        // Manejar entrada de texto
+        for (KeyEvent event : teclado.getEvents()){
+            char c = event.getKeyChar();
+            if (Character.isLetterOrDigit(c) || c == ' ') {
+                if (nombreJugador.length() < 15) {
+                    nombreJugador += c;
+                }
+            }
+        }
+
+        // Manejar tecla borrar
+        if (teclado.isKeyPressed(KeyEvent.VK_BACK_SPACE) && nombreJugador.length() > 0) {
+            nombreJugador = nombreJugador.substring(0, nombreJugador.length() - 1);
+        }
+
+        // Confirmar nombre
+        if (teclado.isKeyPressed(KeyEvent.VK_ENTER) && !nombreJugador.isEmpty()) {
+            nombreCompletado = true;
+            juego.setJugadorActual(new Jugador(nombreJugador));
+            juego.cambiarEstado(0);
+        }
+    }
+
+    public void dibujar(Graphics2D g) {
+        g.setColor(Color.BLACK);
+        g.fillRect(0, 0, juego.getWidth(), juego.getHeight());
+
+        g.setColor(Color.WHITE);
+        g.setFont(new Font("Arial", Font.BOLD, 24));
+        g.drawString("Ingrese su nombre:", 100, 100);
+
+        g.drawString(nombreJugador + (System.currentTimeMillis() % 1000 < 500 ? "_" : ""), 100, 150);
+
+        g.drawImage(img_cavador, 590, 380,null);
+        g.drawImage(img_paracaida, 580, 40,null);
+        g.drawImage(img_bloqueador, 50, 380,null);
+        g.setFont(new Font("Arial", Font.PLAIN, 16));
+        g.drawString("Presione ENTER para continuar", 300, 560);
+    }
+
+    public boolean isNombreCompletado() {
+        return nombreCompletado;
+    }
+}
