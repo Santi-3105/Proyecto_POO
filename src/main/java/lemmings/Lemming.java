@@ -18,6 +18,9 @@ public class Lemming extends JGame {
     private Keyboard teclado = this.getKeyboard(); // Inicializa el teclado
     private int estado;
     private Nivel nivel1,nivel2;
+    private ArrayList<Bichito> arrBichito;
+    private ArrayList<Bichito> arrBichito2;
+    private ArrayList<Bichito> lemmingsEnJuego;
     //definicion de arreglo de lemmings
     private ArrayList<Bichito> arrBichito1;
     private final int ESTADO_MENU = 0;
@@ -42,6 +45,7 @@ public class Lemming extends JGame {
 
     private boolean mouseFuePresionado = false;
     private Bichito lemmingSeleccionado = null;
+    private Bloqueador bloqueador;
 
     private int xBoton;
     private int hudAlto;
@@ -141,20 +145,21 @@ public class Lemming extends JGame {
             salidaLemmings(nivel1);
             lemmingsMuertos(nivel1,delta);
 
-            if (arrBichito1 != null) {
-                for (Bichito bichi : arrBichito1) {
-                    bichi.update(delta);  // Llama al update del tipo actual (caminar, paracaidista, etc.)
+            if (lemmingsEnJuego != null) {
+                for (Bichito bichi : lemmingsEnJuego) {
+                    bichi.update(delta); // Llama al update del tipo actual (caminar, paracaidista, etc.)
                 }
             }
             if (teclado.isKeyPressed(KeyEvent.VK_ESCAPE)) {
+                resetearLemmings();
                 estado = ESTADO_MENU;
             }
             if (teclado.isKeyPressed(KeyEvent.VK_4)) {
-                int index = arrBichito1.indexOf(lemmingSeleccionado);
+                int index = lemmingsEnJuego.indexOf(lemmingSeleccionado);
                 if (index != -1) {
-                    Bichito original = arrBichito1.get(index);
+                    Bichito original = lemmingsEnJuego.get(index);
                     Paracaidista nuevo = new Paracaidista(original);
-                    arrBichito1.set(index, nuevo); // Reemplaza solo la referencia, misma posición en pantalla
+                    lemmingsEnJuego.set(index, nuevo); // Reemplaza solo la referencia, misma posición en pantalla
                     lemmingSeleccionado = nuevo; // Actualiza también la referencia seleccionada
                 }
             }
@@ -167,27 +172,43 @@ public class Lemming extends JGame {
         }
 
         if (estado == ESTADO_MAPA_2) {
-            aparicionLemmings(nivel2,delta);
+            aparicionLemmings(nivel2, delta);
             salidaLemmings(nivel2);
-            lemmingsMuertos(nivel2,delta);
-            
-            if (arrBichito1 != null) {
-                for (Bichito bichi : arrBichito1) {
-                    bichi.update(delta);  // Llama al update del tipo actual (caminar, paracaidista, etc.)
+            lemmingsMuertos(nivel2, delta);
+
+            if (lemmingsEnJuego != null) {
+                for (Bichito bichi : lemmingsEnJuego) {
+                    bichi.update(delta); // Llama al update del tipo actual (caminar, paracaidista, etc.)
+                    if (bloqueador != null) {
+                        // Simular posición futura manualmente para la colisión
+                        if (bichi.colisionaCon(bloqueador)) {
+                            // Cambiar dirección para que se bloquee
+                            bichi.setDireccion(!bichi.estaMirandoDerecha());
+                        }
+                    }
                 }
             }
-
-            if (teclado.isKeyPressed(KeyEvent.VK_4)) {
-                int index = arrBichito1.indexOf(lemmingSeleccionado);
+            if (teclado.isKeyPressed(KeyEvent.VK_1)) {
+                int index = lemmingsEnJuego.indexOf(lemmingSeleccionado);
                 if (index != -1) {
-                    Bichito original = arrBichito1.get(index);
+                    Bichito original = lemmingsEnJuego.get(index);
+                    bloqueador = new Bloqueador(original);
+                    lemmingsEnJuego.set(index, bloqueador); // Reemplaza solo la referencia, misma posición en pantalla
+                    lemmingSeleccionado = bloqueador; // Actualiza también la referencia seleccionada
+                }
+            }
+            if (teclado.isKeyPressed(KeyEvent.VK_4)) {
+                int index = lemmingsEnJuego.indexOf(lemmingSeleccionado);
+                if (index != -1) {
+                    Bichito original = lemmingsEnJuego.get(index);
                     Paracaidista nuevo = new Paracaidista(original);
-                    arrBichito1.set(index, nuevo); // Reemplaza solo la referencia, misma posición en pantalla
+                    lemmingsEnJuego.set(index, nuevo); // Reemplaza solo la referencia, misma posición en pantalla
                     lemmingSeleccionado = nuevo; // Actualiza también la referencia seleccionada
                 }
             }
 
             if (teclado.isKeyPressed(KeyEvent.VK_ESCAPE)) {
+                resetearLemmings();
                 estado = ESTADO_MENU;
             }
             return; // se saltea si no esta en mapa 2
@@ -234,12 +255,12 @@ public class Lemming extends JGame {
             nivel1.mostrar(dibuje);
             creadHUD(dibuje);
 
-            for (Bichito bichi : arrBichito1) {
+            for (Bichito bichi : lemmingsEnJuego) {
                 if (bichi != null) {
                     bichi.mostrar(dibuje);
                 }
             }
-            if (lemmingSeleccionado != null) {
+            if (lemmingSeleccionado != null && lemmingsEnJuego.contains(lemmingSeleccionado)) {
                 dibuje.setColor(Color.YELLOW);
                 dibuje.drawRect((int) lemmingSeleccionado.getX() - 2, (int) lemmingSeleccionado.getY() - 2,
                         lemmingSeleccionado.getAncho() + 4, lemmingSeleccionado.getAlto() + 4);
@@ -250,7 +271,7 @@ public class Lemming extends JGame {
             // dibujar mapa 2
             nivel2.mostrar(dibuje);
             creadHUD(dibuje);
-            for (Bichito bichi : arrBichito1) {
+            for (Bichito bichi : lemmingsEnJuego) {
                 if (bichi != null) {
                     bichi.mostrar(dibuje);
                 }
@@ -285,16 +306,21 @@ public class Lemming extends JGame {
     }
 
     private void jugarMapa1() {
-        estado=ESTADO_MAPA_1;
-        nivel1=new Nivel("mapa1.txt","estructurasSet.config");
-        arrBichito1 =new ArrayList<>();
+        resetearLemmings();
+        estado = ESTADO_MAPA_1;
+        nivel1 = new Nivel("mapa1.txt", "estructurasSet.config");
+        arrBichito = new ArrayList<>();
+        lemmingsEnJuego = arrBichito;
     }
 
     private void jugarMapa2() {
+        resetearLemmings();
         estado = ESTADO_MAPA_2;
-        nivel2=new Nivel("mapa2.txt","estructurasSet.config");
-        arrBichito1 =new ArrayList<>();
+        nivel2 = new Nivel("mapa2.txt", "estructurasSet.config");
+        arrBichito2 = new ArrayList<>();
+        lemmingsEnJuego = arrBichito2;
     }
+
 
     private void jugarMapa3() {
 
@@ -307,18 +333,18 @@ public class Lemming extends JGame {
             Bichito nuevoLemming = new Bichito();
             nuevoLemming.setPosicion(nivel.getSpawnX(),nivel.getSpawnY());
             nuevoLemming.setNivel(nivel);
-            arrBichito1.add(nuevoLemming);
+            lemmingsEnJuego.add(nuevoLemming);
             lemmingsGenerados++;
             tiempoUltimoSpawn = 0; // se reiniciara el temporizador
         }
     }
 
-    private void salidaLemmings(Nivel nivel){
-        Iterator<Bichito>iterator = arrBichito1.iterator();
-        while (iterator.hasNext()){
+    private void salidaLemmings(Nivel nivel) {
+        Iterator<Bichito> iterator = lemmingsEnJuego.iterator();
+        while (iterator.hasNext()) {
             Bichito bichi = iterator.next();
-            //verificar si llegó a la meta
-            if(bichi.detectarMeta(nivel)){
+            // verificar si llegó a la meta
+            if (bichi.detectarMeta(nivel)) {
                 Sonido.reproducir("yippee.wav");
                 iterator.remove(); // se elimina del mapa
                 bichitosRescatados++;
@@ -327,8 +353,8 @@ public class Lemming extends JGame {
         }
     }
 
-    private void lemmingsMuertos(Nivel nivel,double delta){
-        Iterator<Bichito> iterator = arrBichito1.iterator();
+    private void lemmingsMuertos(Nivel nivel, double delta) {
+        Iterator<Bichito> iterator = lemmingsEnJuego.iterator();
         while (iterator.hasNext()) {
             Bichito bichi = iterator.next();
 
@@ -337,7 +363,6 @@ public class Lemming extends JGame {
                 iterator.remove();
                 continue;
             }
-            bichi.update(delta);
         }
     }
 
@@ -396,7 +421,7 @@ public class Lemming extends JGame {
     }
 
     private void seleccionarLemmingEn(int mouseX, int mouseY) {
-        for (Bichito lemming : arrBichito1) {
+        for (Bichito lemming : lemmingsEnJuego) {
             double lx = lemming.getX();
             double ly = lemming.getY();
             int lw = lemming.getAncho();
@@ -429,5 +454,14 @@ public class Lemming extends JGame {
             estadoRanking = new EstadoRanking(this);
         }
     }
-
+    private void resetearLemmings() {
+        if (lemmingsEnJuego != null) {
+            lemmingsEnJuego.clear();
+        }
+        lemmingSeleccionado = null;
+        bloqueador = null;
+        lemmingsGenerados = 0;
+        tiempoUltimoSpawn = 0;
+        bichitosRescatados = 0;
+    }
 }
