@@ -68,7 +68,7 @@ public class Paracaidista extends Bichito implements Habilidad{
         this.setImagen(derecha ? paracaidasDerechaFrames[0] : paracaidasIzquierdaFrames[0]);
     }
 
-    public void moverY(int dy) {
+    public void moverY(double dy) {
         setY(getY() + dy); // caída lenta
     }
 
@@ -88,7 +88,7 @@ public class Paracaidista extends Bichito implements Habilidad{
 
         // Animación y caída lenta
         tiempoAnimacion += delta;
-        if (tiempoAnimacion > 0.1) {
+        if (tiempoAnimacion > 0.2) {
             if (!faseRepeticionActiva) {
                 if (frameActual < 6) {
                     frameActual++;
