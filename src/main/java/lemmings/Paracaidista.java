@@ -1,10 +1,11 @@
 package lemmings;
 
 
-import javax.imageio.ImageIO;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+
+import javax.imageio.ImageIO;
 
 public class Paracaidista extends Bichito implements Habilidad{
     private BufferedImage[] paracaidasDerechaFrames;
@@ -35,26 +36,61 @@ public class Paracaidista extends Bichito implements Habilidad{
 
 
     private void cargarFrames(BufferedImage spriteSheet) {
-        int ancho = 16;
-        int alto = 13; // el paracaidista tiene 13 pixeles de alto
-        int cantidadFrames = 8;
+        
+        int[][] coordenadasDerecha = {
+            {20, 102, 7, 9}, 
+            {37, 102, 6, 9},
+            {53, 102, 7, 9},
+            {68, 97, 9, 14},
+            {83, 96, 9, 16},
+            {99, 96, 9, 15}, 
+            {115, 96, 9, 15},
+            {131, 96, 9, 14} 
+        };
+
+        int[][] coordenadasIzquierda = {
+            {22, 118, 7, 9}, 
+            {38, 118, 6, 9},
+            {53, 118, 7, 9},
+            {68, 113, 9, 14},
+            {85, 112, 9, 16},
+            {101, 112, 9, 15}, 
+            {117, 112, 9, 15},
+            {133, 112, 9, 14}
+        };
+
+        int cantidadFrames = coordenadasDerecha.length;
         int escala = 2;
-        int filaDerecha = 8; // la fila 9 en índice base 0
-        int filaIzquierda = 9; // fila 10 (base 0) asumiendo que está justo abajo
 
         paracaidasDerechaFrames = new BufferedImage[cantidadFrames];
         paracaidasIzquierdaFrames = new BufferedImage[cantidadFrames];
 
-        for (int i = 0; i < cantidadFrames; i++) {
-            BufferedImage frameDerecha = spriteSheet.getSubimage((i + 1) * ancho, filaDerecha * alto - 7, ancho, alto);
-            paracaidasDerechaFrames[i] = escalarImagen(frameDerecha, ancho * escala, alto * escala);
+         for (int i = 0; i < cantidadFrames; i++) {
+            int x = coordenadasDerecha[i][0];
+            int y = coordenadasDerecha[i][1];
+            int ancho = coordenadasDerecha[i][2];
+            int alto = coordenadasDerecha[i][3];
 
-            BufferedImage frameIzquierda = spriteSheet.getSubimage((i + 1) * ancho, filaIzquierda * alto - 4, ancho,
-                    alto);
-            paracaidasIzquierdaFrames[i] = escalarImagen(frameIzquierda, ancho * escala, alto * escala);
+            paracaidasDerechaFrames[i] = escalarImagen(
+                    spriteSheet.getSubimage(x, y, ancho, alto),
+                    ancho * escala,
+                    alto * escala
+            );
+        }
+
+        for (int i = 0; i < cantidadFrames; i++) {
+            int x = coordenadasIzquierda[i][0];
+            int y = coordenadasIzquierda[i][1];
+            int ancho = coordenadasIzquierda[i][2];
+            int alto = coordenadasIzquierda[i][3];
+
+            paracaidasIzquierdaFrames[i] = escalarImagen(
+                    spriteSheet.getSubimage(x, y, ancho, alto),
+                    ancho * escala,
+                    alto * escala
+            );
         }
     }
-
     private BufferedImage escalarImagen(BufferedImage original, int anchoNuevo, int altoNuevo) {
         BufferedImage escalada = new BufferedImage(anchoNuevo, altoNuevo, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2d = escalada.createGraphics();
@@ -68,7 +104,7 @@ public class Paracaidista extends Bichito implements Habilidad{
         this.setImagen(derecha ? paracaidasDerechaFrames[0] : paracaidasIzquierdaFrames[0]);
     }
 
-    public void moverY(int dy) {
+    public void moverY(double dy) {
         setY(getY() + dy); // caída lenta
     }
 
@@ -88,7 +124,7 @@ public class Paracaidista extends Bichito implements Habilidad{
 
         // Animación y caída lenta
         tiempoAnimacion += delta;
-        if (tiempoAnimacion > 0.1) {
+        if (tiempoAnimacion > 0.2) {
             if (!faseRepeticionActiva) {
                 if (frameActual < 6) {
                     frameActual++;

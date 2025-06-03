@@ -11,6 +11,7 @@ import clasesCompartidas.ObjetoGrafico;
 import clasesCompartidas.Sonido;
 
 public class Bichito extends ObjetoGrafico {
+
     private BufferedImage[] caminarDerechaFrames;
     private BufferedImage[] caminarIzquierdaFrames;
     private int frameActual = 0;
@@ -21,7 +22,10 @@ public class Bichito extends ObjetoGrafico {
     private double alturaCaidaAcumulada = 0;
     private boolean estabaCayendo = false;
     private final double altura_maxima_caida = 100;
-
+    private double velocidadMovimiento = 0.0; // píxeles por update
+    private double velocidadAnimacion = 0.1;
+    private double tiempoUltimoCambioDireccion = 0;
+    private final double tiempoMinimoEntreCambios = 0.5;
 
     public Bichito() {
         try {
@@ -37,25 +41,25 @@ public class Bichito extends ObjetoGrafico {
         //Matriz de coordenadas para los sprites
         //Coordenadas iniciales, ancho, alto.
         int[][] coordenadasDerecha = {
-            {21,1,4,9},
-            {37,0,5,10},
-            {52,1,6,9},
-            {68,1,5,9},
-            {85,1,4,9},
-            {101,0,5,10},
-            {116,1,6,9},
-            {132,1,5,9}
+            {17, 1, 12, 9},
+            {33, 0, 13, 10},
+            {48, 1, 14, 9},
+            {64, 1, 13, 9},
+            {81, 1, 12, 9},
+            {97, 0, 13, 10},
+            {112, 1, 14, 9},
+            {128, 1, 13, 9}
         };
 
         int[][] coordenadasIzquierda = {
-            {21, 11, 4, 9}, // Frame 1
-            {37, 11, 5, 10}, // Frame 2
-            {52, 11, 6, 9}, // Frame 3
-            {68, 10, 5, 9}, // Frame 4 
-            {85, 11, 4, 9}, // Frame 5 
-            {101, 11, 5, 10}, // Frame 6
-            {116, 11, 6, 9}, // Frame 7
-            {132, 10, 5, 9} // Frame 8
+            {17, 11, 12, 9},
+            {33, 11, 13, 9},
+            {48, 11, 14, 9},
+            {64, 10, 13, 9}, 
+            {81, 11, 12, 9}, 
+            {97, 11, 13, 10}, 
+            {112, 11, 14, 9}, 
+            {128, 10, 13, 9}
         };
 
         int cantidadFrames = 8;
@@ -97,8 +101,12 @@ public class Bichito extends ObjetoGrafico {
         this.setImagen(frames[frameActual]);
     }
 
+    /*public void setDireccion(boolean derecha) {
+        this.mirandoDerecha = derecha;
+    }*/
     public void setDireccion(boolean derecha) {
         this.mirandoDerecha = derecha;
+        this.tiempoUltimoCambioDireccion = 0; // Resetear el temporizador al cambiar dirección
     }
 
     public boolean estaMirandoDerecha() {
@@ -118,7 +126,7 @@ public class Bichito extends ObjetoGrafico {
         setY(y);
     }
 
-    public void moverX(int dx) {
+    public void moverX(double dx) {
         setX(getX() + dx);
     }
 
@@ -134,15 +142,19 @@ public class Bichito extends ObjetoGrafico {
     }
 
     public boolean colisionaCon(Bloqueador bloqueador) {
+        boolean colisiona = false;
         Rectangle rectBichito = new Rectangle((int) getX(), (int) getY(), getAncho(), getAlto());
         Rectangle rectBloqueador = new Rectangle((int) bloqueador.getX(), (int) bloqueador.getY(), bloqueador.getAncho(), bloqueador.getAlto());
-        return rectBichito.intersects(rectBloqueador);
+        if (rectBichito.intersects(rectBloqueador)) {
+            colisiona = true;
+
+        }
+        return colisiona;
     }
 
     public boolean estaMuerto() {
         return estaMuerto;
     }
-
 
     public void morir() {
         estaMuerto = true;
@@ -164,12 +176,16 @@ public class Bichito extends ObjetoGrafico {
     }
 
     @Override
-    public void update(double delta) {
-        if (estaMuerto) return;
+    /*public void update(double delta) {
+        if (estaMuerto) {
+            return;
+        }
         tiempoAnimacion += delta;
-        if (tiempoAnimacion > 0.1) {
+        //tiempoUltimoCambioDireccion += delta;
+        //Nuevo
+        if (tiempoAnimacion > velocidadAnimacion) {
             caminar();
-            tiempoAnimacion -= 0.1;
+            tiempoAnimacion -= velocidadAnimacion;
         }
         if (detectarPinche(nivel)) {
             morir();
@@ -180,13 +196,52 @@ public class Bichito extends ObjetoGrafico {
             moverY(2);
         } else {
             int direccion = estaMirandoDerecha() ? 1 : -1;
-            if (!detectarColisionMapa(direccion, 0)) {
-                moverX(direccion);
+            velocidadMovimiento = direccion;
+            boolean colisionMapa = detectarColisionMapa(direccion, 0);
+            if (!colisionMapa) {
+                moverX(velocidadMovimiento);
             } else {
                 setDireccion(!estaMirandoDerecha());
             }
         }
+        actualizarCaida(delta);
+    }*/
+    public void update(double delta) {
+        if (estaMuerto) {
+            return;
+        }
 
+        tiempoAnimacion += delta;
+        tiempoUltimoCambioDireccion += delta; // Incrementar el tiempo desde último cambio
+
+        if (tiempoAnimacion > velocidadAnimacion) {
+            caminar();
+            tiempoAnimacion -= velocidadAnimacion;
+        }
+
+        if (detectarPinche(nivel)) {
+            morir();
+            return;
+        }
+
+        if (detectarCaida()) {
+            moverY(2);
+        } else {
+            int direccion = estaMirandoDerecha() ? 1 : -1;
+            velocidadMovimiento = direccion;
+            boolean colisionMapa = detectarColisionMapa(direccion, 0);
+
+            if (!colisionMapa) {
+                moverX(velocidadMovimiento);
+            } else {
+                // Solo cambiar dirección si ha pasado suficiente tiempo
+                if (tiempoUltimoCambioDireccion > tiempoMinimoEntreCambios) {
+                    setDireccion(!estaMirandoDerecha());
+                    tiempoUltimoCambioDireccion = 0; // Resetear el temporizador
+                }
+                // Si no ha pasado suficiente tiempo, simplemente no se mueve
+            }
+        }
         actualizarCaida(delta);
     }
 
@@ -242,8 +297,8 @@ public class Bichito extends ObjetoGrafico {
         }
 
         // Verificar ambos bordes inferiores (izquierdo y derecho)
-        int xIzquierdo = (int) getX() + 5; // Pequeño margen desde el borde izquierdo
-        int xDerecho = (int) getX() + getAncho() - 5; // Pequeño margen desde el borde derecho
+        int xIzquierdo = (int) getX() - 5; // Pequeño margen desde el borde izquierdo
+        int xDerecho = (int) getX() + getAncho() + 5; // Pequeño margen desde el borde derecho
         int yInferior = (int) getY() + getAlto() + 1; // Justo debajo del lemming
 
         // Convertir a coordenadas de mapa
