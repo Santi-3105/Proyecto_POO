@@ -21,7 +21,10 @@ public class Bichito extends ObjetoGrafico {
     private double alturaCaidaAcumulada = 0;
     private boolean estabaCayendo = false;
     private final double altura_maxima_caida = 100;
-
+    // Nuevo
+    private double velocidadMovimiento = 0.0; // píxeles por update
+    //Nuevo
+    private double velocidadAnimacion = 0.1;
 
     public Bichito() {
         try {
@@ -77,8 +80,8 @@ public class Bichito extends ObjetoGrafico {
         setX(x);
         setY(y);
     }
-
-    public void moverX(int dx) {
+    //Nuevo
+    public void moverX(double dx) {
         setX(getX() + dx);
     }
 
@@ -92,12 +95,14 @@ public class Bichito extends ObjetoGrafico {
             g.drawImage(getImagen(), (int) getX(), (int) getY(), null);
         }
     }
-
+    //Nuevo
     public boolean colisionaCon(Bloqueador bloqueador) {
-        Rectangle rectBichito = new Rectangle((int) getX(), (int) getY(), getAncho(), getAlto());
+        double nuevaX = getX() + (estaMirandoDerecha() ? 0.5 : -0.5);
+        Rectangle rectBichito = new Rectangle((int) nuevaX, (int) getY(), getAncho(), getAlto());
         Rectangle rectBloqueador = new Rectangle((int) bloqueador.getX(), (int) bloqueador.getY(), bloqueador.getAncho(), bloqueador.getAlto());
         return rectBichito.intersects(rectBloqueador);
     }
+    //Nuevo
 
     public boolean estaMuerto() {
         return estaMuerto;
@@ -122,14 +127,15 @@ public class Bichito extends ObjetoGrafico {
         g2d.dispose();
         return imagenEscalada;
     }
-
+    //Nuevo
     @Override
     public void update(double delta) {
         if (estaMuerto) return;
         tiempoAnimacion += delta;
-        if (tiempoAnimacion > 0.1) {
+        //Nuevo
+        if (tiempoAnimacion > velocidadAnimacion) {
             caminar();
-            tiempoAnimacion -= 0.1;
+            tiempoAnimacion -= velocidadAnimacion;
         }
         if (detectarPinche(nivel)) {
             morir();
@@ -139,16 +145,26 @@ public class Bichito extends ObjetoGrafico {
         if (detectarCaida()) {
             moverY(2);
         } else {
+            //Nuevo
             int direccion = estaMirandoDerecha() ? 1 : -1;
+            if(direccion==1)
+            {
+                velocidadMovimiento=1;
+            }
+            else
+            {
+                velocidadMovimiento=-1;
+            }
             if (!detectarColisionMapa(direccion, 0)) {
-                moverX(direccion);
-            } else {
+                moverX(velocidadMovimiento);
+            }else {
                 setDireccion(!estaMirandoDerecha());
             }
         }
 
         actualizarCaida(delta);
     }
+    //Nuevo
 
     private void actualizarCaida(double delta) {
         boolean estaCayendoAhora = detectarCaida();

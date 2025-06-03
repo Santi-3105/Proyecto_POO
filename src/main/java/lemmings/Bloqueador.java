@@ -10,16 +10,20 @@ public class Bloqueador extends Bichito {
     private BufferedImage[] frames;
     private int frameActual = 0;
     private double tiempoAnimacion = 0;
-
-    public Bloqueador() {
-        try {
+    //Nuevo
+    public Bloqueador(Bichito b) {
+            try {
+            setPosicion(b.getX(), b.getY());
+            this.setNivel(b.getNivel()); // Copiar el nivel
             BufferedImage spriteSheet = ImageIO.read(getClass().getResource("/lemmings/LemmingsSprite.png"));
             cargarFrames(spriteSheet);
+            setDireccion(b.estaMirandoDerecha());
             this.setImagen(frames[0]);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
     }
+    //Nuevo
 
     private void cargarFrames(BufferedImage spriteSheet) {
         int ancho = 16;
