@@ -9,6 +9,7 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 
 import javax.imageio.ImageIO;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -135,6 +136,7 @@ public class Lemming extends JGame {
 
         if (estado == ESTADO_MAPA_1) {
             // actualizar mapa 1
+
             aparicionLemmings(nivel1,delta);
             salidaLemmings(nivel1);
             lemmingsMuertos(nivel1,delta);
@@ -155,6 +157,10 @@ public class Lemming extends JGame {
                     arrBichito1.set(index, nuevo); // Reemplaza solo la referencia, misma posición en pantalla
                     lemmingSeleccionado = nuevo; // Actualiza también la referencia seleccionada
                 }
+            }
+            if(lemmingsGenerados >= maxLemmingsNivel1 && arrBichito1.isEmpty()){
+                guardarPuntaje();
+                estado = ESTADO_GANADOR;
             }
 
             return; // se saltea si no esta en mapa 1
@@ -263,11 +269,13 @@ public class Lemming extends JGame {
             dibuje.setColor(Color.WHITE);
             dibuje.setFont(new Font("SansSerif", Font.BOLD, 22));
             dibuje.drawString("Jugador: ", 210, 200);
-            dibuje.drawString(jugadorActual.getNombre(), 210, 350);
-            dibuje.drawString("Tiempo: ", 310, 200);
-            dibuje.drawString(""+jugadorActual.getTiempoJuego(), 410, 350);
-            dibuje.drawString("Fecha: ", 410, 200);
-            dibuje.drawString(""+jugadorActual.getFechaPartida(), 410, 350);
+            dibuje.drawString(jugadorActual.getNombre(), 320, 200);
+            dibuje.drawString("Tiempo: ", 210, 300);
+            dibuje.drawString(""+jugadorActual.getTiempoJuego(), 320, 300);
+            dibuje.drawString("Fecha: ", 210, 400);
+            DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            String fechaFormateada = jugadorActual.getFechaPartida().format(dateFormatter);
+            dibuje.drawString(fechaFormateada, 320, 400);
 
         }
 
@@ -279,13 +287,13 @@ public class Lemming extends JGame {
     private void jugarMapa1() {
         estado=ESTADO_MAPA_1;
         nivel1=new Nivel("mapa1.txt","estructurasSet.config");
-        //arrBichito1 =new ArrayList<>();
+        arrBichito1 =new ArrayList<>();
     }
 
     private void jugarMapa2() {
         estado = ESTADO_MAPA_2;
         nivel2=new Nivel("mapa2.txt","estructurasSet.config");
-        //arrBichito1 =new ArrayList<>();
+        arrBichito1 =new ArrayList<>();
     }
 
     private void jugarMapa3() {
