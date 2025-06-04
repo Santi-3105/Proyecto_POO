@@ -74,8 +74,8 @@ public class Bloqueador extends Bichito {
     }
 
     public void update(double delta) {
-        tiempoAnimacion += delta;
-        if (tiempoAnimacion > 0.1) {
+        tiempoAnimacion += delta * multiplicadorVelocidad;
+        if (tiempoAnimacion > 0.1 / multiplicadorVelocidad) {
             frameActual = (frameActual + 1) % frames.length;
             this.setImagen(frames[frameActual]);
             tiempoAnimacion = 0;
