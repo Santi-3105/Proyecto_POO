@@ -3,10 +3,9 @@ package lemmings;
 import java.time.LocalDateTime;
 
 public class Jugador {
-    private String nombre;
+    private final String nombre;
     private LocalDateTime fechaPartida;
     private int lemmingsRescatados;
-    private String nivelAlcanzado;
     private long tiempoJuego; // en segundos
 
     public Jugador(String nombre) {
@@ -30,14 +29,6 @@ public class Jugador {
         this.lemmingsRescatados = lemmingsRescatados;
     }
 
-    public String getNivelAlcanzado() {
-        return nivelAlcanzado;
-    }
-
-    public void setNivelAlcanzado(String nivelAlcanzado) {
-        this.nivelAlcanzado = nivelAlcanzado;
-    }
-
     public long getTiempoJuego() {
         return tiempoJuego;
     }
@@ -52,5 +43,11 @@ public class Jugador {
 
     public int calcularPuntaje() {
         return lemmingsRescatados * 100 - (int)tiempoJuego;
+    }
+
+    public String getTiempoJuegoFormateado() {
+        long minutos = tiempoJuego / 60;
+        long segundos = tiempoJuego % 60;
+        return String.format("%02d:%02d", minutos, segundos);
     }
 }
