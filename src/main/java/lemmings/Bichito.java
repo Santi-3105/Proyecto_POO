@@ -24,6 +24,8 @@ public class Bichito extends ObjetoGrafico {
     private final double altura_maxima_caida = 100;
     private double velocidadMovimiento = 0.0; // píxeles por update
     private double velocidadAnimacion = 0.1;
+    //La seteo static porque todos tendran la velocidad x2
+    protected static double multiplicadorVelocidad = 1.0;
     private double tiempoUltimoCambioDireccion = 0;
     private final double tiempoMinimoEntreCambios = 0.5;
 
@@ -211,10 +213,10 @@ public class Bichito extends ObjetoGrafico {
             return;
         }
 
-        tiempoAnimacion += delta;
+        tiempoAnimacion += delta * multiplicadorVelocidad;
         tiempoUltimoCambioDireccion += delta; // Incrementar el tiempo desde último cambio
 
-        if (tiempoAnimacion > velocidadAnimacion) {
+        if (tiempoAnimacion > velocidadAnimacion / multiplicadorVelocidad) {
             caminar();
             tiempoAnimacion -= velocidadAnimacion;
         }
@@ -228,7 +230,7 @@ public class Bichito extends ObjetoGrafico {
             moverY(2);
         } else {
             int direccion = estaMirandoDerecha() ? 1 : -1;
-            velocidadMovimiento = direccion;
+            velocidadMovimiento = direccion * multiplicadorVelocidad;
             boolean colisionMapa = detectarColisionMapa(direccion, 0);
 
             if (!colisionMapa) {
@@ -352,6 +354,14 @@ public class Bichito extends ObjetoGrafico {
         }
         return false;
 
+    }
+    public static void setVelocidadX2(boolean activa)
+    {
+        multiplicadorVelocidad = activa ? 2.0 : 1.0;
+    }   
+    public static double getMultiplicadorVelocidad() 
+    {
+        return multiplicadorVelocidad;
     }
 
 }

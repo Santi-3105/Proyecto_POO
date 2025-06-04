@@ -123,8 +123,8 @@ public class Paracaidista extends Bichito implements Habilidad{
         }
 
         // Animación y caída lenta
-        tiempoAnimacion += delta;
-        if (tiempoAnimacion > 0.2) {
+        tiempoAnimacion += delta * multiplicadorVelocidad;
+        if (tiempoAnimacion > 0.2 / multiplicadorVelocidad) {
             if (!faseRepeticionActiva) {
                 if (frameActual < 6) {
                     frameActual++;
@@ -147,7 +147,7 @@ public class Paracaidista extends Bichito implements Habilidad{
             tiempoAnimacion = 0;
         }
 
-        moverY(1); // caída lenta
+        moverY(1 * multiplicadorVelocidad); // caída lenta (si esta en x2 se modificara)
 
         // Si tocó el suelo, detenemos la habilidad
         if (!estaEnAire) {

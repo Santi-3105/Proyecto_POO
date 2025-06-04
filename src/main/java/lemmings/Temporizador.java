@@ -1,49 +1,48 @@
 package lemmings;
 
-import java.time.Duration;
-import java.time.Instant;
-
 public class Temporizador {
-    private Instant inicio;
+    private double tiempoAcumulado; // en segundos
     private boolean enEjecucion;
-    private long segundosAcumulados; // Para pausar/reanudar
+    private double multiplicadorVelocidad = 1.0;
 
     public Temporizador() {
-        this.enEjecucion = false;
-        this.segundosAcumulados = 0;
+        tiempoAcumulado = 0;
+        enEjecucion = false;
     }
 
-    // Inicia el temporizador
     public void iniciar() {
-        if (!enEjecucion) {
-            inicio = Instant.now();
-            enEjecucion = true;
-        }
+        enEjecucion = true;
     }
 
-    // Detiene el temporizador y devuelve los segundos que pasaron
-    public long detener() {
+    public void detener() {
+        enEjecucion = false;
+    }
+
+    public void reiniciar() {
+        tiempoAcumulado = 0.0; 
+        enEjecucion = false;
+        multiplicadorVelocidad = 1.0; // volver a la velocidad normal
+    }
+
+    // Se llama desde tu método update general (por ejemplo GameUpdate)
+    public void update(double delta) {
         if (enEjecucion) {
-            segundosAcumulados += Duration.between(inicio, Instant.now()).getSeconds();
-            enEjecucion = false;
+            tiempoAcumulado += delta * multiplicadorVelocidad;
         }
-        return segundosAcumulados;
     }
 
-    // metodo para formatear segundos en mm:ss
-    public String getTiempoFormateado() {
-        long segundosTotales = enEjecucion
-                ? segundosAcumulados + Duration.between(inicio, Instant.now()).getSeconds()
-                : segundosAcumulados;
+    public void setMultiplicadorVelocidad(double factor) {
+        this.multiplicadorVelocidad = factor;
+    }
 
-        long minutos = segundosTotales / 60;
-        long segundos = segundosTotales % 60;
+    public String getTiempoFormateado() {
+        int totalSegundos = (int) tiempoAcumulado;
+        int minutos = totalSegundos / 60;
+        int segundos = totalSegundos % 60;
         return String.format("%02d:%02d", minutos, segundos);
     }
 
-    // Reinicia el temporizador
-    public void reiniciar() {
-        segundosAcumulados = 0;
-        enEjecucion = false;
+    public double getTiempoEnSegundos() {
+        return tiempoAcumulado;
     }
 }
