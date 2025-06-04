@@ -1,17 +1,25 @@
 package lemmings;
 
-import clasesCompartidas.Sonido;
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.GradientPaint;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.Rectangle;
+import java.awt.event.KeyEvent;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Iterator;
+
+import javax.imageio.ImageIO;
+
 import com.entropyinteractive.JGame;
 import com.entropyinteractive.Keyboard;
 import com.entropyinteractive.Mouse;
 
-import java.awt.*;
-import java.awt.event.KeyEvent;
-
-import javax.imageio.ImageIO;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Iterator;
+import clasesCompartidas.Sonido;
 
 
 public class Lemming extends JGame {
@@ -178,22 +186,40 @@ public class Lemming extends JGame {
         }
 
         if (estado == ESTADO_MAPA_2) {
-            aparicionLemmings(nivel2, delta);
-            salidaLemmings(nivel2);
-            lemmingsMuertos(nivel2, delta);
+    aparicionLemmings(nivel2, delta);
+    salidaLemmings(nivel2);
+    lemmingsMuertos(nivel2, delta);
 
-            if (lemmingsEnJuego != null) {
-                for (Bichito bichi : lemmingsEnJuego) {
-                    bichi.update(delta); // Llama al update del tipo actual (caminar, paracaidista, etc.)
-                    if (bloqueador != null) {
-                        // Simular posición futura manualmente para la colisión
-                        if (bichi.colisionaCon(bloqueador)) {
-                            // Cambiar dirección para que se bloquee
-                            bichi.setDireccion(!bichi.estaMirandoDerecha());
-                        }
-                    }
+    if (lemmingsEnJuego != null) {
+        for (Bichito bichi : lemmingsEnJuego) {
+            // Primero verificar colisión ANTES de actualizar
+            boolean bloqueado = false;
+            if (bloqueador != null && !(bichi instanceof Bloqueador)) {
+                // Calcular posición futura para prevenir la colisión
+                int direccion = bichi.estaMirandoDerecha() ? 1 : -1;
+                double futuraX = bichi.getX() + direccion;
+                double futuraY = bichi.getY();
+                
+                // Crear rectángulo temporal para la posición futura
+                Rectangle rectFuturo = new Rectangle((int) futuraX, (int) futuraY, 
+                                                   bichi.getAncho(), bichi.getAlto());
+                Rectangle rectBloqueador = new Rectangle((int) bloqueador.getX(), 
+                                                       (int) bloqueador.getY(),
+                                                       bloqueador.getAncho(), 
+                                                       bloqueador.getAlto());
+                
+                if (rectFuturo.intersects(rectBloqueador)) {
+                    bichi.setDireccion(!bichi.estaMirandoDerecha());
+                    bloqueado = true;
                 }
             }
+            
+            // Solo actualizar si no está bloqueado o si es el propio bloqueador
+            if (!bloqueado || bichi instanceof Bloqueador) {
+                bichi.update(delta);
+            }
+        }
+    }
             if (teclado.isKeyPressed(KeyEvent.VK_1)) {
                 int index = lemmingsEnJuego.indexOf(lemmingSeleccionado);
                 if (index != -1) {
