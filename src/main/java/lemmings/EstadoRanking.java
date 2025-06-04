@@ -3,17 +3,13 @@ package lemmings;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
-import java.util.List;
-
 import com.entropyinteractive.Keyboard;
-import lemmings.Lemming;
-import lemmings.Jugador;
-import lemmings.RankingManager;
+
 
 public class EstadoRanking {
-    private Lemming juego;
-    private RankingManager rankingManager;
-    private ArrayList<Jugador> topJugadores;
+    private final Lemming juego;
+    private final RankingManager rankingManager;
+    private final ArrayList<Jugador> topJugadores;
 
     public EstadoRanking(Lemming juego) {
         this.juego = juego;
@@ -21,7 +17,7 @@ public class EstadoRanking {
         this.topJugadores = rankingManager.obtenerTop10();
     }
 
-    public void actualizar(double delta) {
+    public void actualizar() {
         Keyboard teclado = juego.getKeyboard();
 
         if (teclado.isKeyPressed(KeyEvent.VK_ESCAPE)) {
@@ -42,11 +38,10 @@ public class EstadoRanking {
         int y = 100;
         for (int i = 0; i < topJugadores.size(); i++) {
             Jugador jugador = topJugadores.get(i);
-            String linea = String.format("%d. %s - %d lemmings - Nivel %s - Tiempo: %ds",
+            String linea = String.format("%d. %s - %d lemmings - Tiempo: %ds",
                     i + 1,
                     jugador.getNombre(),
                     jugador.getLemmingsRescatados(),
-                    jugador.getNivelAlcanzado(),
                     jugador.getTiempoJuego());
             g.drawString(linea, 100, y);
             y += 30;

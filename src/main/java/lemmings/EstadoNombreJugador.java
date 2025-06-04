@@ -3,18 +3,18 @@ package lemmings;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
+import java.security.Key;
 
 import com.entropyinteractive.Keyboard;
 
 import javax.imageio.ImageIO;
 
 public class EstadoNombreJugador {
-    private Lemming juego;
+    private final Lemming juego;
     private String nombreJugador = "";
-    private boolean nombreCompletado = false;
-    private Image img_cavador = ImageIO.read(getClass().getResource("/lemmings/cavador.png"));
-    private Image img_paracaida = ImageIO.read(getClass().getResource("/lemmings/paracaida.png"));
-    private Image img_bloqueador = ImageIO.read(getClass().getResource("/lemmings/bloqueador.png"));
+    private final Image img_cavador = ImageIO.read(getClass().getResource("/lemmings/cavador.png"));
+    private final Image img_paracaida = ImageIO.read(getClass().getResource("/lemmings/paracaida.png"));
+    private final Image img_bloqueador = ImageIO.read(getClass().getResource("/lemmings/bloqueador.png"));
 
 
     public EstadoNombreJugador(Lemming juego) throws IOException {
@@ -33,17 +33,15 @@ public class EstadoNombreJugador {
                         nombreJugador += c;
                     }
                 }
+                //para borrar
+                if (teclado.isKeyPressed(KeyEvent.VK_BACK_SPACE) && nombreJugador.length() > 0) {
+                    nombreJugador = nombreJugador.substring(0, nombreJugador.length() - 1);
+                }
             }
-        }
-
-        // Manejar tecla borrar
-        if (teclado.isKeyPressed(KeyEvent.VK_BACK_SPACE) && nombreJugador.length() > 0) {
-            nombreJugador = nombreJugador.substring(0, nombreJugador.length() - 1);
         }
 
         // Confirmar nombre
         if (teclado.isKeyPressed(KeyEvent.VK_ENTER) && !nombreJugador.isEmpty()) {
-            nombreCompletado = true;
             juego.setJugadorActual(new Jugador(nombreJugador));
             juego.cambiarEstado(0);
         }
@@ -64,9 +62,5 @@ public class EstadoNombreJugador {
         g.drawImage(img_bloqueador, 50, 380,null);
         g.setFont(new Font("Arial", Font.PLAIN, 16));
         g.drawString("Presione ENTER para continuar", 300, 560);
-    }
-
-    public boolean isNombreCompletado() {
-        return nombreCompletado;
     }
 }
