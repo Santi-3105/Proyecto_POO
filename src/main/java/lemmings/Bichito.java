@@ -36,30 +36,8 @@ public class Bichito extends ObjetoGrafico {
     }
 
     private void cargarFrames(BufferedImage spriteSheet) {
-        //Matriz de coordenadas para los sprites
-        //Coordenadas iniciales, ancho, alto.
-        int[][] coordenadasDerecha = {
-            {21,1,4,9},
-            {37,0,5,10},
-            {52,1,6,9},
-            {68,1,5,9},
-            {85,1,4,9},
-            {101,0,5,10},
-            {116,1,6,9},
-            {132,1,5,9}
-        };
-
-        int[][] coordenadasIzquierda = {
-            {21, 11, 4, 9}, // Frame 1
-            {37, 11, 5, 10}, // Frame 2
-            {52, 11, 6, 9}, // Frame 3
-            {68, 10, 5, 9}, // Frame 4 
-            {85, 11, 4, 9}, // Frame 5 
-            {101, 11, 5, 10}, // Frame 6
-            {116, 11, 6, 9}, // Frame 7
-            {132, 10, 5, 9} // Frame 8
-        };
-
+        int ancho = 16;
+        int alto = 11;
         int cantidadFrames = 8;
         int escala = 2;
 
@@ -67,29 +45,11 @@ public class Bichito extends ObjetoGrafico {
         caminarIzquierdaFrames = new BufferedImage[cantidadFrames];
 
         for (int i = 0; i < cantidadFrames; i++) {
-            int x = coordenadasDerecha[i][0];
-            int y = coordenadasDerecha[i][1];
-            int ancho = coordenadasDerecha[i][2];
-            int alto = coordenadasDerecha[i][3];
+            BufferedImage frameDerecha = spriteSheet.getSubimage((i + 1) * ancho, 0, ancho, alto);
+            BufferedImage frameIzquierda = spriteSheet.getSubimage((i + 1) * ancho, alto - 1, ancho, alto);
 
-            caminarDerechaFrames[i] = escalarImagen(
-                    spriteSheet.getSubimage(x, y, ancho, alto),
-                    ancho * escala,
-                    alto * escala
-            );
-        }
-
-        for (int i = 0; i < cantidadFrames; i++) {
-            int x = coordenadasIzquierda[i][0];
-            int y = coordenadasIzquierda[i][1];
-            int ancho = coordenadasIzquierda[i][2];
-            int alto = coordenadasIzquierda[i][3];
-
-            caminarIzquierdaFrames[i] = escalarImagen(
-                    spriteSheet.getSubimage(x, y, ancho, alto),
-                    ancho * escala,
-                    alto * escala
-            );
+            caminarDerechaFrames[i] = escalarImagen(frameDerecha, ancho * escala, alto * escala);
+            caminarIzquierdaFrames[i] = escalarImagen(frameIzquierda, ancho * escala, alto * escala);
         }
     }
 
@@ -119,7 +79,6 @@ public class Bichito extends ObjetoGrafico {
         setX(x);
         setY(y);
     }
-
     public void moverX(double dx) {
         setX(getX() + dx);
     }
@@ -134,7 +93,6 @@ public class Bichito extends ObjetoGrafico {
             g.drawImage(getImagen(), (int) getX(), (int) getY(), null);
         }
     }
-
     public boolean colisionaCon(Bloqueador bloqueador) {
         double nuevaX = getX() + (estaMirandoDerecha() ? 0.5 : -0.5);
         Rectangle rectBichito = new Rectangle((int) nuevaX, (int) getY(), getAncho(), getAlto());
@@ -165,7 +123,6 @@ public class Bichito extends ObjetoGrafico {
         g2d.dispose();
         return imagenEscalada;
     }
-
     @Override
     public void update(double delta) {
         if (estaMuerto) return;
