@@ -19,6 +19,7 @@ public class RankingManager {
                 "id INTEGER PRIMARY KEY AUTOINCREMENT," +
                 "nombre TEXT," +
                 "lemmings_rescatados INTEGER," +
+                "nivelJugado INTEGER," +
                 "tiempo_juego INTEGER," +
                 "fecha_partida TEXT," +
                 "puntaje INTEGER)";
@@ -33,45 +34,68 @@ public class RankingManager {
 
     public void guardarJugador(Jugador jugador) {
         String sql = "INSERT INTO ranking(nombre, lemmings_rescatados, " +
-                "tiempo_juego, fecha_partida, puntaje) VALUES(?,?,?,?,?)";
+                "nivelJugado, tiempo_juego, fecha_partida, puntaje) VALUES(?,?,?,?,?,?)";
 
-        try (Connection conn = DriverManager.getConnection(DB_URL);
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, jugador.getNombre());
-            pstmt.setInt(2, jugador.getLemmingsRescatados());
-            pstmt.setLong(3, jugador.getTiempoJuego());
-            pstmt.setString(4, jugador.getFechaPartida().format(DATE_FORMATTER));
-            pstmt.setInt(5, jugador.calcularPuntaje());
-            pstmt.executeUpdate();
+        try (Connection conn = DriverManager.getConnection(DB_URL)) {
+            // Desactivar autocommit para controlar manualmente la transacción
+            conn.setAutoCommit(false);
+
+            try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                pstmt.setString(1, jugador.getNombre());
+                pstmt.setInt(2, jugador.getLemmingsRescatados());
+                pstmt.setInt(3, jugador.getNivel());
+                pstmt.setLong(4, jugador.getTiempoJuego());
+                pstmt.setString(5, jugador.getFechaPartida().format(DATE_FORMATTER));
+                pstmt.setInt(6, jugador.calcularPuntaje());
+                pstmt.executeUpdate();
+
+                // Confirmar la transacción explícitamente
+                conn.commit();
+
+                System.out.println("Jugador guardado: " + jugador.getNombre()); // Debug
+            } catch (SQLException e) {
+                // Revertir en caso de error
+                conn.rollback();
+                System.err.println("Error al guardar jugador: " + e.getMessage());
+                e.printStackTrace();
+            }
         } catch (SQLException e) {
-            System.err.println("Error al guardar jugador: " + e.getMessage());
+            System.err.println("Error de conexión: " + e.getMessage());
         }
+
     }
 
     public ArrayList<Jugador> obtenerTop10() {
         ArrayList<Jugador> top10 = new ArrayList<>();
         String sql = "SELECT nombre, lemmings_rescatados, " +
-                "tiempo_juego, fecha_partida, puntaje FROM ranking " +
+                "nivelJugado, tiempo_juego, fecha_partida, puntaje FROM ranking " +
                 "ORDER BY puntaje DESC LIMIT 10";
 
-        try (Connection conn = DriverManager.getConnection(DB_URL);
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
-            System.out.println("Ejecutando consulta TOP10..."); // Debug
+        try (Connection conn = DriverManager.getConnection(DB_URL)) {
+            conn.setAutoCommit(false);
 
-            while (rs.next()) {
-                Jugador jugador = new Jugador(rs.getString("nombre"));
-                jugador.setLemmingsRescatados(rs.getInt("lemmings_rescatados"));
-                jugador.setTiempoJuego(rs.getLong("tiempo_juego"));
+            try (Statement stmt = conn.createStatement();
+                 ResultSet rs = stmt.executeQuery(sql)) {
 
-                String fechaStr = rs.getString("fecha_partida");
-                if (fechaStr != null) {
-                    LocalDateTime fecha = LocalDateTime.parse(fechaStr, DATE_FORMATTER);
-                    jugador.setFechaPartida(fecha);
+                while (rs.next()) {
+                    Jugador jugador = new Jugador(rs.getString("nombre"));
+                    jugador.setLemmingsRescatados(rs.getInt("lemmings_rescatados"));
+                    jugador.setNivel(rs.getInt("nivelJugado"));
+                    jugador.setTiempoJuego(rs.getLong("tiempo_juego"));
+
+                    String fechaStr = rs.getString("fecha_partida");
+                    if (fechaStr != null) {
+                        LocalDateTime fecha = LocalDateTime.parse(fechaStr, DATE_FORMATTER);
+                        jugador.setFechaPartida(fecha);
+                    }
+                    System.out.println("Jugador cargado: " + jugador.getNombre() +
+                            ", Puntaje: " + rs.getInt("puntaje")); // Debug
+                    top10.add(jugador);
                 }
-                System.out.println("Jugador cargado: " + jugador.getNombre() +
-                        ", Puntaje: " + rs.getInt("puntaje")); // Debug
-                top10.add(jugador);
+                conn.commit(); // Confirmar transacción
+            } catch (SQLException e) {
+                conn.rollback();
+                throw e;
             }
         } catch (SQLException e) {
             System.err.println("Error al obtener ranking: " + e.getMessage());

@@ -31,20 +31,21 @@ public class EstadoRanking {
 
         g.setColor(Color.WHITE);
         g.setFont(new Font("Arial", Font.BOLD, 30));
-        g.drawString("TOP 10 MEJORES PUNTAJES", 200, 100);
+        g.drawString("TOP 10 MEJORES PUNTAJES", 200, 80);
 
         g.setFont(new Font("Arial", Font.PLAIN, 20));
 
-        int y = 100;
+        int y = 150;
         for (int i = 0; i < topJugadores.size(); i++) {
             Jugador jugador = topJugadores.get(i);
-            String linea = String.format("%d. %s - %d lemmings - Tiempo: %ds",
+            String linea = String.format("%d.   %s   -   %d lemmings   -   Nivel: %d   -   Tiempo: %ds",
                     i + 1,
                     jugador.getNombre(),
                     jugador.getLemmingsRescatados(),
+                    jugador.getNivel(),
                     jugador.getTiempoJuego());
             g.drawString(linea, 100, y);
-            y += 30;
+            y += 40;
         }
 
         g.setFont(new Font("Arial", Font.PLAIN, 16));
