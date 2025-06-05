@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 public class Jugador {
     private final String nombre;
     private LocalDateTime fechaPartida;
+    private int nivel;
     private int lemmingsRescatados;
     private long tiempoJuego; // en segundos
 
@@ -40,6 +41,10 @@ public class Jugador {
     public void setFechaPartida(LocalDateTime fechaPartida) {
         this.fechaPartida = fechaPartida;
     }
+
+    public void setNivel(int nivel){this.nivel = nivel;}
+
+    public int getNivel(){return this.nivel;}
 
     public int calcularPuntaje() {
         return lemmingsRescatados * 100 - (int)tiempoJuego;

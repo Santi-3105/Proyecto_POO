@@ -45,6 +45,7 @@ public class Lemming extends JGame {
     private int lemmingsGenerados = 0;
     private int bichitosRescatados = 0;
     // manejo de jugador y ranking
+    RankingManager manager;
     private Jugador jugadorActual;
     private EstadoNombreJugador estadoNombreJugador;
     private EstadoRanking estadoRanking;
@@ -89,6 +90,7 @@ public class Lemming extends JGame {
             estadoNombreJugador = new EstadoNombreJugador(this);
             estadoRanking = new EstadoRanking(this);
             temporizador = new Temporizador();
+            manager = new RankingManager();
             imageEstadistica = ImageIO.read(getClass().getResource("/lemmings/estadisticas.png"));
 
             // Cargo las imagenes antes de entrar en el juego
@@ -199,8 +201,9 @@ public class Lemming extends JGame {
                 temporizador.detener();
                 jugadorActual.setLemmingsRescatados(bichitosRescatados);
                 jugadorActual.setTiempoJuego((long)temporizador.getTiempoEnSegundos());
-                //jugadorActual.setTiempoJuego(temporizador.detener());
-                guardarPuntaje();
+                jugadorActual.setNivel(1);
+                manager.guardarJugador(jugadorActual);
+                estadoRanking = new EstadoRanking(this);
                 estado = ESTADO_GANADOR;
             }
 
@@ -345,18 +348,18 @@ public class Lemming extends JGame {
             estadoRanking.dibujar(dibuje);
         } else if (estado == ESTADO_GANADOR) {
             dibuje.setColor(Color.WHITE);
-            dibuje.drawImage(imageEstadistica, 100, 30, null);
+            dibuje.drawImage(imageEstadistica, 260, 20, null);
             dibuje.setFont(new Font("SansSerif", Font.BOLD, 18));
-            dibuje.drawString("Jugador: ", 200, 200);
-            dibuje.drawString(jugadorActual.getNombre(), 250, 200);
-            dibuje.drawString("Lemmings rescatados: ", 200, 300);
-            dibuje.drawString("" + jugadorActual.getLemmingsRescatados(), 370, 300);
-            dibuje.drawString("Tiempo: ", 200, 400);
-            dibuje.drawString(jugadorActual.getTiempoJuegoFormateado(), 250, 400);
-            dibuje.drawString("Fecha: ", 200, 500);
+            dibuje.drawString("Jugador: ", 50, 300);
+            dibuje.drawString(jugadorActual.getNombre(), 140, 300);
+            dibuje.drawString("Lemmings rescatados: ", 50, 360);
+            dibuje.drawString("" + jugadorActual.getLemmingsRescatados(), 260, 360);
+            dibuje.drawString("Tiempo: ", 50, 420);
+            dibuje.drawString(jugadorActual.getTiempoJuegoFormateado(), 130, 420);
+            dibuje.drawString("Fecha: ", 50, 500);
             DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
             String fechaFormateada = jugadorActual.getFechaPartida().format(dateFormatter);
-            dibuje.drawString(fechaFormateada, 250, 500);
+            dibuje.drawString(fechaFormateada, 120, 500);
 
         }
 
@@ -508,12 +511,11 @@ public class Lemming extends JGame {
     }
 
     // metodos para ranking
-    public void guardarPuntaje() {
+    /*public void guardarPuntaje() {
         if (jugadorActual != null) {
-            RankingManager manager = new RankingManager();
             manager.guardarJugador(jugadorActual);
         }
-    }
+    }*/
 
     public void setJugadorActual(Jugador jugador) {
         this.jugadorActual = jugador;
