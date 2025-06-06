@@ -94,9 +94,9 @@ public class Nivel {
 
             // Elementos especiales
             estructuras.put('T', new Estructura(
-                    ImageIO.read(getClass().getResource("/lemmings/bloques/tronco.png")),
-                    false,
-                    false
+                    ImageIO.read(getClass().getResource("/lemmings/bloques/tierra32.png")),
+                    true,
+                    true
             ));
             estructuras.put('S', new Estructura(
                     ImageIO.read(getClass().getResource("/lemmings/bloques/spawn.png")),
@@ -242,5 +242,9 @@ public class Nivel {
     public int getPincheY(){return pincheY+30;}
     public ArrayList<Rectangle> getPinches() {
         return pinches;
+    }
+
+    public Estructura[][] getMapaEstructuras() {
+        return mapaEstructuras;
     }
 }
