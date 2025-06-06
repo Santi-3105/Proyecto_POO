@@ -158,11 +158,6 @@ public class Paracaidista extends Bichito implements Habilidad{
     }
 
     @Override
-    public void guardarHabilidad() {
-        // No hace nada. La usamos para indicar que la habilidad fue "asignada"
-    }
-
-    @Override
     public void iniciarHabilidad(Bichito b) {
         ultimaDireccionAntesDeHabilidad = b.estaMirandoDerecha();
         this.habilidadActiva = true;

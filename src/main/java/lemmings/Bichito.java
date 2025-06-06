@@ -17,7 +17,7 @@ public class Bichito extends ObjetoGrafico {
     private int frameActual = 0;
     private double tiempoAnimacion = 0;
     private boolean mirandoDerecha = true;
-    private Nivel nivel;
+    protected Nivel nivel;
     private boolean estaMuerto = false;
     private double alturaCaidaAcumulada = 0;
     private boolean estabaCayendo = false;
@@ -57,10 +57,10 @@ public class Bichito extends ObjetoGrafico {
             {17, 11, 12, 9},
             {33, 11, 13, 9},
             {48, 11, 14, 9},
-            {64, 10, 13, 9}, 
-            {81, 11, 12, 9}, 
-            {97, 11, 13, 10}, 
-            {112, 11, 14, 9}, 
+            {64, 10, 13, 9},
+            {81, 11, 12, 9},
+            {97, 11, 13, 10},
+            {112, 11, 14, 9},
             {128, 10, 13, 9}
         };
 
@@ -178,36 +178,6 @@ public class Bichito extends ObjetoGrafico {
     }
 
     @Override
-    /*public void update(double delta) {
-        if (estaMuerto) {
-            return;
-        }
-        tiempoAnimacion += delta;
-        //tiempoUltimoCambioDireccion += delta;
-        //Nuevo
-        if (tiempoAnimacion > velocidadAnimacion) {
-            caminar();
-            tiempoAnimacion -= velocidadAnimacion;
-        }
-        if (detectarPinche(nivel)) {
-            morir();
-            return;
-        }
-
-        if (detectarCaida()) {
-            moverY(2);
-        } else {
-            int direccion = estaMirandoDerecha() ? 1 : -1;
-            velocidadMovimiento = direccion;
-            boolean colisionMapa = detectarColisionMapa(direccion, 0);
-            if (!colisionMapa) {
-                moverX(velocidadMovimiento);
-            } else {
-                setDireccion(!estaMirandoDerecha());
-            }
-        }
-        actualizarCaida(delta);
-    }*/
     public void update(double delta) {
         if (estaMuerto) {
             return;
@@ -241,8 +211,8 @@ public class Bichito extends ObjetoGrafico {
                     setDireccion(!estaMirandoDerecha());
                     tiempoUltimoCambioDireccion = 0; // Resetear el temporizador
                 }
-                // Si no ha pasado suficiente tiempo, simplemente no se mueve
             }
+
         }
         actualizarCaida(delta);
     }
@@ -282,7 +252,12 @@ public class Bichito extends ObjetoGrafico {
 
         // Coordenadas del mapa en filas/columnas
         int fila = nuevoY / nivel.getAltoEstructura();
-        int columna = nuevoX / nivel.getAnchoEstructura();
+        int columna = (nuevoX / nivel.getAnchoEstructura());
+        //agrego +1 cuando está mirando a la derecha, para que se detecte bien la colisión
+        if(estaMirandoDerecha()){
+            columna = (nuevoX / (nivel.getAnchoEstructura()-1));
+
+        }
 
         // Asegurarse de que esté dentro de los límites del mapa
         if (fila < 0 || fila >= nivel.getFilas() || columna < 0 || columna >= nivel.getColumnas()) {
@@ -358,8 +333,8 @@ public class Bichito extends ObjetoGrafico {
     public static void setVelocidadX2(boolean activa)
     {
         multiplicadorVelocidad = activa ? 2.0 : 1.0;
-    }   
-    public static double getMultiplicadorVelocidad() 
+    }
+    public static double getMultiplicadorVelocidad()
     {
         return multiplicadorVelocidad;
     }

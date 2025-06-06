@@ -12,6 +12,7 @@ import java.awt.event.KeyEvent;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedList;
 
 import javax.imageio.ImageIO;
 
@@ -24,9 +25,10 @@ import clasesCompartidas.Sonido;
 public class Lemming extends JGame {
     private Keyboard teclado = this.getKeyboard(); // Inicializa el teclado
     private int estado;
-    private Nivel nivel1, nivel2;
+    private Nivel nivel1, nivel2, nivel3;
     private ArrayList<Bichito> arrBichito;
     private ArrayList<Bichito> arrBichito2;
+    private ArrayList<Bichito> arrBichito3;
     private ArrayList<Bichito> lemmingsEnJuego;
     // definicion de arreglo de lemmings
     private ArrayList<Bichito> arrBichito1;
@@ -40,8 +42,10 @@ public class Lemming extends JGame {
     private final int ESTADO_GANADOR = 7;
     // variable para el tiempo de caida de lemming
     private double tiempoUltimoSpawn = 0;
-    private final double tiempoIntervalo = 1.0; // cada segundo va a aparecer un lemming en el spawn
+    private final double tiempoIntervalo = 2.0; // cada segundo va a aparecer un lemming en el spawn
     private final int maxLemmingsNivel1 = 10;
+    private final int maxLemmingsNivel2 = 15;
+    private final int maxLemmingsNivel3 = 15;
     private int lemmingsGenerados = 0;
     private int bichitosRescatados = 0;
     // manejo de jugador y ranking
@@ -162,7 +166,7 @@ public class Lemming extends JGame {
         if (estado == ESTADO_MAPA_1) {
             // actualizar mapa 1
 
-            aparicionLemmings(nivel1, delta);
+            aparicionLemmings(nivel1, delta,maxLemmingsNivel1);
             salidaLemmings(nivel1);
             lemmingsMuertos(nivel1, delta);
 
@@ -184,34 +188,14 @@ public class Lemming extends JGame {
                     lemmingSeleccionado = nuevo; // Actualiza también la referencia seleccionada
                 }
             }
-
-            tecla5PresionadaAhora = teclado.isKeyPressed(KeyEvent.VK_5);
-            if (tecla5PresionadaAhora && !tecla5PresionadaAnteriormente) {
-                // La tecla se acaba de presionar ahora, hacer toggle
-                velocidadRapidaActiva = !velocidadRapidaActiva;
-                temporizador.setMultiplicadorVelocidad(velocidadRapidaActiva ? 2.0 : 1.0);
-                for (Bichito b : lemmingsEnJuego) {
-                    b.setVelocidadX2(velocidadRapidaActiva);
-                }
-            } else {
-                tecla5PresionadaAnteriormente = false; // Se soltó la tecla
-            }
-            if (lemmingsGenerados >= maxLemmingsNivel1 && lemmingsEnJuego.isEmpty()) {
-                //Nuevo
-                temporizador.detener();
-                jugadorActual.setLemmingsRescatados(bichitosRescatados);
-                jugadorActual.setTiempoJuego((long)temporizador.getTiempoEnSegundos());
-                jugadorActual.setNivel(1);
-                manager.guardarJugador(jugadorActual);
-                estadoRanking = new EstadoRanking(this);
-                estado = ESTADO_GANADOR;
-            }
+            velocidadx2();
+            detenerJuego(maxLemmingsNivel1,1);
 
             return; // se saltea si no esta en mapa 1
         }
 
         if (estado == ESTADO_MAPA_2) {
-            aparicionLemmings(nivel2, delta);
+            aparicionLemmings(nivel2, delta,maxLemmingsNivel2);
             salidaLemmings(nivel2);
             lemmingsMuertos(nivel2, delta);
 
@@ -263,13 +247,42 @@ public class Lemming extends JGame {
                     lemmingSeleccionado = nuevo; // Actualiza también la referencia seleccionada
                 }
             }
-            tecla5PresionadaAhora = teclado.isKeyPressed(KeyEvent.VK_5);
-            if (tecla5PresionadaAhora && !tecla5PresionadaAnteriormente) {
-                // La tecla se acaba de presionar ahora, hacer toggle
-                velocidadRapidaActiva = !velocidadRapidaActiva;
-                temporizador.setMultiplicadorVelocidad(velocidadRapidaActiva ? 2.0 : 1.0);
-                for (Bichito b : lemmingsEnJuego) {
-                    b.setVelocidadX2(velocidadRapidaActiva);
+            velocidadx2();
+
+            if (teclado.isKeyPressed(KeyEvent.VK_ESCAPE)) {
+                resetearLemmings();
+                estado = ESTADO_MENU;
+            }
+
+            detenerJuego(maxLemmingsNivel2,2);
+            return; // se saltea si no esta en mapa 2
+        }
+
+        if (estado == ESTADO_MAPA_3) {
+            aparicionLemmings(nivel3, delta,maxLemmingsNivel3);
+            salidaLemmings(nivel3);
+            lemmingsMuertos(nivel3, delta);
+            if (lemmingsEnJuego != null) {
+                for (Bichito bichi : lemmingsEnJuego) {
+                    bichi.update(delta); // Llama al update del tipo actual (caminar, paracaidista, etc.)
+                }
+                if (teclado.isKeyPressed(KeyEvent.VK_3)) {
+                    int index = lemmingsEnJuego.indexOf(lemmingSeleccionado);
+                    if (index != -1) {
+                        Bichito original = lemmingsEnJuego.get(index);
+                        Cavador cavador = new Cavador(original);
+                        lemmingsEnJuego.set(index, cavador);
+                        lemmingSeleccionado = cavador;
+                    }
+                }
+                if (teclado.isKeyPressed(KeyEvent.VK_2)) {
+                    int index = lemmingsEnJuego.indexOf(lemmingSeleccionado);
+                    if (index != -1) {
+                        Bichito original = lemmingsEnJuego.get(index);
+                        Escalador escalador = new Escalador(original);
+                        lemmingsEnJuego.set(index, escalador);
+                        lemmingSeleccionado = escalador;
+                    }
                 }
             }
 
@@ -277,11 +290,8 @@ public class Lemming extends JGame {
                 resetearLemmings();
                 estado = ESTADO_MENU;
             }
-            return; // se saltea si no esta en mapa 2
-        }
-
-        if (estado == ESTADO_MAPA_3) {
-            // actualizar mapa 3
+            velocidadx2();
+            detenerJuego(maxLemmingsNivel3,3);
             return; // se saltea si no esta en mapa 3
         }
     }
@@ -343,7 +353,19 @@ public class Lemming extends JGame {
 
             }
         } else if (estado == ESTADO_MAPA_3) {
-            // dibujar mapa 3
+            nivel3.mostrar(dibuje);
+            creadHUD(dibuje);
+            for (Bichito bichi : lemmingsEnJuego) {
+                if (bichi != null) {
+                    bichi.mostrar(dibuje);
+                }
+            }
+            if (lemmingSeleccionado != null) {
+                dibuje.setColor(Color.YELLOW);
+                dibuje.drawRect((int) lemmingSeleccionado.getX() - 2, (int) lemmingSeleccionado.getY() - 2,
+                        lemmingSeleccionado.getAncho() + 4, lemmingSeleccionado.getAlto() + 4);
+
+            }
         } else if (estado == ESTADO_RANKING) {
             estadoRanking.dibujar(dibuje);
         } else if (estado == ESTADO_GANADOR) {
@@ -369,6 +391,7 @@ public class Lemming extends JGame {
     }
 
     private void jugarMapa1() {
+        Sonido.reproducir("letsgo.wav");
         resetearLemmings();
         estado = ESTADO_MAPA_1;
         nivel1 = new Nivel("mapa1.txt", "estructurasSet.config");
@@ -380,6 +403,7 @@ public class Lemming extends JGame {
     }
 
     private void jugarMapa2() {
+        Sonido.reproducir("letsgo.wav");
         resetearLemmings();
         estado = ESTADO_MAPA_2;
         nivel2 = new Nivel("mapa2.txt", "estructurasSet.config");
@@ -391,13 +415,21 @@ public class Lemming extends JGame {
     }
 
     private void jugarMapa3() {
-
+        Sonido.reproducir("letsgo.wav");
+        resetearLemmings();
+        estado = ESTADO_MAPA_3;
+        nivel3 = new Nivel("mapa3.txt", "estructurasSet.config");
+        arrBichito3 = new ArrayList<>();
+        lemmingsEnJuego = arrBichito3;
+        temporizador.reiniciar(); // Reinicia antes de iniciar
+        temporizador.iniciar(); // Comienza a contar
+        bichitosRescatados = 0;
     }
 
-    private void aparicionLemmings(Nivel nivel, double delta) {
+    private void aparicionLemmings(Nivel nivel, double delta, int maxLemmingsNivel) {
         tiempoUltimoSpawn += delta;
         // spawnear nuevo lemming
-        if (lemmingsGenerados < maxLemmingsNivel1 && tiempoUltimoSpawn >= tiempoIntervalo && nivel.getSpawnX() != -1
+        if (lemmingsGenerados < maxLemmingsNivel && tiempoUltimoSpawn >= tiempoIntervalo && nivel.getSpawnX() != -1
                 && nivel.getSpawnY() != -1) {
             Bichito nuevoLemming = new Bichito();
             nuevoLemming.setPosicion(nivel.getSpawnX(), nivel.getSpawnY());
@@ -510,13 +542,6 @@ public class Lemming extends JGame {
         }
     }
 
-    // metodos para ranking
-    /*public void guardarPuntaje() {
-        if (jugadorActual != null) {
-            manager.guardarJugador(jugadorActual);
-        }
-    }*/
-
     public void setJugadorActual(Jugador jugador) {
         this.jugadorActual = jugador;
     }
@@ -545,5 +570,33 @@ public class Lemming extends JGame {
         velocidadRapidaActiva = false;
         Bichito.multiplicadorVelocidad = 1.0;
         temporizador.reiniciar();
+    }
+
+    private void detenerJuego(int maxLemmingsNivel,int nroNivel){
+        if (lemmingsGenerados >= maxLemmingsNivel && lemmingsEnJuego.isEmpty()) {
+            //Nuevo
+            temporizador.detener();
+            jugadorActual.setLemmingsRescatados(bichitosRescatados);
+            jugadorActual.setTiempoJuego((long)temporizador.getTiempoEnSegundos());
+            jugadorActual.setNivel(nroNivel);
+            manager.guardarJugador(jugadorActual);
+            estadoRanking = new EstadoRanking(this);
+            estado = ESTADO_GANADOR;
+        }
+    }
+
+    private void velocidadx2(){
+        for (KeyEvent event : teclado.getEvents()) {
+            if (event.getID() == KeyEvent.KEY_TYPED) {
+                char c = event.getKeyChar();
+                if (c == '5') {
+                    velocidadRapidaActiva = !velocidadRapidaActiva;
+                    temporizador.setMultiplicadorVelocidad(velocidadRapidaActiva ? 2.0 : 1.0);
+                    for (Bichito b : lemmingsEnJuego) {
+                        b.setVelocidadX2(velocidadRapidaActiva);
+                    }
+                }
+            }
+        }
     }
 }
