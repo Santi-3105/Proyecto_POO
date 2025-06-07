@@ -21,7 +21,7 @@ public class EstadoRanking {
         Keyboard teclado = juego.getKeyboard();
 
         if (teclado.isKeyPressed(KeyEvent.VK_ESCAPE)) {
-            juego.cambiarEstado(0); // Volver al menú principal
+            juego.cambiarEstado(Lemming.EstadoJuego.MENU); // Volver al menú principal
         }
     }
 

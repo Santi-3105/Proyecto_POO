@@ -1,5 +1,7 @@
 package lemmings;
 
+import clasesCompartidas.Sonido;
+
 import javax.imageio.ImageIO;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
@@ -103,6 +105,7 @@ public class Nuke extends Bichito{
                     setImagen(explosionFrames[frameActual]);
                 } else {
                     super.morir(); // Solo marca como muerto al terminar TODOS los frames
+                    Sonido.reproducir("tenton.wav");
                 }
             }
         }
