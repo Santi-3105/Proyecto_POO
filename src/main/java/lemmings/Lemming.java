@@ -94,6 +94,8 @@ public class Lemming extends JGame {
             for (KeyEvent event : teclado.getEvents()) {
                 if (event.getID() == KeyEvent.KEY_PRESSED && event.getKeyCode() == KeyEvent.VK_P) {
                     estado = ESTADO_ACTUAL;
+                    temporizador.renaudar(temporizador.getTiempoEnSegundos());
+                    temporizador.iniciar();
                 }
             }
             return;
@@ -347,6 +349,7 @@ public class Lemming extends JGame {
         for (KeyEvent event : teclado.getEvents()) {
             if (event.getID() == KeyEvent.KEY_PRESSED && event.getKeyCode() == KeyEvent.VK_P) {
                 estado = ESTADO_PAUSA;
+                temporizador.detener();
                 ESTADO_ACTUAL = ESTADO_MAPA;
                 nivelJugando = nivel;;
             }

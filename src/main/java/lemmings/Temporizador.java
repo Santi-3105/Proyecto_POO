@@ -34,7 +34,7 @@ public class Temporizador {
     public void setMultiplicadorVelocidad(double factor) {
         this.multiplicadorVelocidad = factor;
     }
-
+    public void renaudar(double tiempoAcumulado){this.tiempoAcumulado = tiempoAcumulado;}
     public String getTiempoFormateado() {
         int totalSegundos = (int) tiempoAcumulado;
         int minutos = totalSegundos / 60;
