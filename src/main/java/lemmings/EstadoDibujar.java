@@ -18,11 +18,13 @@ public class EstadoDibujar {
             "Destrucción" };
     private Image[] imagenesHabilidades = new Image[6];
     private final Image imageEstadistica;
+    private final Image imagePerdedor;
 
     public EstadoDibujar(Lemming juego) throws IOException {
         this.juego = juego;
         // Cargo las imagenes antes de entrar en el juego
         imageEstadistica = ImageIO.read(getClass().getResource("/lemmings/estadisticas.png"));
+        imagePerdedor = ImageIO.read(getClass().getResource("/lemmings/perdedor.png"));
         for (int i = 0; i < imagenesHabilidades.length; i++) {
             if (i > 3) {
                 imagenesHabilidades[i] = ImageIO.read(getClass().getResource("/lemmings/habilidad" + i + ".png"));
@@ -143,5 +145,10 @@ public class EstadoDibujar {
         dibuje.setFont(new Font("SansSerif", Font.BOLD, 18));
         dibuje.drawString("Rescatados: " + bichitosRescatados, 610, 585);
         dibuje.drawString("Tiempo: " + temporizador.getTiempoFormateado(), 610, 550);
+    }
+
+    public void dibujarPerdedor(Graphics2D dibuje){
+        dibuje.setColor(Color.WHITE);
+        dibuje.drawImage(imagePerdedor, 300, 200, null);
     }
 }
