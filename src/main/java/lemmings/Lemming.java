@@ -1,21 +1,11 @@
 package lemmings;
 
-import java.awt.BasicStroke;
 import java.awt.Color;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.GradientPaint;
 import java.awt.Graphics2D;
-import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.LinkedList;
-
-import javax.imageio.ImageIO;
-
 import com.entropyinteractive.JGame;
 import com.entropyinteractive.Keyboard;
 import com.entropyinteractive.Mouse;
@@ -25,13 +15,14 @@ import clasesCompartidas.Sonido;
 public class Lemming extends JGame {
     private Keyboard teclado = this.getKeyboard(); // Inicializa el teclado
     private int estado;
-    private Nivel nivel1, nivel2, nivel3;
+    private Nivel nivel1, nivel2, nivel3,nivelJugando;
     private ArrayList<Bichito> arrBichito;
     private ArrayList<Bichito> arrBichito2;
     private ArrayList<Bichito> arrBichito3;
     private ArrayList<Bichito> lemmingsEnJuego;
     // definicion de arreglo de lemmings
     private ArrayList<Bichito> arrBichito1;
+    private int ESTADO_ACTUAL;
     private final int ESTADO_MENU = 0;
     private final int ESTADO_ELEGIR_MAPA = 1;
     private final int ESTADO_MAPA_1 = 2;
@@ -40,22 +31,21 @@ public class Lemming extends JGame {
     private final int ESTADO_RANKING = 5;
     private final int ESTADO_NOMBRE_JUGADOR = 6;
     private final int ESTADO_GANADOR = 7;
+    private final int ESTADO_PAUSA = 8;
     // variable para el tiempo de caida de lemming
     private double tiempoUltimoSpawn = 0;
-    private final double tiempoIntervalo = 2.0; // cada segundo va a aparecer un lemming en el spawn
+    private final double tiempoIntervalo = 1.5; // cada segundo va a aparecer un lemming en el spawn
     private final int maxLemmingsNivel1 = 10;
     private final int maxLemmingsNivel2 = 15;
     private final int maxLemmingsNivel3 = 15;
     private int lemmingsGenerados = 0;
     private int bichitosRescatados = 0;
     // manejo de jugador y ranking
-    RankingManager manager;
+    private RankingManager manager;
     private Jugador jugadorActual;
     private EstadoNombreJugador estadoNombreJugador;
     private EstadoRanking estadoRanking;
     private Temporizador temporizador;
-    private Image imageEstadistica;
-    private RankingManager baseDatos;
     // Manejo de mouse
     private boolean mouseFuePresionado = false;
     private Bichito lemmingSeleccionado = null;
@@ -67,16 +57,7 @@ public class Lemming extends JGame {
     private boolean tecla5PresionadaAnteriormente = false;
     private boolean tecla5PresionadaAhora;
     private boolean velocidadRapidaActiva = false;
-    // Variable para la creacion del HUD
-    private int xBoton;
-    private int hudAlto;
-    private int botonAncho;
-    private int botonAlto;
-    private int espacio;
-    private int yBoton;
-    private String[] etiquetas = { "Bloqueador", "Escalador", "Cavador", "Paracaidista", "Velocidad X2",
-            "Destrucción" };
-    private Image[] imagenesHabilidades = new Image[6];
+    EstadoDibujar estadoClase;
 
     public static void main(String[] args) {
         Lemming game = new Lemming("Lemmings", 800, 600);
@@ -95,16 +76,7 @@ public class Lemming extends JGame {
             estadoRanking = new EstadoRanking(this);
             temporizador = new Temporizador();
             manager = new RankingManager();
-            imageEstadistica = ImageIO.read(getClass().getResource("/lemmings/estadisticas.png"));
-
-            // Cargo las imagenes antes de entrar en el juego
-            for (int i = 0; i < imagenesHabilidades.length; i++) {
-                if (i > 3) {
-                    imagenesHabilidades[i] = ImageIO.read(getClass().getResource("/lemmings/habilidad" + i + ".png"));
-                } else {
-                    imagenesHabilidades[i] = ImageIO.read(getClass().getResource("/lemmings/habilidad" + i + ".jpg"));
-                }
-            }
+            estadoClase = new EstadoDibujar(this);
         } catch (Exception ex) {
             System.out.println("ERROR en gameStartup");
             ex.printStackTrace();
@@ -115,6 +87,15 @@ public class Lemming extends JGame {
         temporizador.update(delta);
         if (estado == ESTADO_NOMBRE_JUGADOR) {
             estadoNombreJugador.actualizar();
+            return;
+        }
+
+        if(estado == ESTADO_PAUSA){
+            for (KeyEvent event : teclado.getEvents()) {
+                if (event.getID() == KeyEvent.KEY_PRESSED && event.getKeyCode() == KeyEvent.VK_P) {
+                    estado = ESTADO_ACTUAL;
+                }
+            }
             return;
         }
 
@@ -164,8 +145,7 @@ public class Lemming extends JGame {
         mouseFuePresionado = clicked;
 
         if (estado == ESTADO_MAPA_1) {
-            // actualizar mapa 1
-
+            pausar(nivel1,ESTADO_MAPA_1);
             aparicionLemmings(nivel1, delta,maxLemmingsNivel1);
             salidaLemmings(nivel1);
             lemmingsMuertos(nivel1, delta);
@@ -179,6 +159,8 @@ public class Lemming extends JGame {
                 resetearLemmings();
                 estado = ESTADO_MENU;
             }
+
+
             if (teclado.isKeyPressed(KeyEvent.VK_4)) {
                 int index = lemmingsEnJuego.indexOf(lemmingSeleccionado);
                 if (index != -1) {
@@ -195,6 +177,7 @@ public class Lemming extends JGame {
         }
 
         if (estado == ESTADO_MAPA_2) {
+            pausar(nivel2,ESTADO_MAPA_2);
             aparicionLemmings(nivel2, delta,maxLemmingsNivel2);
             salidaLemmings(nivel2);
             lemmingsMuertos(nivel2, delta);
@@ -259,6 +242,7 @@ public class Lemming extends JGame {
         }
 
         if (estado == ESTADO_MAPA_3) {
+            pausar(nivel3,ESTADO_MAPA_3);
             aparicionLemmings(nivel3, delta,maxLemmingsNivel3);
             salidaLemmings(nivel3);
             lemmingsMuertos(nivel3, delta);
@@ -302,94 +286,27 @@ public class Lemming extends JGame {
         if (estado == ESTADO_NOMBRE_JUGADOR) {
             estadoNombreJugador.dibujar(dibuje);
         } else if (estado == ESTADO_MENU) {
-            dibuje.setColor(Color.WHITE);
-            dibuje.setFont(new Font("SansSerif", Font.BOLD, 32));
-            dibuje.drawString("[J] Elegir mapa", 310, 200);
-            dibuje.drawString("[R] Raking", 310, 300);
-            dibuje.setFont(new Font("SansSerif", Font.BOLD, 10));
-            dibuje.drawString("Presione 1", 379, 225);
-            dibuje.drawString("Presione R", 376, 325);
+            estadoClase.dibujarMenu(dibuje);
         } else if (estado == ESTADO_ELEGIR_MAPA) {
-            dibuje.setColor(Color.WHITE);
-            dibuje.setFont(new Font("SansSerif", Font.BOLD, 26));
-            dibuje.drawString("[1] Mapa 1", 310, 200);
-            dibuje.drawString("[2] Mapa 2", 310, 300);
-            dibuje.drawString("[3] Mapa 3", 310, 400);
-            dibuje.setFont(new Font("SansSerif", Font.BOLD, 10));
-            dibuje.drawString("Presione 1", 379, 225);
-            dibuje.drawString("Presione 2", 376, 325);
-            dibuje.drawString("Presione 3", 376, 425);
-            dibuje.drawString("Volver menú: Esq", 12, 600);
+            estadoClase.dibujarEstadoMapa(dibuje);
         } else if (estado == ESTADO_MAPA_1) {
-            // Dibujar mapa 1
-            nivel1.mostrar(dibuje);
-            creadHUD(dibuje);
-
-            for (Bichito bichi : lemmingsEnJuego) {
-                if (bichi != null) {
-                    bichi.mostrar(dibuje);
-                }
-            }
-            if (lemmingSeleccionado != null && lemmingsEnJuego.contains(lemmingSeleccionado)) {
-                dibuje.setColor(Color.YELLOW);
-                dibuje.drawRect((int) lemmingSeleccionado.getX() - 2, (int) lemmingSeleccionado.getY() - 2,
-                        lemmingSeleccionado.getAncho() + 4, lemmingSeleccionado.getAlto() + 4);
-
-            }
-
+            estadoClase.dibujarNivel(dibuje,nivel1,lemmingsEnJuego,lemmingSeleccionado,bichitosRescatados,temporizador);
         } else if (estado == ESTADO_MAPA_2) {
-            // dibujar mapa 2
-            nivel2.mostrar(dibuje);
-            creadHUD(dibuje);
-            for (Bichito bichi : lemmingsEnJuego) {
-                if (bichi != null) {
-                    bichi.mostrar(dibuje);
-                }
-            }
-            if (lemmingSeleccionado != null) {
-                dibuje.setColor(Color.YELLOW);
-                dibuje.drawRect((int) lemmingSeleccionado.getX() - 2, (int) lemmingSeleccionado.getY() - 2,
-                        lemmingSeleccionado.getAncho() + 4, lemmingSeleccionado.getAlto() + 4);
-
-            }
+            estadoClase.dibujarNivel(dibuje,nivel2,lemmingsEnJuego,lemmingSeleccionado,bichitosRescatados,temporizador);
         } else if (estado == ESTADO_MAPA_3) {
-            nivel3.mostrar(dibuje);
-            creadHUD(dibuje);
-            for (Bichito bichi : lemmingsEnJuego) {
-                if (bichi != null) {
-                    bichi.mostrar(dibuje);
-                }
-            }
-            if (lemmingSeleccionado != null) {
-                dibuje.setColor(Color.YELLOW);
-                dibuje.drawRect((int) lemmingSeleccionado.getX() - 2, (int) lemmingSeleccionado.getY() - 2,
-                        lemmingSeleccionado.getAncho() + 4, lemmingSeleccionado.getAlto() + 4);
-
-            }
+            estadoClase.dibujarNivel(dibuje,nivel3,lemmingsEnJuego,lemmingSeleccionado,bichitosRescatados,temporizador);
         } else if (estado == ESTADO_RANKING) {
             estadoRanking.dibujar(dibuje);
         } else if (estado == ESTADO_GANADOR) {
-            dibuje.setColor(Color.WHITE);
-            dibuje.drawImage(imageEstadistica, 260, 20, null);
-            dibuje.setFont(new Font("SansSerif", Font.BOLD, 18));
-            dibuje.drawString("Jugador: ", 50, 300);
-            dibuje.drawString(jugadorActual.getNombre(), 140, 300);
-            dibuje.drawString("Lemmings rescatados: ", 50, 360);
-            dibuje.drawString("" + jugadorActual.getLemmingsRescatados(), 260, 360);
-            dibuje.drawString("Tiempo: ", 50, 420);
-            dibuje.drawString(jugadorActual.getTiempoJuegoFormateado(), 130, 420);
-            dibuje.drawString("Fecha: ", 50, 500);
-            DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-            String fechaFormateada = jugadorActual.getFechaPartida().format(dateFormatter);
-            dibuje.drawString(fechaFormateada, 120, 500);
-
+            estadoClase.dibujarGanador(dibuje,jugadorActual);
+        }else if(estado == ESTADO_PAUSA){
+            estadoClase.dibujarNivel(dibuje,nivelJugando,lemmingsEnJuego,lemmingSeleccionado,bichitosRescatados,temporizador);
         }
 
     }
 
     public void gameShutdown() {
     }
-
     private void jugarMapa1() {
         Sonido.reproducir("letsgo.wav");
         resetearLemmings();
@@ -424,6 +341,16 @@ public class Lemming extends JGame {
         temporizador.reiniciar(); // Reinicia antes de iniciar
         temporizador.iniciar(); // Comienza a contar
         bichitosRescatados = 0;
+    }
+
+    private void pausar(Nivel nivel, int ESTADO_MAPA){
+        for (KeyEvent event : teclado.getEvents()) {
+            if (event.getID() == KeyEvent.KEY_PRESSED && event.getKeyCode() == KeyEvent.VK_P) {
+                estado = ESTADO_PAUSA;
+                ESTADO_ACTUAL = ESTADO_MAPA;
+                nivelJugando = nivel;;
+            }
+        }
     }
 
     private void aparicionLemmings(Nivel nivel, double delta, int maxLemmingsNivel) {
@@ -468,62 +395,6 @@ public class Lemming extends JGame {
                 continue;
             }
         }
-    }
-
-    private void creadHUD(Graphics2D dibuje) {
-        // Dibujar fondo del HUD con degradado gris oscuro a negro
-        hudAlto = 100; // fijo
-        GradientPaint gradiente = new GradientPaint(0, getHeight() - hudAlto, new Color(40, 40, 40), 0, getHeight(),
-                Color.BLACK);
-        dibuje.setPaint(gradiente);
-        dibuje.fillRect(0, getHeight() - hudAlto, getWidth(), hudAlto);
-        // Dibujar borde blanco alrededor del HUD
-        dibuje.setColor(Color.WHITE);
-        dibuje.setStroke(new BasicStroke(2));
-        dibuje.drawRect(0, getHeight() - hudAlto, getWidth() - 1, hudAlto - 1);
-
-        // Dimensiones de botones e imágenes
-        botonAncho = 50;
-        botonAlto = 50;
-        espacio = 30;
-        yBoton = getHeight() - hudAlto + 5; // margen superior
-        Font fuenteTexto = new Font("SansSerif", Font.BOLD, 11);
-        dibuje.setFont(fuenteTexto);
-        FontMetrics metrics = dibuje.getFontMetrics(fuenteTexto);
-
-        for (int i = 0; i < 6; i++) {
-            xBoton = 50 + i * (botonAncho + espacio);
-
-            // Imagen (centrada arriba)
-            dibuje.drawImage(imagenesHabilidades[i], xBoton, yBoton, botonAncho, botonAlto, null);
-
-            // Coordenadas para los textos (más abajo)
-            int yTextoBase = yBoton + botonAlto + 10;
-
-            // Texto de número [n] con sombra
-            String tecla = "[" + (i + 1) + "]";
-            int anchoTecla = metrics.stringWidth(tecla);
-            int xTecla = xBoton + (botonAncho - anchoTecla) / 2;
-
-            dibuje.setColor(Color.BLACK);
-            dibuje.drawString(tecla, xTecla + 1, yTextoBase + 1);
-            dibuje.setColor(Color.WHITE);
-            dibuje.drawString(tecla, xTecla, yTextoBase);
-
-            // Texto de habilidad con sombra, debajo del número
-            String texto = etiquetas[i];
-            int textoAncho = metrics.stringWidth(texto);
-            int xTexto = xBoton + (botonAncho - textoAncho) / 2;
-            int yTexto = yTextoBase + 12;
-
-            dibuje.setColor(Color.BLACK);
-            dibuje.drawString(texto, xTexto + 1, yTexto + 1);
-            dibuje.setColor(Color.WHITE);
-            dibuje.drawString(texto, xTexto, yTexto);
-        }
-        dibuje.setFont(new Font("SansSerif", Font.BOLD, 18));
-        dibuje.drawString("Rescatados: " + bichitosRescatados, 610, 585);
-        dibuje.drawString("Tiempo: " + temporizador.getTiempoFormateado(), 610, 550);
     }
 
     private void seleccionarLemmingEn(int mouseX, int mouseY) {
