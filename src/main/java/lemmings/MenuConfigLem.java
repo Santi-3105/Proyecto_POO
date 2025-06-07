@@ -24,13 +24,8 @@ public class MenuConfigLem implements ActionListener {
     private JTextField habilidad2;
     private JTextField habilidad3;
     private JTextField habilidad4;
-    private JTextField habilidad5;
-    private JTextField habilidad6;
-    private JTextField habilidad7;
-    private JTextField habilidad8;
     private JTextField acelerarJuego;
     private JTextField autodestruccion;
-    private JTextField iniciarJuego;
     private JComboBox<String> pistaMusical;
     private JComboBox<String> skin;
     private JButton guardar;
@@ -82,18 +77,13 @@ public class MenuConfigLem implements ActionListener {
         efectoSonidoBox.addActionListener(this);
         bEfectoSonido = new JTextField("Q", 5);
         bMusica = new JTextField("W", 5);
-        pausar = new JTextField("Space", 5);
+        pausar = new JTextField("P", 5);
         habilidad1 = new JTextField("1", 5);
         habilidad2 = new JTextField("2", 5);
         habilidad3 = new JTextField("3", 5);
         habilidad4 = new JTextField("4", 5);
-        habilidad5 = new JTextField("5", 5);
-        habilidad6 = new JTextField("6", 5);
-        habilidad7 = new JTextField("7", 5);
-        habilidad8 = new JTextField("8", 5);
-        acelerarJuego = new JTextField("E", 5);
-        autodestruccion = new JTextField("R", 5);
-        iniciarJuego = new JTextField("Enter", 5);
+        acelerarJuego = new JTextField("5", 5);
+        autodestruccion = new JTextField("6", 5);
         pistaMusical = new JComboBox<>(new String[] { "Original", "V2", "V3" });
         skin = new JComboBox<>(new String[] { "Original", "V2", "V3" });
         reset = new JButton("Restablecer");
@@ -124,13 +114,8 @@ public class MenuConfigLem implements ActionListener {
         componentes.put("habilidad2", habilidad2);
         componentes.put("habilidad3", habilidad3);
         componentes.put("habilidad4", habilidad4);
-        componentes.put("habilidad5", habilidad5);
-        componentes.put("habilidad6", habilidad6);
-        componentes.put("habilidad7", habilidad7);
-        componentes.put("habilidad8", habilidad8);
         componentes.put("acelerarJuego", acelerarJuego);
         componentes.put("autodestruccion", autodestruccion);
-        componentes.put("iniciarJuego", iniciarJuego);
 
         // JComboBox
         componentes.put("pistaMusical", pistaMusical);
@@ -183,11 +168,6 @@ public class MenuConfigLem implements ActionListener {
         config.add(bMusica, g);
         g.gridx = 0;
         g.gridy++;
-        config.add(new JLabel("Iniciar juego: "), g);
-        g.gridx++;
-        config.add(iniciarJuego, g);
-        g.gridx = 0;
-        g.gridy++;
         config.add(new JLabel("Pausar/Reanudar juego: "), g);
         g.gridx++;
         config.add(pausar, g);
@@ -199,7 +179,8 @@ public class MenuConfigLem implements ActionListener {
         config.add(new JLabel("Habilidad 1: "), g);
         g.gridx++;
         config.add(habilidad1, g);
-        g.gridx++;
+        g.gridx = 0;
+        g.gridy++;
         config.add(new JLabel("Habilidad 2: "), g);
         g.gridx++;
         config.add(habilidad2, g);
@@ -208,28 +189,11 @@ public class MenuConfigLem implements ActionListener {
         config.add(new JLabel("Habilidad 3: "), g);
         g.gridx++;
         config.add(habilidad3, g);
-        g.gridx++;
+        g.gridx = 0;
+        g.gridy++;
         config.add(new JLabel("Habilidad 4: "), g);
         g.gridx++;
         config.add(habilidad4, g);
-        g.gridx = 0;
-        g.gridy++;
-        config.add(new JLabel("Habilidad 5: "), g);
-        g.gridx++;
-        config.add(habilidad5, g);
-        g.gridx++;
-        config.add(new JLabel("Habilidad 6: "), g);
-        g.gridx++;
-        config.add(habilidad6, g);
-        g.gridx = 0;
-        g.gridy++;
-        config.add(new JLabel("Habilidad 7: "), g);
-        g.gridx++;
-        config.add(habilidad7, g);
-        g.gridx++;
-        config.add(new JLabel("Habilidad 8: "), g);
-        g.gridx++;
-        config.add(habilidad8, g);
         g.gridx = 0;
         g.gridy++;
         config.add(new JLabel("Otras teclas y configuraciones: "), g);
@@ -286,13 +250,8 @@ public class MenuConfigLem implements ActionListener {
                 habilidad2,
                 habilidad3,
                 habilidad4,
-                habilidad5,
-                habilidad6,
-                habilidad7,
-                habilidad8,
                 acelerarJuego,
                 autodestruccion,
-                iniciarJuego,
                 pistaMusical,
                 skin,
                 guardar,
@@ -420,18 +379,13 @@ public class MenuConfigLem implements ActionListener {
             efectoSonidoBox.setSelected(true);
             bEfectoSonido.setText("Q");
             bMusica.setText("W");
-            pausar.setText("Space");
+            pausar.setText("P");
             habilidad1.setText("1");
             habilidad2.setText("2");
             habilidad3.setText("3");
             habilidad4.setText("4");
-            habilidad5.setText("5");
-            habilidad6.setText("6");
-            habilidad7.setText("7");
-            habilidad8.setText("8");
-            acelerarJuego.setText("E");
-            autodestruccion.setText("R");
-            iniciarJuego.setText("Enter");
+            acelerarJuego.setText("5");
+            autodestruccion.setText("6");
             pistaMusical.setSelectedIndex(0);
             skin.setSelectedIndex(0);
         }
