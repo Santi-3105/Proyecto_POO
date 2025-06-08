@@ -16,8 +16,20 @@ public class Bloqueador extends Bichito {
             try {
             setPosicion(b.getX(), b.getY());
             this.setNivel(b.getNivel()); // Copiar el nivel
-            BufferedImage spriteSheet = ImageIO.read(getClass().getResource("/lemmings/LemmingsSprite.png"));
-            cargarFrames(spriteSheet);
+                        if (Lemming.skin.equals("Original")) {
+                BufferedImage spriteSheet = ImageIO.read(getClass().getResource("/lemmings/LemmingsSprite.png"));
+                cargarFrames(spriteSheet);
+            }
+            if(Lemming.skin.equals("LemmingRed"))
+            {
+                BufferedImage spriteSheet = ImageIO.read(getClass().getResource("/lemmings/SpriteSkins2.png"));
+                cargarFrames(spriteSheet);
+            }
+            if(Lemming.skin.equals("LemmingViolet"))
+            {
+                BufferedImage spriteSheet = ImageIO.read(getClass().getResource("/lemmings/SpriteSkins1.png"));
+                cargarFrames(spriteSheet);
+            }
             setDireccion(b.estaMirandoDerecha());
             this.setImagen(frames[0]);
             } catch (IOException e) {
