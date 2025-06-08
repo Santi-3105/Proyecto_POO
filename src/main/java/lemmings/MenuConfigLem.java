@@ -84,8 +84,8 @@ public class MenuConfigLem implements ActionListener {
         habilidad4 = new JTextField("4", 5);
         acelerarJuego = new JTextField("5", 5);
         autodestruccion = new JTextField("6", 5);
-        pistaMusical = new JComboBox<>(new String[] { "Original", "V2", "V3" });
-        skin = new JComboBox<>(new String[] { "Original", "V2", "V3" });
+        pistaMusical = new JComboBox<>(new String[] { "originalLem.wav", "LemmingsV1.wav", "LemmingsV2.wav" });
+        skin = new JComboBox<>(new String[] { "Original", "LemmingRed", "LemmingViolet" });
         reset = new JButton("Restablecer");
         reset.addActionListener(this);
         reset.setVisible(true);

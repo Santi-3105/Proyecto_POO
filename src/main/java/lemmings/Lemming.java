@@ -6,6 +6,7 @@ import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Properties;
 
 import clasesCompartidas.Musica;
 import com.entropyinteractive.JGame;
@@ -13,17 +14,20 @@ import com.entropyinteractive.Keyboard;
 import com.entropyinteractive.Mouse;
 
 import clasesCompartidas.Sonido;
-
-
+import clasesCompartidas.conversorTecla;
+import pong.MenuConfig;
 
 public class Lemming extends JGame {
     private final Keyboard teclado = this.getKeyboard(); // Inicializa el teclado
     private Nivel nivel1, nivel2, nivel3, nivelJugando;
-    private ArrayList<Bichito> arrBichito,arrBichito2,arrBichito3,lemmingsEnJuego;
-    //private boolean nukeActivado = false; -------------FIJARSE DE SACAR
+    private ArrayList<Bichito> arrBichito, arrBichito2, arrBichito3, lemmingsEnJuego;
+    // private boolean nukeActivado = false; -------------FIJARSE DE SACAR
     public EstadoJuego estado;
     public EstadoJuego estadoAnterior;
-    public enum EstadoJuego {MENU, ELEGIR_MAPA, MAPA_1, MAPA_2, MAPA_3, RANKING, NOMBRE_JUGADOR, GANADOR, PAUSA, PERDEDOR}
+
+    public enum EstadoJuego {
+        MENU, ELEGIR_MAPA, MAPA_1, MAPA_2, MAPA_3, RANKING, NOMBRE_JUGADOR, GANADOR, PAUSA, PERDEDOR
+    }
 
     // variable para el tiempo de caida de lemming
     private double tiempoUltimoSpawn = 0;
@@ -48,6 +52,16 @@ public class Lemming extends JGame {
     // Manejo de velocidades
     private boolean velocidadRapidaActiva = false;
     private EstadoDibujar estadoDibujar;
+    // Manejo archivos
+    protected Properties appProperties;
+    private int IntHabilidad1, IntHabilidad2, IntHabilidad3, IntHabilidad4, IntacelerarJuego, Intautodestruccion,
+            Intpausar, IntbMusica, IntbEfectoSonido;
+    private String pistaMusical;
+    protected static boolean musicaActiva=true;
+    protected static boolean sonidoActivo=true;
+    protected static String skin;
+    protected static String habilidad1, habilidad2, habilidad3, habilidad4, acelerarJuego, autodestruccion;
+    protected static ArrayList<String> nomHabilidades;
 
     public static void main(String[] args) {
         Lemming game = new Lemming("Lemmings", 800, 600);
@@ -57,6 +71,48 @@ public class Lemming extends JGame {
 
     public Lemming(String title, int width, int height) {
         super(title, width, height);
+        appProperties = new Properties();
+        nomHabilidades = new ArrayList<>();
+        System.out.println(appProperties.stringPropertyNames());
+        try {
+            // Cargar propiedades desde el archivo default.properties
+            String rutaArchivo = "defaultLemmings.properties";
+            MenuConfigLem.cargarEnArchivo(appProperties, rutaArchivo);
+            habilidad1 = appProperties.getProperty("habilidad1", "1");
+            habilidad2 = appProperties.getProperty("habilidad2", "2");
+            habilidad3 = appProperties.getProperty("habilidad3", "3");
+            habilidad4 = appProperties.getProperty("habilidad4", "4");
+            acelerarJuego = appProperties.getProperty("acelerarJuego", "5");
+            autodestruccion = appProperties.getProperty("autodestruccion", "6");
+            //Optimizar
+            nomHabilidades.add(habilidad1.toUpperCase());
+            nomHabilidades.add(habilidad2.toUpperCase());
+            nomHabilidades.add(habilidad3.toUpperCase());
+            nomHabilidades.add(habilidad4.toUpperCase());
+            nomHabilidades.add(acelerarJuego.toUpperCase());
+            nomHabilidades.add(autodestruccion.toUpperCase());
+            String pausar = appProperties.getProperty("pausar", "P");
+            String bMusica = appProperties.getProperty("bMusica", "W");
+            String bEfectoSonido = appProperties.getProperty("bEfectoSonido", "Q");
+            // Seteo la skin
+            skin = appProperties.getProperty("skin", "Original");
+            // Seteo si quiero musica o no como tambien sonidos
+            this.pistaMusical = appProperties.getProperty("pistaMusical", "originalLem.wav");
+            musicaActiva = Boolean.parseBoolean(appProperties.getProperty("musicaBox", "true"));
+            sonidoActivo = Boolean.parseBoolean(appProperties.getProperty("efectoSonidoBox", "true"));
+            // Las convierto
+            IntHabilidad1 = conversorTecla.convertirTecla(habilidad1);
+            IntHabilidad2 = conversorTecla.convertirTecla(habilidad2);
+            IntHabilidad3 = conversorTecla.convertirTecla(habilidad3);
+            IntHabilidad4 = conversorTecla.convertirTecla(habilidad4);
+            IntacelerarJuego = conversorTecla.convertirTecla(acelerarJuego);
+            Intautodestruccion = conversorTecla.convertirTecla(autodestruccion);
+            Intpausar = conversorTecla.convertirTecla(pausar);
+            IntbMusica = conversorTecla.convertirTecla(bMusica);
+            IntbEfectoSonido = conversorTecla.convertirTecla(bEfectoSonido);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void gameStartup() {
@@ -141,7 +197,7 @@ public class Lemming extends JGame {
             }
             salirYresetear();
             habilidadesMapa1();
-            detenerJuego(maxLemmingsNivel1, 1,7,35); //7 max para ganar
+            detenerJuego(maxLemmingsNivel1, 1, 7, 35); // 7 max para ganar
 
             return; // se saltea si no esta en mapa 1
         }
@@ -182,7 +238,7 @@ public class Lemming extends JGame {
                 }
             }
             habilidadesMapa2();
-            detenerJuego(maxLemmingsNivel2, 2,10,60); //10 max para ganar
+            detenerJuego(maxLemmingsNivel2, 2, 10, 60); // 10 max para ganar
             return; // se saltea si no esta en mapa 2
         }
 
@@ -197,7 +253,7 @@ public class Lemming extends JGame {
                 }
             }
             habilidadesMapa3();
-            detenerJuego(maxLemmingsNivel3, 3,15,120); //15 max para ganar
+            detenerJuego(maxLemmingsNivel3, 3, 15, 120); // 15 max para ganar
         }
     }
 
@@ -226,7 +282,7 @@ public class Lemming extends JGame {
         } else if (estado == EstadoJuego.PAUSA) {
             estadoDibujar.dibujarNivel(dibuje, nivelJugando, lemmingsEnJuego, lemmingSeleccionado, bichitosRescatados,
                     temporizador);
-        }else if(estado == EstadoJuego.PERDEDOR){
+        } else if (estado == EstadoJuego.PERDEDOR) {
             estadoDibujar.dibujarPerdedor(dibuje);
         }
 
@@ -236,8 +292,14 @@ public class Lemming extends JGame {
     }
 
     private void jugarMapa1() {
-        Musica.iniciarMusica("lemming1.wav");
-        Sonido.reproducir("letsgo.wav");
+        if(musicaActiva)
+        {
+            Musica.iniciarMusica(pistaMusical);
+        }
+        if(sonidoActivo)
+        {
+            Sonido.reproducir("letsgo.wav");
+        }
         resetearLemmings();
         estado = EstadoJuego.MAPA_1;
         nivel1 = new Nivel("mapa1.txt", "estructurasSet.config");
@@ -249,8 +311,14 @@ public class Lemming extends JGame {
     }
 
     private void jugarMapa2() {
-        Musica.iniciarMusica("lemming1.wav");
-        Sonido.reproducir("letsgo.wav");
+        if(musicaActiva)
+        {
+            Musica.iniciarMusica(pistaMusical);
+        }
+        if(sonidoActivo)
+        {
+            Sonido.reproducir("letsgo.wav");
+        }
         resetearLemmings();
         estado = EstadoJuego.MAPA_2;
         nivel2 = new Nivel("mapa2.txt", "estructurasSet.config");
@@ -262,8 +330,14 @@ public class Lemming extends JGame {
     }
 
     private void jugarMapa3() {
-        Musica.iniciarMusica("lemming1.wav");
-        Sonido.reproducir("letsgo.wav");
+        if(musicaActiva)
+        {
+            Musica.iniciarMusica(pistaMusical);
+        }
+        if(sonidoActivo)
+        {
+            Sonido.reproducir("letsgo.wav");
+        }
         resetearLemmings();
         estado = EstadoJuego.MAPA_3;
         nivel3 = new Nivel("mapa3.txt", "estructurasSet.config");
@@ -274,8 +348,8 @@ public class Lemming extends JGame {
         bichitosRescatados = 0;
     }
 
-    private void habilidadesMapa1(){
-        if (teclado.isKeyPressed(KeyEvent.VK_4)) {
+    private void habilidadesMapa1() {
+        if (teclado.isKeyPressed(IntHabilidad4)) {
             int index = lemmingsEnJuego.indexOf(lemmingSeleccionado);
             if (index != -1) {
                 Bichito original = lemmingsEnJuego.get(index);
@@ -284,12 +358,18 @@ public class Lemming extends JGame {
                 lemmingSeleccionado = paracaidista; // Actualiza también la referencia seleccionada
             }
         }
-        Nuke.nukear(teclado,lemmingsEnJuego,lemmingSeleccionado);
+        if (teclado.isKeyPressed(IntbEfectoSonido)) {
+
+        }
+        Nuke.nukear(teclado, Intautodestruccion, lemmingsEnJuego, lemmingSeleccionado);
+        alternarMusica();
+        alternarEfectosSonido();
         velocidadx2();
         salirYresetear();
     }
-    private void habilidadesMapa2(){
-        if (teclado.isKeyPressed(KeyEvent.VK_1)) {
+
+    private void habilidadesMapa2() {
+        if (teclado.isKeyPressed(IntHabilidad1)) {
             int index = lemmingsEnJuego.indexOf(lemmingSeleccionado);
             if (index != -1) {
                 Bichito original = lemmingsEnJuego.get(index);
@@ -298,7 +378,7 @@ public class Lemming extends JGame {
                 lemmingSeleccionado = bloqueador; // Actualiza también la referencia seleccionada
             }
         }
-        if (teclado.isKeyPressed(KeyEvent.VK_4)) {
+        if (teclado.isKeyPressed(IntHabilidad4)) {
             int index = lemmingsEnJuego.indexOf(lemmingSeleccionado);
             if (index != -1) {
                 Bichito original = lemmingsEnJuego.get(index);
@@ -307,12 +387,15 @@ public class Lemming extends JGame {
                 lemmingSeleccionado = nuevo; // Actualiza también la referencia seleccionada
             }
         }
-        Nuke.nukear(teclado,lemmingsEnJuego,lemmingSeleccionado);
+        Nuke.nukear(teclado, Intautodestruccion, lemmingsEnJuego, lemmingSeleccionado);
+        alternarMusica();
+        alternarEfectosSonido();
         velocidadx2();
         salirYresetear();
     }
-    private void habilidadesMapa3(){
-        if (teclado.isKeyPressed(KeyEvent.VK_3)) {
+
+    private void habilidadesMapa3() {
+        if (teclado.isKeyPressed(IntHabilidad3)) {
             int index = lemmingsEnJuego.indexOf(lemmingSeleccionado);
             if (index != -1) {
                 Bichito original = lemmingsEnJuego.get(index);
@@ -321,7 +404,7 @@ public class Lemming extends JGame {
                 lemmingSeleccionado = cavador;
             }
         }
-        if (teclado.isKeyPressed(KeyEvent.VK_2)) {
+        if (teclado.isKeyPressed(IntHabilidad2)) {
             int index = lemmingsEnJuego.indexOf(lemmingSeleccionado);
             if (index != -1) {
                 Bichito original = lemmingsEnJuego.get(index);
@@ -330,14 +413,16 @@ public class Lemming extends JGame {
                 lemmingSeleccionado = escalador;
             }
         }
-        Nuke.nukear(teclado,lemmingsEnJuego,lemmingSeleccionado);
+        Nuke.nukear(teclado, Intautodestruccion, lemmingsEnJuego, lemmingSeleccionado);
+        alternarMusica();
+        alternarEfectosSonido();
         velocidadx2();
         salirYresetear();
     }
 
     private void pausar(Nivel nivel, EstadoJuego ESTADO_MAPA) {
         for (KeyEvent event : teclado.getEvents()) {
-            if (event.getID() == KeyEvent.KEY_PRESSED && event.getKeyCode() == KeyEvent.VK_P) {
+            if (event.getID() == KeyEvent.KEY_PRESSED && event.getKeyCode() == Intpausar) {
                 estado = EstadoJuego.PAUSA;
                 temporizador.detener();
                 estadoAnterior = ESTADO_MAPA;
@@ -345,17 +430,20 @@ public class Lemming extends JGame {
             }
         }
     }
-    private void salir(){
-        if (teclado.isKeyPressed(KeyEvent.VK_ESCAPE)) {this.estado = EstadoJuego.MENU;}
+
+    private void salir() {
+        if (teclado.isKeyPressed(KeyEvent.VK_ESCAPE)) {
+            this.estado = EstadoJuego.MENU;
+        }
     }
-    private void salirYresetear(){
+    private void salirYresetear() {
         if (teclado.isKeyPressed(KeyEvent.VK_ESCAPE)) {
             resetearLemmings();
             estado = EstadoJuego.MENU;
             Musica.detenerMusicaFondo();
         }
     }
-    private void cargarMouse(){
+    private void cargarMouse() {
         Mouse mouse = this.getMouse();
         int mouseX = mouse.getX();
         int mouseY = mouse.getY();
@@ -388,7 +476,10 @@ public class Lemming extends JGame {
             Bichito bichi = iterator.next();
             // verificar si llegó a la meta
             if (bichi.detectarMeta(nivel)) {
-                Sonido.reproducir("yippee.wav");
+                if(sonidoActivo)
+                {
+                    Sonido.reproducir("yippee.wav");
+                }
                 iterator.remove(); // se elimina del mapa
                 bichitosRescatados++;
             }
@@ -441,10 +532,13 @@ public class Lemming extends JGame {
         Bichito.multiplicadorVelocidad = 1.0;
         temporizador.reiniciar();
         Nuke.nukeActivado = false;
+        musicaActiva = Boolean.parseBoolean(appProperties.getProperty("musicaBox", "true"));
+        sonidoActivo = Boolean.parseBoolean(appProperties.getProperty("efectoSonidoBox", "true"));
     }
 
-    private void detenerJuego(int maxLemmingsNivel, int nroNivel,int maxGanar, double tiempoMaximo) {
-        if (lemmingsGenerados >= maxLemmingsNivel && lemmingsEnJuego.isEmpty() && bichitosRescatados>=maxGanar && temporizador.getTiempoEnSegundos()<=tiempoMaximo) {
+    private void detenerJuego(int maxLemmingsNivel, int nroNivel, int maxGanar, double tiempoMaximo) {
+        if (lemmingsGenerados >= maxLemmingsNivel && lemmingsEnJuego.isEmpty() && bichitosRescatados >= maxGanar
+                && temporizador.getTiempoEnSegundos() <= tiempoMaximo) {
             // Nuevo
             temporizador.detener();
             jugadorActual.setLemmingsRescatados(bichitosRescatados);
@@ -455,7 +549,8 @@ public class Lemming extends JGame {
             Musica.detenerMusicaFondo();
             estado = EstadoJuego.GANADOR;
         }
-        if(lemmingsGenerados>= maxLemmingsNivel && lemmingsEnJuego.isEmpty() && bichitosRescatados<maxGanar && temporizador.getTiempoEnSegundos()>tiempoMaximo){
+        if (lemmingsGenerados >= maxLemmingsNivel && lemmingsEnJuego.isEmpty() && bichitosRescatados < maxGanar
+                && temporizador.getTiempoEnSegundos() > tiempoMaximo) {
             temporizador.detener();
             Musica.detenerMusicaFondo();
             estado = EstadoJuego.PERDEDOR;
@@ -464,9 +559,9 @@ public class Lemming extends JGame {
 
     private void velocidadx2() {
         for (KeyEvent event : teclado.getEvents()) {
-            if (event.getID() == KeyEvent.KEY_TYPED) {
-                char c = event.getKeyChar();
-                if (c == '5') {
+            if (event.getID() == KeyEvent.KEY_PRESSED) {
+                int c = event.getKeyCode();
+                if (c == IntacelerarJuego) {
                     velocidadRapidaActiva = !velocidadRapidaActiva;
                     temporizador.setMultiplicadorVelocidad(velocidadRapidaActiva ? 1.3 : 1.0);
                     for (Bichito b : lemmingsEnJuego) {
@@ -476,4 +571,31 @@ public class Lemming extends JGame {
             }
         }
     }
+
+    private void alternarEfectosSonido() {
+        for (KeyEvent event : teclado.getEvents()) {
+            if (event.getID() == KeyEvent.KEY_PRESSED) {
+                int code = event.getKeyCode();
+                if (code == IntbEfectoSonido) {
+                    sonidoActivo = !sonidoActivo;
+                }
+            }
+        }
+    }
+    private void alternarMusica() {
+        for (KeyEvent event : teclado.getEvents()) {
+            if (event.getID() == KeyEvent.KEY_PRESSED) {
+                int code = event.getKeyCode();
+                if (code == IntbMusica) {
+                    musicaActiva = !musicaActiva;
+                    if (musicaActiva) {
+                        Musica.iniciarMusica(pistaMusical);
+                    } else {
+                        Musica.detenerMusicaFondo();
+                    }
+                }
+            }
+        }
+    }
+
 }

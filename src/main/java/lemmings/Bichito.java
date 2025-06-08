@@ -22,46 +22,59 @@ public class Bichito extends ObjetoGrafico {
     private double alturaCaidaAcumulada = 0;
     private boolean estabaCayendo = false;
     private final double altura_maxima_caida = 100;
-    private  double velocidadMovimiento = 0.0; // píxeles por update
+    private double velocidadMovimiento = 0.0; // píxeles por update
     private final double velocidadAnimacion = 0.1;
-    //La seteo static porque todos tendran la velocidad x2
+    // La seteo static porque todos tendran la velocidad x2
     protected static double multiplicadorVelocidad = 1.0;
     private double tiempoUltimoCambioDireccion = 0;
     private final double tiempoMinimoEntreCambios = 0.5;
 
     public Bichito() {
         try {
-            BufferedImage spriteSheet = ImageIO.read(getClass().getResource("/lemmings/LemmingsSprite.png"));
-            cargarFrames(spriteSheet);
+            if (Lemming.skin.equals("Original")) {
+                BufferedImage spriteSheet = ImageIO.read(getClass().getResource("/lemmings/LemmingsSprite.png"));
+                cargarFrames(spriteSheet);
+            }
+            if(Lemming.skin.equals("LemmingRed"))
+            {
+                BufferedImage spriteSheet = ImageIO.read(getClass().getResource("/lemmings/SpriteSkins2.png"));
+                cargarFrames(spriteSheet);
+            }
+            if(Lemming.skin.equals("LemmingViolet"))
+            {
+                BufferedImage spriteSheet = ImageIO.read(getClass().getResource("/lemmings/SpriteSkins1.png"));
+                cargarFrames(spriteSheet);
+            }
             this.setImagen(caminarDerechaFrames[0]); // imagen inicial
+
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     private void cargarFrames(BufferedImage spriteSheet) {
-        //Matriz de coordenadas para los sprites
-        //Coordenadas iniciales, ancho, alto.
+        // Matriz de coordenadas para los sprites
+        // Coordenadas iniciales, ancho, alto.
         int[][] coordenadasDerecha = {
-            {17, 1, 12, 9},
-            {33, 0, 13, 10},
-            {48, 1, 14, 9},
-            {64, 1, 13, 9},
-            {81, 1, 12, 9},
-            {97, 0, 13, 10},
-            {112, 1, 14, 9},
-            {128, 1, 13, 9}
+                { 17, 1, 12, 9 },
+                { 33, 0, 13, 10 },
+                { 48, 1, 14, 9 },
+                { 64, 1, 13, 9 },
+                { 81, 1, 12, 9 },
+                { 97, 0, 13, 10 },
+                { 112, 1, 14, 9 },
+                { 128, 1, 13, 9 }
         };
 
         int[][] coordenadasIzquierda = {
-            {17, 11, 12, 9},
-            {33, 11, 13, 9},
-            {48, 11, 14, 9},
-            {64, 10, 13, 9},
-            {81, 11, 12, 9},
-            {97, 11, 13, 10},
-            {112, 11, 14, 9},
-            {128, 10, 13, 9}
+                { 17, 11, 12, 9 },
+                { 33, 11, 13, 9 },
+                { 48, 11, 14, 9 },
+                { 64, 10, 13, 9 },
+                { 81, 11, 12, 9 },
+                { 97, 11, 13, 10 },
+                { 112, 11, 14, 9 },
+                { 128, 10, 13, 9 }
         };
 
         int cantidadFrames = 8;
@@ -79,8 +92,7 @@ public class Bichito extends ObjetoGrafico {
             caminarDerechaFrames[i] = escalarImagen(
                     spriteSheet.getSubimage(x, y, ancho, alto),
                     ancho * escala,
-                    alto * escala
-            );
+                    alto * escala);
         }
 
         for (int i = 0; i < cantidadFrames; i++) {
@@ -92,8 +104,7 @@ public class Bichito extends ObjetoGrafico {
             caminarIzquierdaFrames[i] = escalarImagen(
                     spriteSheet.getSubimage(x, y, ancho, alto),
                     ancho * escala,
-                    alto * escala
-            );
+                    alto * escala);
         }
     }
 
@@ -146,8 +157,10 @@ public class Bichito extends ObjetoGrafico {
 
     public void morir() {
         estaMuerto = true;
-        Sonido.reproducir("die.wav");
-        //añadir animación de muerte
+        if (Lemming.sonidoActivo) {
+            Sonido.reproducir("die.wav");
+        }
+        // añadir animación de muerte
 
     }
 
@@ -210,7 +223,7 @@ public class Bichito extends ObjetoGrafico {
             if (estabaCayendo && alturaCaidaAcumulada > altura_maxima_caida) {
                 morir();
             }
-            //resetea valores de caídas
+            // resetea valores de caídas
             alturaCaidaAcumulada = 0;
             estabaCayendo = false;
         }
@@ -235,9 +248,10 @@ public class Bichito extends ObjetoGrafico {
         // Coordenadas del mapa en filas/columnas
         int fila = nuevoY / nivel.getAltoEstructura();
         int columna = (nuevoX / nivel.getAnchoEstructura());
-        //agrego +1 cuando está mirando a la derecha, para que se detecte bien la colisión
-        if(estaMirandoDerecha()){
-            columna = (nuevoX / (nivel.getAnchoEstructura()-1));
+        // agrego +1 cuando está mirando a la derecha, para que se detecte bien la
+        // colisión
+        if (estaMirandoDerecha()) {
+            columna = (nuevoX / (nivel.getAnchoEstructura() - 1));
 
         }
 
@@ -294,7 +308,8 @@ public class Bichito extends ObjetoGrafico {
         }
         Rectangle rectLemming = new Rectangle((int) getX(), (int) getY(), getAncho(), getAlto());
 
-        return rectLemming.intersects(nivel.getMetaX(), nivel.getMetaY(), nivel.getAnchoEstructura(), nivel.getAltoEstructura());
+        return rectLemming.intersects(nivel.getMetaX(), nivel.getMetaY(), nivel.getAnchoEstructura(),
+                nivel.getAltoEstructura());
     }
 
     public boolean detectarPinche(Nivel nivel) {
@@ -311,8 +326,8 @@ public class Bichito extends ObjetoGrafico {
         return false;
 
     }
-    public void setVelocidadX2(boolean activa)
-    {
+
+    public void setVelocidadX2(boolean activa) {
         multiplicadorVelocidad = activa ? 2.0 : 1.0;
     }
 

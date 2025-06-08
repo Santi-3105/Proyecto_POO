@@ -23,8 +23,20 @@ public class Nuke extends Bichito{
         try {
             setPosicion(b.getX(), b.getY());
             this.setNivel(b.getNivel()); // Copiar nivel del lemming original
-            BufferedImage spriteSheet = ImageIO.read(getClass().getResource("/lemmings/LemmingsSprite.png"));
-            cargarFrames(spriteSheet);
+            if (Lemming.skin.equals("Original")) {
+                BufferedImage spriteSheet = ImageIO.read(getClass().getResource("/lemmings/LemmingsSprite.png"));
+                cargarFrames(spriteSheet);
+            }
+            if(Lemming.skin.equals("LemmingRed"))
+            {
+                BufferedImage spriteSheet = ImageIO.read(getClass().getResource("/lemmings/SpriteSkins2.png"));
+                cargarFrames(spriteSheet);
+            }
+            if(Lemming.skin.equals("LemmingViolet"))
+            {
+                BufferedImage spriteSheet = ImageIO.read(getClass().getResource("/lemmings/SpriteSkins1.png"));
+                cargarFrames(spriteSheet);
+            }
             setDireccion(b.estaMirandoDerecha());
             this.setImagen(countdownFrames[0]);
         } catch (IOException e) {
@@ -109,7 +121,10 @@ public class Nuke extends Bichito{
                     setImagen(explosionFrames[frameActual]);
                 } else {
                     super.morir(); // Solo marca como muerto al terminar TODOS los frames
-                    Sonido.reproducir("tenton.wav");
+                    if(Lemming.sonidoActivo)
+                    {
+                        Sonido.reproducir("tenton.wav");
+                    }
                 }
             }
         }
@@ -123,8 +138,8 @@ public class Nuke extends Bichito{
         return escalada;
     }
 
-    public static void nukear(Keyboard teclado, ArrayList<Bichito>lemmingsEnJuego, Bichito lemmingSeleccionado){
-        if (teclado.isKeyPressed(KeyEvent.VK_6) && !nukeActivado) {
+    public static void nukear(Keyboard teclado, int Intautodestruccion, ArrayList<Bichito>lemmingsEnJuego, Bichito lemmingSeleccionado){
+        if (teclado.isKeyPressed(Intautodestruccion) && !nukeActivado) {
             nukeActivado = true;
             for (int i = 0; i < lemmingsEnJuego.size(); i++) {
                 Bichito original = lemmingsEnJuego.get(i);

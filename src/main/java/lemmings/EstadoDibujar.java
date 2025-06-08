@@ -122,7 +122,7 @@ public class EstadoDibujar {
             int yTextoBase = yBoton + botonAlto + 10;
 
             // Texto de número [n] con sombra
-            String tecla = "[" + (i + 1) + "]";
+            String tecla = "[" + Lemming.nomHabilidades.get(i) + "]";
             int anchoTecla = metrics.stringWidth(tecla);
             int xTecla = xBoton + (botonAncho - anchoTecla) / 2;
 
