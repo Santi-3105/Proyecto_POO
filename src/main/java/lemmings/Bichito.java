@@ -22,8 +22,8 @@ public class Bichito extends ObjetoGrafico {
     private double alturaCaidaAcumulada = 0;
     private boolean estabaCayendo = false;
     private final double altura_maxima_caida = 100;
-    private double velocidadMovimiento = 0.0; // píxeles por update
-    private double velocidadAnimacion = 0.1;
+    private  double velocidadMovimiento = 0.0; // píxeles por update
+    private final double velocidadAnimacion = 0.1;
     //La seteo static porque todos tendran la velocidad x2
     protected static double multiplicadorVelocidad = 1.0;
     private double tiempoUltimoCambioDireccion = 0;
@@ -103,9 +103,6 @@ public class Bichito extends ObjetoGrafico {
         this.setImagen(frames[frameActual]);
     }
 
-    /*public void setDireccion(boolean derecha) {
-        this.mirandoDerecha = derecha;
-    }*/
     public void setDireccion(boolean derecha) {
         this.mirandoDerecha = derecha;
         this.tiempoUltimoCambioDireccion = 0; // Resetear el temporizador al cambiar dirección
@@ -143,17 +140,6 @@ public class Bichito extends ObjetoGrafico {
         }
     }
 
-    public boolean colisionaCon(Bloqueador bloqueador) {
-        boolean colisiona = false;
-        Rectangle rectBichito = new Rectangle((int) getX(), (int) getY(), getAncho(), getAlto());
-        Rectangle rectBloqueador = new Rectangle((int) bloqueador.getX(), (int) bloqueador.getY(), bloqueador.getAncho(), bloqueador.getAlto());
-        if (rectBichito.intersects(rectBloqueador)) {
-            colisiona = true;
-
-        }
-        return colisiona;
-    }
-
     public boolean estaMuerto() {
         return estaMuerto;
     }
@@ -162,10 +148,6 @@ public class Bichito extends ObjetoGrafico {
         estaMuerto = true;
         Sonido.reproducir("die.wav");
         //añadir animación de muerte
-
-    }
-
-    public void explotar() {
 
     }
 
@@ -214,10 +196,10 @@ public class Bichito extends ObjetoGrafico {
             }
 
         }
-        actualizarCaida(delta);
+        actualizarCaida();
     }
 
-    private void actualizarCaida(double delta) {
+    private void actualizarCaida() {
         boolean estaCayendoAhora = detectarCaida();
         if (estaCayendoAhora) {
             alturaCaidaAcumulada += 2;
@@ -311,7 +293,6 @@ public class Bichito extends ObjetoGrafico {
             return false;
         }
         Rectangle rectLemming = new Rectangle((int) getX(), (int) getY(), getAncho(), getAlto());
-        //Rectangle rectMeta = new Rectangle(nivel.getMetaX(),nivel.getMetaY(),nivel.getAnchoEstructura(),nivel.getAltoEstructura());
 
         return rectLemming.intersects(nivel.getMetaX(), nivel.getMetaY(), nivel.getAnchoEstructura(), nivel.getAltoEstructura());
     }
@@ -330,13 +311,9 @@ public class Bichito extends ObjetoGrafico {
         return false;
 
     }
-    public static void setVelocidadX2(boolean activa)
+    public void setVelocidadX2(boolean activa)
     {
         multiplicadorVelocidad = activa ? 2.0 : 1.0;
-    }
-    public static double getMultiplicadorVelocidad()
-    {
-        return multiplicadorVelocidad;
     }
 
 }

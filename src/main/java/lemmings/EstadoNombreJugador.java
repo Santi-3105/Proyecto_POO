@@ -43,7 +43,7 @@ public class EstadoNombreJugador {
         // Confirmar nombre
         if (teclado.isKeyPressed(KeyEvent.VK_ENTER) && !nombreJugador.isEmpty()) {
             juego.setJugadorActual(new Jugador(nombreJugador));
-            juego.cambiarEstado(Lemming.EstadoJuego.MENU);
+            juego.estado = Lemming.EstadoJuego.MENU;
         }
     }
 

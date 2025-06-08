@@ -1,11 +1,14 @@
 package lemmings;
 
 import clasesCompartidas.Sonido;
+import com.entropyinteractive.Keyboard;
 
 import javax.imageio.ImageIO;
 import java.awt.Graphics2D;
+import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class Nuke extends Bichito{
 
@@ -14,6 +17,7 @@ public class Nuke extends Bichito{
     private int frameActual = 0;
     private double tiempoAnimacion = 0;
     private boolean explotado = false;
+    public static boolean nukeActivado = false;
 
     public Nuke(Bichito b) {
         try {
@@ -117,5 +121,21 @@ public class Nuke extends Bichito{
         g2d.drawImage(original, 0, 0, anchoNuevo, altoNuevo, null);
         g2d.dispose();
         return escalada;
+    }
+
+    public static void nukear(Keyboard teclado, ArrayList<Bichito>lemmingsEnJuego, Bichito lemmingSeleccionado){
+        if (teclado.isKeyPressed(KeyEvent.VK_6) && !nukeActivado) {
+            nukeActivado = true;
+            for (int i = 0; i < lemmingsEnJuego.size(); i++) {
+                Bichito original = lemmingsEnJuego.get(i);
+                if (!original.estaMuerto()) {
+                    Bichito nukeado = new Nuke(original);
+                    lemmingsEnJuego.set(i, nukeado);
+                    if (lemmingSeleccionado == original) {
+                        lemmingSeleccionado = nukeado; //QUE SE MUERA EL BLOQUEADOR TAMBIEN
+                    }
+                }
+            }
+        }
     }
 }

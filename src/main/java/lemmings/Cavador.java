@@ -16,7 +16,6 @@ public class Cavador extends Bichito implements Habilidad{
     private double tiempoAnimacion = 0;
     private double tiempoCavando = 0;
     private boolean habilidadActiva = false;
-    private boolean cavando = false;
     private final double VELOCIDAD_CAVIDO = 0.5; // Bloques por segundo
     private boolean ultimaDireccionAntesDeHabilidad = true;
 
@@ -113,13 +112,6 @@ public class Cavador extends Bichito implements Habilidad{
             if (empezarACavar()) {
                 iniciarHabilidad(this);
             }
-        }
-    }
-
-    @Override
-    public void mostrar(Graphics2D g) {
-        if (getImagen() != null) {
-            g.drawImage(getImagen(), (int) getX(), (int) getY(), null);
         }
     }
 
