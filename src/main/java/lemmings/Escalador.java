@@ -170,8 +170,9 @@ public class Escalador extends Bichito implements Habilidad {
         // Verificar que haya espacio para escalar arriba
         int filaArriba = ((int)getY() - getNivel().getAltoEstructura()) / getNivel().getAltoEstructura();
         int columnaArriba = (int)getX() / getNivel().getAnchoEstructura();
-
-
+        if(direccion == 1){
+            filaArriba += 1;
+        }
         if (filaPared < 0 || filaPared >= getNivel().getFilas() ||
                 columnaPared < 0 || columnaPared >= getNivel().getColumnas()) {
             return false;
@@ -200,6 +201,9 @@ public class Escalador extends Bichito implements Habilidad {
         // Verificar espacio arriba
         int filaArriba = ((int)getY() - getNivel().getAltoEstructura()) / getNivel().getAltoEstructura();
         int columnaArriba = (int)getX() / getNivel().getAnchoEstructura();
+        if(direccion == 1){
+            filaArriba += 1;
+        }
 
         if (filaPared < 0 || filaPared >= getNivel().getFilas() ||
                 columnaPared < 0 || columnaPared >= getNivel().getColumnas()) {
@@ -244,11 +248,5 @@ public class Escalador extends Bichito implements Habilidad {
         setDireccion(ultimaDireccionAntesDeHabilidad);
     }
 
-    @Override
-    public void mostrar(Graphics2D g) {
-        if (getImagen() != null) {
-            g.drawImage(getImagen(), (int) getX(), (int) getY(), null);
-        }
-    }
 
 }

@@ -17,14 +17,6 @@ public class EstadoRanking {
         this.topJugadores = rankingManager.obtenerTop10();
     }
 
-    public void actualizar() {
-        Keyboard teclado = juego.getKeyboard();
-
-        if (teclado.isKeyPressed(KeyEvent.VK_ESCAPE)) {
-            juego.cambiarEstado(Lemming.EstadoJuego.MENU); // Volver al menú principal
-        }
-    }
-
     public void dibujar(Graphics2D g) {
         g.setColor(Color.BLACK);
         g.fillRect(0, 0, juego.getWidth(), juego.getHeight());
