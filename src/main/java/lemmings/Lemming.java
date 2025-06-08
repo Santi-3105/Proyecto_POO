@@ -1,8 +1,6 @@
 package lemmings;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
-import java.awt.Rectangle;
+import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -87,27 +85,13 @@ public class Lemming extends JGame {
                     temporizador.iniciar();
                 }
             }
-            return;
         }
 
-        if (estado == EstadoJuego.RANKING) {
-            estadoRanking.actualizar();
-            return;
-        }
+        if (estado == EstadoJuego.RANKING) {estadoRanking.actualizar();}
 
-        if (estado == EstadoJuego.GANADOR) {
-            if (teclado.isKeyPressed(KeyEvent.VK_ESCAPE)) {
-                estado = EstadoJuego.MENU;
-            }
-            return;
-        }
+        if (estado == EstadoJuego.GANADOR) {salir(EstadoJuego.MENU);}
 
-        if (estado == EstadoJuego.PERDEDOR) {
-            if (teclado.isKeyPressed(KeyEvent.VK_ESCAPE)) {
-                estado = EstadoJuego.MENU;
-            }
-            return;
-        }
+        if (estado == EstadoJuego.PERDEDOR) {salir(EstadoJuego.MENU);}
 
         if (estado == EstadoJuego.MENU) {
             if (teclado.isKeyPressed(KeyEvent.VK_J)) {
@@ -116,7 +100,6 @@ public class Lemming extends JGame {
             if (teclado.isKeyPressed(KeyEvent.VK_R)) {
                 estado = EstadoJuego.RANKING;
             }
-            return;
         }
 
         if (estado == EstadoJuego.ELEGIR_MAPA) {
@@ -157,7 +140,6 @@ public class Lemming extends JGame {
                 resetearLemmings();
                 estado = EstadoJuego.MENU;
             }
-
             if (teclado.isKeyPressed(KeyEvent.VK_4)) {
                 int index = lemmingsEnJuego.indexOf(lemmingSeleccionado);
                 if (index != -1) {
@@ -184,7 +166,6 @@ public class Lemming extends JGame {
             if (!teclado.isKeyPressed(KeyEvent.VK_6)) {
                 nukeActivado = false; // se libera cuando soltás la tecla
             }
-
             velocidadx2();
             detenerJuego(maxLemmingsNivel1, 1,7,35); //7 max para ganar
 
@@ -245,7 +226,7 @@ public class Lemming extends JGame {
                     lemmingSeleccionado = nuevo; // Actualiza también la referencia seleccionada
                 }
             }
-                        if (teclado.isKeyPressed(KeyEvent.VK_6) && !nukeActivado) {
+            if (teclado.isKeyPressed(KeyEvent.VK_6) && !nukeActivado) {
                 nukeActivado = true;
                 for (int i = 0; i < lemmingsEnJuego.size(); i++) {
                     Bichito original = lemmingsEnJuego.get(i);
@@ -406,6 +387,13 @@ public class Lemming extends JGame {
                 temporizador.detener();
                 estadoAnterior = ESTADO_MAPA;
                 nivelJugando = nivel;
+            }
+        }
+    }
+    private void salir(EstadoJuego estado){
+        for (KeyEvent event : teclado.getEvents()) {
+            if (event.getID() == KeyEvent.KEY_PRESSED && event.getKeyCode() == KeyEvent.VK_ESCAPE) {
+               this.estado = estado;
             }
         }
     }
