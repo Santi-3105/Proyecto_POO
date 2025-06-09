@@ -47,7 +47,7 @@ public class Lemming extends JGame {
     private boolean mouseFuePresionado = false;
     private Bichito lemmingSeleccionado = null;
     // Bloqueador que sera pasado por parametro y paracaidista generado
-    private Bloqueador bloqueador;
+    protected static Bloqueador bloqueador;
     private Paracaidista paracaidista;
     // Manejo de velocidades
     private boolean velocidadRapidaActiva = false;
