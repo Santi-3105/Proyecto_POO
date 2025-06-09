@@ -1,6 +1,5 @@
 package lemmings;
 
-
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -11,55 +10,53 @@ public class Bloqueador extends Bichito {
     private BufferedImage[] frames;
     private int frameActual = 0;
     private double tiempoAnimacion = 0;
+    private boolean fueNukeado = false;
+    private BufferedImage spriteSheet;
 
     public Bloqueador(Bichito b) {
-            try {
+        try {
             setPosicion(b.getX(), b.getY());
             this.setNivel(b.getNivel()); // Copiar el nivel
-                        if (Lemming.skin.equals("Original")) {
-                BufferedImage spriteSheet = ImageIO.read(getClass().getResource("/lemmings/LemmingsSprite.png"));
-                cargarFrames(spriteSheet);
+            if (Lemming.skin.equals("Original")) {
+                spriteSheet = ImageIO.read(getClass().getResource("/lemmings/LemmingsSprite.png"));
             }
-            if(Lemming.skin.equals("LemmingRed"))
-            {
-                BufferedImage spriteSheet = ImageIO.read(getClass().getResource("/lemmings/SpriteSkins2.png"));
-                cargarFrames(spriteSheet);
+            if (Lemming.skin.equals("LemmingRed")) {
+                spriteSheet = ImageIO.read(getClass().getResource("/lemmings/SpriteSkins2.png"));
             }
-            if(Lemming.skin.equals("LemmingViolet"))
-            {
-                BufferedImage spriteSheet = ImageIO.read(getClass().getResource("/lemmings/SpriteSkins1.png"));
-                cargarFrames(spriteSheet);
+            if (Lemming.skin.equals("LemmingViolet")) {
+                spriteSheet = ImageIO.read(getClass().getResource("/lemmings/SpriteSkins1.png"));
             }
+            cargarFrames(spriteSheet);
             setDireccion(b.estaMirandoDerecha());
             this.setImagen(frames[0]);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void cargarFrames(BufferedImage spriteSheet) {
-        //Matriz de coordenadas para los sprites
+        // Matriz de coordenadas para los sprites
         int[][] coordenadas = {
-            {20, 148, 10, 10}, 
-            {36, 148, 10, 10}, 
-            {52, 148, 10, 10}, 
-            {68, 148, 10, 10}, 
-            {84, 148, 10, 10}, 
-            {100, 148, 10, 10}, 
-            {116, 148, 10, 10}, 
-            {132, 148, 10, 10}, 
-            {148, 148, 10, 10}, 
-            {164, 148, 10, 10}, 
-            {180, 148, 10, 10}, 
-            {196, 148, 10, 10}, 
-            {212, 148, 10, 10}, 
-            {228, 148, 10, 10}, 
-            {244, 148, 10, 10}, 
-            {260, 148, 10, 10}, 
+                { 20, 148, 10, 10 },
+                { 36, 148, 10, 10 },
+                { 52, 148, 10, 10 },
+                { 68, 148, 10, 10 },
+                { 84, 148, 10, 10 },
+                { 100, 148, 10, 10 },
+                { 116, 148, 10, 10 },
+                { 132, 148, 10, 10 },
+                { 148, 148, 10, 10 },
+                { 164, 148, 10, 10 },
+                { 180, 148, 10, 10 },
+                { 196, 148, 10, 10 },
+                { 212, 148, 10, 10 },
+                { 228, 148, 10, 10 },
+                { 244, 148, 10, 10 },
+                { 260, 148, 10, 10 },
         };
 
-        int escala=2;
-        int cantidadFrames= coordenadas.length;
+        int escala = 2;
+        int cantidadFrames = coordenadas.length;
 
         frames = new BufferedImage[cantidadFrames];
 
@@ -72,8 +69,7 @@ public class Bloqueador extends Bichito {
             frames[i] = escalarImagen(
                     spriteSheet.getSubimage(x, y, ancho, alto),
                     ancho * escala,
-                    alto * escala
-            );
+                    alto * escala);
         }
     }
 
@@ -85,7 +81,10 @@ public class Bloqueador extends Bichito {
         return escalada;
     }
 
+    @Override
     public void update(double delta) {
+        if (fueNukeado || estaMuerto()) return;
+
         tiempoAnimacion += delta * multiplicadorVelocidad;
         if (tiempoAnimacion > 0.1 / multiplicadorVelocidad) {
             frameActual = (frameActual + 1) % frames.length;
@@ -101,7 +100,7 @@ public class Bloqueador extends Bichito {
 
     @Override
     public void mostrar(Graphics2D g) {
-        if (getImagen() != null) {
+        if (!fueNukeado && getImagen() != null) {
             g.drawImage(getImagen(), (int) getX(), (int) getY(), null);
         }
     }
@@ -114,4 +113,8 @@ public class Bloqueador extends Bichito {
     public int getAlto() {
         return getImagen().getHeight();
     }
+    public void setFueNukeado(boolean valor) {
+        this.fueNukeado = valor;
+    }
+
 }

@@ -15,25 +15,24 @@ public class Escalador extends Bichito implements Habilidad {
     private boolean ultimaDireccionAntesDeHabilidad = true;
     private boolean escalando = false;
     private double tiempoDesdeUltimoMovimiento = 0;
+    BufferedImage spriteSheet;
 
     public Escalador(Bichito b) {
         try {
             setPosicion(b.getX(), b.getY());
             this.setNivel(b.getNivel());
             if (Lemming.skin.equals("Original")) {
-                BufferedImage spriteSheet = ImageIO.read(getClass().getResource("/lemmings/LemmingsSprite.png"));
-                cargarFramesEscalador(spriteSheet);
+                spriteSheet = ImageIO.read(getClass().getResource("/lemmings/LemmingsSprite.png"));
             }
             if(Lemming.skin.equals("LemmingRed"))
             {
-                BufferedImage spriteSheet = ImageIO.read(getClass().getResource("/lemmings/SpriteSkins2.png"));
-                cargarFramesEscalador(spriteSheet);
+                spriteSheet = ImageIO.read(getClass().getResource("/lemmings/SpriteSkins2.png"));
             }
             if(Lemming.skin.equals("LemmingViolet"))
             {
-                BufferedImage spriteSheet = ImageIO.read(getClass().getResource("/lemmings/SpriteSkins1.png"));
-                cargarFramesEscalador(spriteSheet);
+                spriteSheet = ImageIO.read(getClass().getResource("/lemmings/SpriteSkins1.png"));
             }
+            cargarFramesEscalador(spriteSheet);
             setDireccion(b.estaMirandoDerecha());
             this.setImagen(b.estaMirandoDerecha() ? escaladaDerechaFrames[0] : escaladaIzquierdaFrames[0]);
             ultimaDireccionAntesDeHabilidad = b.estaMirandoDerecha();

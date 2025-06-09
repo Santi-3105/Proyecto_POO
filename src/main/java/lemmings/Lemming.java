@@ -188,8 +188,6 @@ public class Lemming extends JGame {
             pausar(nivel1, EstadoJuego.MAPA_1);
             aparicionLemmings(nivel1, delta, maxLemmingsNivel1);
             salidaLemmings(nivel1);
-            lemmingsMuertos();
-
             if (lemmingsEnJuego != null) {
                 for (Bichito bichi : lemmingsEnJuego) {
                     bichi.update(delta); // Llama al update del tipo actual (caminar, paracaidista, etc.)
@@ -198,7 +196,7 @@ public class Lemming extends JGame {
             salirYresetear();
             habilidadesMapa1();
             detenerJuego(maxLemmingsNivel1, 1, 7, 35); // 7 max para ganar
-
+            lemmingsMuertos();
             return; // se saltea si no esta en mapa 1
         }
 
@@ -206,7 +204,6 @@ public class Lemming extends JGame {
             pausar(nivel2, EstadoJuego.MAPA_2);
             aparicionLemmings(nivel2, delta, maxLemmingsNivel2);
             salidaLemmings(nivel2);
-            lemmingsMuertos();
             if (lemmingsEnJuego != null) {
                 for (Bichito bichi : lemmingsEnJuego) {
                     // Primero verificar colisión ANTES de actualizar
@@ -239,6 +236,7 @@ public class Lemming extends JGame {
             }
             habilidadesMapa2();
             detenerJuego(maxLemmingsNivel2, 2, 10, 60); // 10 max para ganar
+            lemmingsMuertos();
             return; // se saltea si no esta en mapa 2
         }
 
@@ -246,7 +244,6 @@ public class Lemming extends JGame {
             pausar(nivel3, EstadoJuego.MAPA_3);
             aparicionLemmings(nivel3, delta, maxLemmingsNivel3);
             salidaLemmings(nivel3);
-            lemmingsMuertos();
             if (lemmingsEnJuego != null) {
                 for (Bichito bichi : lemmingsEnJuego) {
                     bichi.update(delta); // Llama al update del tipo actual (caminar, paracaidista, etc.)
@@ -254,6 +251,7 @@ public class Lemming extends JGame {
             }
             habilidadesMapa3();
             detenerJuego(maxLemmingsNivel3, 3, 15, 120); // 15 max para ganar
+            lemmingsMuertos();
         }
     }
 
@@ -358,9 +356,6 @@ public class Lemming extends JGame {
                 lemmingSeleccionado = paracaidista; // Actualiza también la referencia seleccionada
             }
         }
-        if (teclado.isKeyPressed(IntbEfectoSonido)) {
-
-        }
         Nuke.nukear(teclado, Intautodestruccion, lemmingsEnJuego);
         alternarMusica();
         alternarEfectosSonido();
@@ -373,7 +368,7 @@ public class Lemming extends JGame {
             int index = lemmingsEnJuego.indexOf(lemmingSeleccionado);
             if (index != -1 && lemmingSeleccionado.isAsignable && !lemmingSeleccionado.detectarCaida()) {
                 Bichito original = lemmingsEnJuego.get(index);
-                bloqueador = new Bloqueador(original);
+                bloqueador = new Bloqueador(original);  
                 lemmingsEnJuego.set(index, bloqueador); // Reemplaza solo la referencia, misma posición en pantalla
                 lemmingSeleccionado = bloqueador; // Actualiza también la referencia seleccionada
             }
@@ -550,8 +545,21 @@ public class Lemming extends JGame {
             Musica.detenerMusicaFondo();
             estado = EstadoJuego.GANADOR;
         }
-        if (lemmingsGenerados >= maxLemmingsNivel && lemmingsEnJuego.isEmpty() && bichitosRescatados < maxGanar
+        else if (lemmingsGenerados >= maxLemmingsNivel && lemmingsEnJuego.isEmpty() && bichitosRescatados < maxGanar
                 && temporizador.getTiempoEnSegundos() > tiempoMaximo) {
+            temporizador.detener();
+            Musica.detenerMusicaFondo();
+            estado = EstadoJuego.PERDEDOR;
+        }
+        else if (lemmingsGenerados >= maxLemmingsNivel &&
+             lemmingsEnJuego.isEmpty() &&
+             bichitosRescatados < maxGanar) {
+
+            temporizador.detener();
+            Musica.detenerMusicaFondo();
+            estado = EstadoJuego.PERDEDOR;
+        }
+        else if(temporizador.getTiempoEnSegundos() > tiempoMaximo){
             temporizador.detener();
             Musica.detenerMusicaFondo();
             estado = EstadoJuego.PERDEDOR;
