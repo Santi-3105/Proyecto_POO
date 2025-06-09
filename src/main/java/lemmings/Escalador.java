@@ -162,7 +162,7 @@ public class Escalador extends Bichito implements Habilidad {
 
     private boolean activarEscalador() {
         if (habilidadActiva) return false;
-
+        isAsignable = false;
         int direccion = estaMirandoDerecha() ? 1 : -1;
         return detectarColisionMapa(direccion,0);
     }
@@ -258,6 +258,7 @@ public class Escalador extends Bichito implements Habilidad {
         escalando = false;
         frameActual = 0;
         setDireccion(ultimaDireccionAntesDeHabilidad);
+        isAsignable = true;
     }
 
 

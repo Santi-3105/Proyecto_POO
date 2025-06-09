@@ -138,7 +138,7 @@ public class Lemming extends JGame {
 
         if (estado == EstadoJuego.PAUSA) {
             for (KeyEvent event : teclado.getEvents()) {
-                if (event.getID() == KeyEvent.KEY_PRESSED && event.getKeyCode() == KeyEvent.VK_P) {
+                if (event.getID() == KeyEvent.KEY_PRESSED && event.getKeyCode() == Intpausar) {
                     salirYresetear();
                     estado = estadoAnterior;
                     temporizador.renaudar(temporizador.getTiempoEnSegundos());
@@ -361,7 +361,7 @@ public class Lemming extends JGame {
         if (teclado.isKeyPressed(IntbEfectoSonido)) {
 
         }
-        Nuke.nukear(teclado, Intautodestruccion, lemmingsEnJuego, lemmingSeleccionado);
+        Nuke.nukear(teclado, Intautodestruccion, lemmingsEnJuego);
         alternarMusica();
         alternarEfectosSonido();
         velocidadx2();
@@ -371,7 +371,7 @@ public class Lemming extends JGame {
     private void habilidadesMapa2() {
         if (teclado.isKeyPressed(IntHabilidad1)) {
             int index = lemmingsEnJuego.indexOf(lemmingSeleccionado);
-            if (index != -1) {
+            if (index != -1 && lemmingSeleccionado.isAsignable && !lemmingSeleccionado.detectarCaida()) {
                 Bichito original = lemmingsEnJuego.get(index);
                 bloqueador = new Bloqueador(original);
                 lemmingsEnJuego.set(index, bloqueador); // Reemplaza solo la referencia, misma posición en pantalla
@@ -380,14 +380,15 @@ public class Lemming extends JGame {
         }
         if (teclado.isKeyPressed(IntHabilidad4)) {
             int index = lemmingsEnJuego.indexOf(lemmingSeleccionado);
-            if (index != -1) {
+            if (index != -1 && lemmingSeleccionado != bloqueador) {
                 Bichito original = lemmingsEnJuego.get(index);
                 Paracaidista nuevo = new Paracaidista(original);
                 lemmingsEnJuego.set(index, nuevo); // Reemplaza solo la referencia, misma posición en pantalla
                 lemmingSeleccionado = nuevo; // Actualiza también la referencia seleccionada
+                lemmingSeleccionado.isAsignable = false;
             }
         }
-        Nuke.nukear(teclado, Intautodestruccion, lemmingsEnJuego, lemmingSeleccionado);
+        Nuke.nukear(teclado, Intautodestruccion, lemmingsEnJuego);
         alternarMusica();
         alternarEfectosSonido();
         velocidadx2();
@@ -397,7 +398,7 @@ public class Lemming extends JGame {
     private void habilidadesMapa3() {
         if (teclado.isKeyPressed(IntHabilidad3)) {
             int index = lemmingsEnJuego.indexOf(lemmingSeleccionado);
-            if (index != -1) {
+            if (index != -1 && lemmingSeleccionado.isAsignable) {
                 Bichito original = lemmingsEnJuego.get(index);
                 Cavador cavador = new Cavador(original);
                 lemmingsEnJuego.set(index, cavador);
@@ -413,7 +414,7 @@ public class Lemming extends JGame {
                 lemmingSeleccionado = escalador;
             }
         }
-        Nuke.nukear(teclado, Intautodestruccion, lemmingsEnJuego, lemmingSeleccionado);
+        Nuke.nukear(teclado, Intautodestruccion, lemmingsEnJuego);
         alternarMusica();
         alternarEfectosSonido();
         velocidadx2();
