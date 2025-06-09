@@ -5,12 +5,11 @@ import com.entropyinteractive.Keyboard;
 
 import javax.imageio.ImageIO;
 import java.awt.Graphics2D;
-import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class Nuke extends Bichito {
+public class Nuke extends Bichito{
 
     private BufferedImage[] countdownFrames;
     private BufferedImage[] explosionFrames;
@@ -18,6 +17,7 @@ public class Nuke extends Bichito {
     private double tiempoAnimacion = 0;
     private boolean explotado = false;
     public static boolean nukeActivado = false;
+    public static boolean terminarForzado = false;
 
     public Nuke(Bichito b) {
         try {
@@ -27,11 +27,13 @@ public class Nuke extends Bichito {
                 BufferedImage spriteSheet = ImageIO.read(getClass().getResource("/lemmings/LemmingsSprite.png"));
                 cargarFrames(spriteSheet);
             }
-            if (Lemming.skin.equals("LemmingRed")) {
+            if(Lemming.skin.equals("LemmingRed"))
+            {
                 BufferedImage spriteSheet = ImageIO.read(getClass().getResource("/lemmings/SpriteSkins2.png"));
                 cargarFrames(spriteSheet);
             }
-            if (Lemming.skin.equals("LemmingViolet")) {
+            if(Lemming.skin.equals("LemmingViolet"))
+            {
                 BufferedImage spriteSheet = ImageIO.read(getClass().getResource("/lemmings/SpriteSkins1.png"));
                 cargarFrames(spriteSheet);
             }
@@ -93,7 +95,6 @@ public class Nuke extends Bichito {
                     ancho * escala, alto * escala);
         }
     }
-
     @Override
     public void update(double delta) {
         tiempoAnimacion += delta;
@@ -120,7 +121,8 @@ public class Nuke extends Bichito {
                     setImagen(explosionFrames[frameActual]);
                 } else {
                     super.morir(); // Solo marca como muerto al terminar TODOS los frames
-                    if (Lemming.sonidoActivo) {
+                    if(Lemming.sonidoActivo)
+                    {
                         Sonido.reproducir("tenton.wav");
                     }
                 }
@@ -136,17 +138,12 @@ public class Nuke extends Bichito {
         return escalada;
     }
 
-    public static void nukear(Keyboard teclado, int Intautodestruccion, ArrayList<Bichito> lemmingsEnJuego) {
+    public static void nukear(Keyboard teclado, int Intautodestruccion, ArrayList<Bichito>lemmingsEnJuego){
         if (teclado.isKeyPressed(Intautodestruccion) && !nukeActivado) {
             nukeActivado = true;
             for (int i = 0; i < lemmingsEnJuego.size(); i++) {
                 Bichito original = lemmingsEnJuego.get(i);
                 if (!original.estaMuerto()) {
-                    // Crear un Nuke basado en el original
-                    // Si era un bloqueador, marcamos que fue nukeado
-                    if (original instanceof Bloqueador) {
-                        ((Bloqueador) original).setFueNukeado(true);
-                    }
                     Bichito nukeado = new Nuke(original);
                     lemmingsEnJuego.set(i, nukeado);
                 }

@@ -10,7 +10,6 @@ public class Bloqueador extends Bichito {
     private BufferedImage[] frames;
     private int frameActual = 0;
     private double tiempoAnimacion = 0;
-    private boolean fueNukeado = false;
     private BufferedImage spriteSheet;
 
     public Bloqueador(Bichito b) {
@@ -83,8 +82,6 @@ public class Bloqueador extends Bichito {
 
     @Override
     public void update(double delta) {
-        if (fueNukeado || estaMuerto()) return;
-
         tiempoAnimacion += delta * multiplicadorVelocidad;
         if (tiempoAnimacion > 0.1 / multiplicadorVelocidad) {
             frameActual = (frameActual + 1) % frames.length;
@@ -100,7 +97,7 @@ public class Bloqueador extends Bichito {
 
     @Override
     public void mostrar(Graphics2D g) {
-        if (!fueNukeado && getImagen() != null) {
+        if (getImagen() != null) {
             g.drawImage(getImagen(), (int) getX(), (int) getY(), null);
         }
     }
@@ -109,12 +106,7 @@ public class Bloqueador extends Bichito {
     public int getAncho() {
         return getImagen().getWidth();
     }
-
     public int getAlto() {
         return getImagen().getHeight();
     }
-    public void setFueNukeado(boolean valor) {
-        this.fueNukeado = valor;
-    }
-
 }

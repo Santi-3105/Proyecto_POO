@@ -544,8 +544,7 @@ public class Lemming extends JGame {
             estadoRanking = new EstadoRanking(this);
             Musica.detenerMusicaFondo();
             estado = EstadoJuego.GANADOR;
-        }
-        else if (lemmingsGenerados >= maxLemmingsNivel && lemmingsEnJuego.isEmpty() && bichitosRescatados < maxGanar
+        } else if (lemmingsGenerados >= maxLemmingsNivel && lemmingsEnJuego.isEmpty() && bichitosRescatados < maxGanar
                 && temporizador.getTiempoEnSegundos() > tiempoMaximo) {
             temporizador.detener();
             Musica.detenerMusicaFondo();
@@ -563,6 +562,16 @@ public class Lemming extends JGame {
             temporizador.detener();
             Musica.detenerMusicaFondo();
             estado = EstadoJuego.PERDEDOR;
+        }else if(lemmingsGenerados >= maxLemmingsNivel && bichitosRescatados >= maxGanar
+                && temporizador.getTiempoEnSegundos() <= tiempoMaximo && Nuke.terminarForzado){
+            temporizador.detener();
+            jugadorActual.setLemmingsRescatados(bichitosRescatados);
+            jugadorActual.setTiempoJuego((long) temporizador.getTiempoEnSegundos());
+            jugadorActual.setNivel(nroNivel);
+            manager.guardarJugador(jugadorActual);
+            estadoRanking = new EstadoRanking(this);
+            Musica.detenerMusicaFondo();
+            estado = EstadoJuego.GANADOR;
         }
     }
 

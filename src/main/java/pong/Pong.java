@@ -198,7 +198,7 @@ public class Pong extends JGame {
             try {
                 // Leo propiedades
                 // Seteo si la pantalla sera en ventana o completa
-                /* 
+                /*
                 boolean pantallaCompleta = Boolean.parseBoolean(appProperties2.getProperty("fullScreen", "true"));
                 boolean ventana = Boolean.parseBoolean(appProperties2.getProperty("fullScreen", "true")); // valor por defecto
                 if (pantallaCompleta) {
