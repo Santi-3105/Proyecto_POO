@@ -145,7 +145,9 @@ public class Nuke extends Bichito {
                     // Crear un Nuke basado en el original
                     // Si era un bloqueador, marcamos que fue nukeado
                     if (original instanceof Bloqueador) {
-                        ((Bloqueador) original).setFueNukeado(true);
+                        if (Lemming.bloqueador == original) {
+                            Lemming.bloqueador = null; // Eliminás el viejo bloqueador ya que va a ser reemplazado por un Nuke
+                        }
                     }
                     Bichito nukeado = new Nuke(original);
                     lemmingsEnJuego.set(i, nukeado);
