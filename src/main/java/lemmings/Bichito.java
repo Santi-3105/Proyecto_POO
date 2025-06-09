@@ -29,23 +29,22 @@ public class Bichito extends ObjetoGrafico {
     private double tiempoUltimoCambioDireccion = 0;
     private final double tiempoMinimoEntreCambios = 0.5;
     public boolean isAsignable = true; //bandera para saber si se puede asignar la habilidad
+    BufferedImage spriteSheet;
 
     public Bichito() {
         try {
             if (Lemming.skin.equals("Original")) {
-                BufferedImage spriteSheet = ImageIO.read(getClass().getResource("/lemmings/LemmingsSprite.png"));
-                cargarFrames(spriteSheet);
+                spriteSheet = ImageIO.read(getClass().getResource("/lemmings/LemmingsSprite.png"));
             }
             if(Lemming.skin.equals("LemmingRed"))
             {
-                BufferedImage spriteSheet = ImageIO.read(getClass().getResource("/lemmings/SpriteSkins2.png"));
-                cargarFrames(spriteSheet);
+                spriteSheet = ImageIO.read(getClass().getResource("/lemmings/SpriteSkins2.png"));
             }
             if(Lemming.skin.equals("LemmingViolet"))
             {
-                BufferedImage spriteSheet = ImageIO.read(getClass().getResource("/lemmings/SpriteSkins1.png"));
-                cargarFrames(spriteSheet);
+                spriteSheet = ImageIO.read(getClass().getResource("/lemmings/SpriteSkins1.png"));
             }
+            cargarFrames(spriteSheet);
             this.setImagen(caminarDerechaFrames[0]); // imagen inicial
 
         } catch (IOException e) {

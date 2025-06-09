@@ -18,25 +18,24 @@ public class Paracaidista extends Bichito implements Habilidad{
     private boolean habilidadActiva = false;
     private boolean yaEstabaEnAire = false;
     private boolean ultimaDireccionAntesDeHabilidad = true;
+    BufferedImage spriteSheet;
 
     public Paracaidista(Bichito b) {
         try {
             setPosicion(b.getX(), b.getY());
             this.setNivel(b.getNivel()); // Copiar el nivel
             if (Lemming.skin.equals("Original")) {
-                BufferedImage spriteSheet = ImageIO.read(getClass().getResource("/lemmings/LemmingsSprite.png"));
-                cargarFrames(spriteSheet);
+                spriteSheet = ImageIO.read(getClass().getResource("/lemmings/LemmingsSprite.png"));
             }
             if(Lemming.skin.equals("LemmingRed"))
             {
-                BufferedImage spriteSheet = ImageIO.read(getClass().getResource("/lemmings/SpriteSkins2.png"));
-                cargarFrames(spriteSheet);
+                spriteSheet = ImageIO.read(getClass().getResource("/lemmings/SpriteSkins2.png"));
             }
             if(Lemming.skin.equals("LemmingViolet"))
             {
-                BufferedImage spriteSheet = ImageIO.read(getClass().getResource("/lemmings/SpriteSkins1.png"));
-                cargarFrames(spriteSheet);
+                spriteSheet = ImageIO.read(getClass().getResource("/lemmings/SpriteSkins1.png"));
             }
+            cargarFrames(spriteSheet);
             setDireccion(b.estaMirandoDerecha());
             this.setImagen(b.estaMirandoDerecha() ? paracaidasDerechaFrames[0] : paracaidasIzquierdaFrames[0]);
         } catch (IOException e) {

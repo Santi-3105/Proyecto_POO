@@ -18,25 +18,24 @@ public class Cavador extends Bichito implements Habilidad{
     private boolean habilidadActiva = false;
     private final double VELOCIDAD_CAVIDO = 0.5; // Bloques por segundo
     private boolean ultimaDireccionAntesDeHabilidad = true;
+    BufferedImage spriteSheet;
 
     public Cavador(Bichito b) {
         try {
             setPosicion(b.getX(), b.getY());
             this.setNivel(b.getNivel());
-                        if (Lemming.skin.equals("Original")) {
-                BufferedImage spriteSheet = ImageIO.read(getClass().getResource("/lemmings/LemmingsSprite.png"));
-                cargarFramesCavador(spriteSheet);
+            if (Lemming.skin.equals("Original")) {
+                spriteSheet = ImageIO.read(getClass().getResource("/lemmings/LemmingsSprite.png"));
             }
             if(Lemming.skin.equals("LemmingRed"))
             {
-                BufferedImage spriteSheet = ImageIO.read(getClass().getResource("/lemmings/SpriteSkins2.png"));
-                cargarFramesCavador(spriteSheet);
+                spriteSheet = ImageIO.read(getClass().getResource("/lemmings/SpriteSkins2.png"));
             }
             if(Lemming.skin.equals("LemmingViolet"))
             {
-                BufferedImage spriteSheet = ImageIO.read(getClass().getResource("/lemmings/SpriteSkins1.png"));
-                cargarFramesCavador(spriteSheet);
+                spriteSheet = ImageIO.read(getClass().getResource("/lemmings/SpriteSkins1.png"));
             }
+            cargarFramesCavador(spriteSheet);
             setDireccion(b.estaMirandoDerecha());
             this.setImagen(frames[0]);
             ultimaDireccionAntesDeHabilidad = b.estaMirandoDerecha();
