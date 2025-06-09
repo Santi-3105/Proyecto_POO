@@ -120,7 +120,7 @@ public class Nuke extends Bichito{
                     frameActual++;
                     setImagen(explosionFrames[frameActual]);
                 } else {
-                    super.morir(); // Solo marca como muerto al terminar TODOS los frames
+                    //super.morir(); // Solo marca como muerto al terminar TODOS los frames
                     if(Lemming.sonidoActivo)
                     {
                         Sonido.reproducir("tenton.wav");
@@ -138,7 +138,7 @@ public class Nuke extends Bichito{
         return escalada;
     }
 
-    public static void nukear(Keyboard teclado, int Intautodestruccion, ArrayList<Bichito>lemmingsEnJuego, Bichito lemmingSeleccionado){
+    public static void nukear(Keyboard teclado, int Intautodestruccion, ArrayList<Bichito>lemmingsEnJuego){
         if (teclado.isKeyPressed(Intautodestruccion) && !nukeActivado) {
             nukeActivado = true;
             for (int i = 0; i < lemmingsEnJuego.size(); i++) {
@@ -146,9 +146,7 @@ public class Nuke extends Bichito{
                 if (!original.estaMuerto()) {
                     Bichito nukeado = new Nuke(original);
                     lemmingsEnJuego.set(i, nukeado);
-                    if (lemmingSeleccionado == original) {
-                        lemmingSeleccionado = nukeado; //QUE SE MUERA EL BLOQUEADOR TAMBIEN
-                    }
+                    original.morir();
                 }
             }
         }

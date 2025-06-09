@@ -28,6 +28,7 @@ public class Bichito extends ObjetoGrafico {
     protected static double multiplicadorVelocidad = 1.0;
     private double tiempoUltimoCambioDireccion = 0;
     private final double tiempoMinimoEntreCambios = 0.5;
+    public boolean isAsignable = true; //bandera para saber si se puede asignar la habilidad
 
     public Bichito() {
         try {
