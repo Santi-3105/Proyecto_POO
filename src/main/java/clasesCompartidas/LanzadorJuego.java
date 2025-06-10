@@ -14,21 +14,14 @@ import pong.Pong;
 import lemmings.Lemming; //Nuevo
 
 public class LanzadorJuego extends JFrame implements ActionListener {
-    protected JGame juego;
-    protected Thread t;
-    protected Panel tarjetaPong;
-    protected Panel tarjetaLemmings;
-    protected Font descripcionFont;
-    protected Font botonFont;
-    protected Label titulo;
-    protected Panel tarjeta;
-    protected Button boton;
-    protected DefaultListModel<String> listaJuegos;
-    protected JList<String> juegos;
-    protected JButton botonConfig;
-    protected JButton botonIniciar;
-    protected JPanel panelImg;
-    protected JScrollPane scrollPane;
+    private JGame juego;
+    private Thread t;
+    private final DefaultListModel<String> listaJuegos;
+    private final JList<String> juegos;
+    private final JButton botonConfig;
+    private final JButton botonIniciar;
+    private final JPanel panelImg;
+    private final JScrollPane scrollPane;
 
     public LanzadorJuego() {
         setTitle("Sistema de videojuego");
@@ -93,8 +86,6 @@ public class LanzadorJuego extends JFrame implements ActionListener {
     }
 
     public void actionPerformed(ActionEvent e) {
-        Musica.detenerMusicaFondo();
-        
         if (e.getSource() == botonIniciar) {
             // Agarra el valor del juego seleccionado en la barra
             String juegoSeleccionado = juegos.getSelectedValue();
@@ -125,11 +116,11 @@ public class LanzadorJuego extends JFrame implements ActionListener {
             String juegoSeleccionado = juegos.getSelectedValue();
             if (juegoSeleccionado == null) {
                 JOptionPane.showMessageDialog(LanzadorJuego.this, "Error, seleccione un juego para configurar");
-            } else if (juegoSeleccionado == "Lemmings") {
+            } else if (juegoSeleccionado.equals("Lemmings") ) {
                 new MenuConfigLem();
-            } else if (juegoSeleccionado == "Pong") {
+            } else if (juegoSeleccionado.equals("Pong") ) {
                 new MenuConfig();
-            } else if (juegoSeleccionado == "Counter-Strike") {
+            } else if (juegoSeleccionado.equals("Counter-Strike")) {
                 // HACER NUEVA CONFIGURACION
                 // ConfigVideojuego config = new ConfigVideojuego();
                 // config.getClass();

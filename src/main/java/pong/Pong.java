@@ -3,18 +3,13 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.util.Properties;
-
-
 import com.entropyinteractive.JGame;
 import com.entropyinteractive.Keyboard;
-import com.entropyinteractive.Log;
-
 import clasesCompartidas.Sonido;
 import clasesCompartidas.Musica;
 import clasesCompartidas.conversorTecla;
+import lemmings.Lemming;
 
 
 public class Pong extends JGame {
@@ -30,16 +25,17 @@ public class Pong extends JGame {
     private int teclaArribaJ2;
     private int teclaAbajoJ2;
     protected Properties appProperties;
-    private Properties appProperties2;
+    private final Properties appProperties2;
     private Cancha cancha;
+    private final Keyboard key = this.getKeyboard(); // Inicializa el teclado
 
     private static final double TIEMPO_ESPERA_MAXIMO = 2.0; // dos segundos de espera para volver a poner la pelota al
     // medio
     private int estado;
-    private static final int ESTADO_MENU = 0;
-    private static final int ESTADO_JUEGO = 1;
-    private static final int ESTADO_RANKING = 2;
-    private static final int ESTADO_GANADOR = 3;
+    private final int ESTADO_MENU = 0;
+    private final int ESTADO_JUEGO = 1;
+    private final int ESTADO_GANADOR = 3;
+    private final int ESTADO_PAUSA = 4;
     private String ganador;
 
     public Pong(String title, int width, int height) {
@@ -60,25 +56,30 @@ public class Pong extends JGame {
 
 
     public void gameUpdate(double delta) {
-        if (estado == ESTADO_MENU) {
-            Keyboard key = this.getKeyboard(); // Inicializa el teclado
-            if (key.isKeyPressed(KeyEvent.VK_1)) {
-                // Un jugador
-            } else if (key.isKeyPressed(KeyEvent.VK_2)) {
-                iniciarJuego2Jugadores();
-            } else if (key.isKeyPressed(KeyEvent.VK_R)) {
-                //Ranking
+        if (estado == ESTADO_PAUSA) {
+            for (KeyEvent event : key.getEvents()) {
+                if (event.getID() == KeyEvent.KEY_PRESSED && key.isKeyPressed(KeyEvent.VK_P)) {
+                  estado = ESTADO_JUEGO;
+                }
             }
+            return;
+        }
+
+        if (estado == ESTADO_MENU) {
+           if (key.isKeyPressed(KeyEvent.VK_2)) {
+                iniciarJuego2Jugadores();
+           }
         }
 
         if (estado != ESTADO_JUEGO) {
             if (this.getKeyboard().isKeyPressed(KeyEvent.VK_ESCAPE)) {
                 estado = ESTADO_MENU;
+                Musica.detenerMusicaFondo();
             }
             return;
         }
         //Solo se sigue si esta en estado_juego, para dejar de dibujar
-
+        pausar();
         if (esperandoReinicio) {
             tiempoEspera += delta;
             if (tiempoEspera >= TIEMPO_ESPERA_MAXIMO) {
@@ -131,7 +132,6 @@ public class Pong extends JGame {
                 return; //cortar para no seguir ejecutando audio
             }
         }
-
         if (this.getKeyboard().isKeyPressed(KeyEvent.VK_ESCAPE)) {
             estado = ESTADO_MENU;
         }
@@ -144,14 +144,10 @@ public class Pong extends JGame {
         if (estado == ESTADO_MENU) {
             dibuje.setColor(Color.WHITE);
             dibuje.setFont(new Font("SansSerif", Font.BOLD, 32));
-            dibuje.drawString("1 Jugador", 330, 200);
             dibuje.drawString("2 Jugadores", 312, 300);
-            dibuje.drawString("Ranking", 344, 400);
             dibuje.setFont(new Font("SansSerif", Font.BOLD, 16));
-            dibuje.drawString("Presione 1", 366, 225);
             dibuje.drawString("Presione 2", 366, 325);
-            dibuje.drawString("Presione R", 365, 425);
-        } else if (estado == ESTADO_JUEGO) {
+        } else if (estado == ESTADO_JUEGO || estado == ESTADO_PAUSA) {
             // Agrego un if por si se produce un error la cancha quedara negra (default)
             if (cancha != null) {
                 cancha.mostrar(dibuje, getWidth(), getHeight());
@@ -198,7 +194,7 @@ public class Pong extends JGame {
             try {
                 // Leo propiedades
                 // Seteo si la pantalla sera en ventana o completa
-                /* 
+
                 boolean pantallaCompleta = Boolean.parseBoolean(appProperties2.getProperty("fullScreen", "true"));
                 boolean ventana = Boolean.parseBoolean(appProperties2.getProperty("fullScreen", "true")); // valor por defecto
                 if (pantallaCompleta) {
@@ -208,7 +204,7 @@ public class Pong extends JGame {
                     appProperties2.setProperty("fullScreen", "false");
                     MenuConfig.guardarEnArchivo(appProperties2,rutaArchivo2);
                 }
-                */
+
                 String t1Arriba = appProperties.getProperty("movArriba1", "W");
                 String t1Abajo = appProperties.getProperty("movAbajo1", "S");
                 String t2Arriba = appProperties.getProperty("movArriba2", "\u2191");
@@ -245,5 +241,12 @@ public class Pong extends JGame {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+    }
+    private void pausar(){
+        for (KeyEvent event : key.getEvents()) {
+            if (event.getID() == KeyEvent.KEY_PRESSED && key.isKeyPressed(KeyEvent.VK_P)) {
+                estado = ESTADO_PAUSA;
+            }
+        }
     }
 }
