@@ -3,7 +3,6 @@ package lemmings;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
-import java.security.Key;
 
 import com.entropyinteractive.Keyboard;
 

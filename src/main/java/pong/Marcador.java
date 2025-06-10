@@ -26,7 +26,7 @@ class Marcador extends ObjetoGrafico {
     public int getPuntaje() {
         return puntaje;
     }
-
+    @Override
     public void update(double delta) {
     }
 

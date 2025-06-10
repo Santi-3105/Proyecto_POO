@@ -11,7 +11,7 @@ public class JPanelImage extends JPanel {
     private final String path;
     private Image img;
 
-        public JPanelImage(String path)
+    public JPanelImage(String path)
     {
         this.path=path;
         loadImage();

@@ -9,7 +9,7 @@ import com.entropyinteractive.Keyboard;
 import clasesCompartidas.Sonido;
 import clasesCompartidas.Musica;
 import clasesCompartidas.conversorTecla;
-import lemmings.Lemming;
+
 
 
 public class Pong extends JGame {
@@ -194,7 +194,7 @@ public class Pong extends JGame {
             try {
                 // Leo propiedades
                 // Seteo si la pantalla sera en ventana o completa
-
+                /*
                 boolean pantallaCompleta = Boolean.parseBoolean(appProperties2.getProperty("fullScreen", "true"));
                 boolean ventana = Boolean.parseBoolean(appProperties2.getProperty("fullScreen", "true")); // valor por defecto
                 if (pantallaCompleta) {
@@ -203,7 +203,7 @@ public class Pong extends JGame {
                 } else if (ventana) {
                     appProperties2.setProperty("fullScreen", "false");
                     MenuConfig.guardarEnArchivo(appProperties2,rutaArchivo2);
-                }
+                }*/
 
                 String t1Arriba = appProperties.getProperty("movArriba1", "W");
                 String t1Abajo = appProperties.getProperty("movAbajo1", "S");

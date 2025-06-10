@@ -49,7 +49,6 @@ public class MenuConfigLem implements ActionListener {
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.setLocationRelativeTo(null);
 
-        // Crear el panel principal del menú de configuración
         // Crear el panel principal del menú de configuración con fondo de imagen
         panelCompleto = new JPanel(new BorderLayout()) {
             Image lemmingsFondo = new ImageIcon(getClass().getResource("/lemmings/confgFondo2.png")).getImage();
@@ -64,7 +63,6 @@ public class MenuConfigLem implements ActionListener {
                 }
             }
         };
-        // Config botones
         // Config botones
         ventana = new JRadioButton("Ventana", true);
         pantallaCompleta = new JRadioButton("Pantalla completa", false);
@@ -93,11 +91,10 @@ public class MenuConfigLem implements ActionListener {
         guardar.addActionListener(this);
         guardar.setVisible(true);
         defaultProps = new Properties();
+        // JComponent el cual engloba todo
         componentes = new HashMap<>();
 
-        // JComponent el cual engloba todo
         // Cargo en un mapa las key y los valores
-        // JComponent el cual engloba todo
         // JRadioButtons
         componentes.put("ventana", ventana);
         componentes.put("pantallaCompleta", pantallaCompleta);
@@ -122,14 +119,11 @@ public class MenuConfigLem implements ActionListener {
         componentes.put("skin", skin);
 
         // Iniciara el mapa (cargarConfig) con los datos que le pase el archivo
-        // (cargarEnArchivo)
-
         cargarEnArchivo(defaultProps, archivoConfig);
         cargarConfiguracion(componentes, defaultProps);
 
         // Creo el menu configuracion
         // Añado sus botones
-        // Config panel
         config = new JPanel(new GridBagLayout());
         config.setOpaque(false);
         GridBagConstraints g = new GridBagConstraints();
@@ -228,7 +222,7 @@ public class MenuConfigLem implements ActionListener {
         for (Component component : components) {
             if (component instanceof JLabel) {
                 component.setForeground(Color.WHITE);
-                component.setFont(new Font("Comic Sans MS", Font.BOLD, 20)); // Opcional, para que coincida el estilo
+                component.setFont(new Font("Comic Sans MS", Font.BOLD, 20));
             }
         }
         // Unificar y agregar paneles al frame
@@ -305,8 +299,6 @@ public class MenuConfigLem implements ActionListener {
     protected static void guardarEnArchivo(Properties defaultProps, String rutaArchivo) {
         try (FileOutputStream out = new FileOutputStream(rutaArchivo)) {
             defaultProps.store(out, "ConfgUsuario");
-            String currentDirectory = System.getProperty("user.dir");
-            System.out.println("El directorio actual es: " + currentDirectory);
         } catch (Exception e) {
             System.out.println("No se pudo encontrar la ruta");
             e.printStackTrace();

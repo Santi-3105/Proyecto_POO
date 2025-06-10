@@ -89,7 +89,7 @@ class Pelota extends ObjetoGrafico {
         return this.velocidadX;
     }
 
-    boolean colisiona(ObjetoGrafico b) {
+    boolean colisiona(Paleta b) {
         return getX() < b.getX() + b.getAncho() &&
                 getX() + getAncho() > b.getX() &&
                 getY() < b.getY() + b.getAlto() &&

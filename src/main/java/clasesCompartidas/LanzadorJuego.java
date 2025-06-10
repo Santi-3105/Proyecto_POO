@@ -46,7 +46,6 @@ public class LanzadorJuego extends JFrame implements ActionListener {
         scrollPane = new JScrollPane(juegos);
         add(scrollPane, BorderLayout.WEST);
 
-        //Nuevo agregue el panelImg antes porque hacia conflicto
         // Creo el panel de la imagen
         panelImg = new JPanel();
         //Cargo las imagenes segun aprete los juegos de la lista 
@@ -62,10 +61,7 @@ public class LanzadorJuego extends JFrame implements ActionListener {
                         panelImg.add(new JPanelImage("/lemmings/portada_lemmings.png"));
                     } else if ("Pong".equals(selected)) {
                         panelImg.add(new JPanelImage("/pong/portada_pong.png"));
-                    } else if ("Counter-Strike".equals(selected)) {
-                        panelImg.add(new JPanelImage("Iconos/cs.jpg"));
                     }
-
                     panelImg.revalidate();
                     panelImg.repaint();
                 }
@@ -108,6 +104,9 @@ public class LanzadorJuego extends JFrame implements ActionListener {
                     }
                 };
                 t.start();
+            } else if ("Counter-Strike".equals(juegoSeleccionado))
+            {
+                JOptionPane.showMessageDialog(LanzadorJuego.this, "No somos tan buenos, todavia no sabemos hacer este");
             }
             //Nuevo
         }
@@ -121,9 +120,7 @@ public class LanzadorJuego extends JFrame implements ActionListener {
             } else if (juegoSeleccionado.equals("Pong") ) {
                 new MenuConfig();
             } else if (juegoSeleccionado.equals("Counter-Strike")) {
-                // HACER NUEVA CONFIGURACION
-                // ConfigVideojuego config = new ConfigVideojuego();
-                // config.getClass();
+                JOptionPane.showMessageDialog(LanzadorJuego.this, "Configuración en proceso... (Jugate otro juego)");
             }
         }
     }
