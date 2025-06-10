@@ -17,7 +17,7 @@ public class Bichito extends ObjetoGrafico {
     private int frameActual = 0;
     private double tiempoAnimacion = 0;
     private boolean mirandoDerecha = true;
-    protected Nivel nivel;
+    private Nivel nivel;
     private boolean estaMuerto = false;
     private double alturaCaidaAcumulada = 0;
     private boolean estabaCayendo = false;
@@ -29,7 +29,7 @@ public class Bichito extends ObjetoGrafico {
     private double tiempoUltimoCambioDireccion = 0;
     private final double tiempoMinimoEntreCambios = 0.5;
     public boolean isAsignable = true; //bandera para saber si se puede asignar la habilidad
-    BufferedImage spriteSheet;
+    private BufferedImage spriteSheet;
 
     public Bichito() {
         try {
@@ -160,8 +160,6 @@ public class Bichito extends ObjetoGrafico {
         if (Lemming.sonidoActivo) {
             Sonido.reproducir("die.wav");
         }
-        // añadir animación de muerte
-
     }
 
     private BufferedImage escalarImagen(BufferedImage imagenOriginal, int nuevaAncho, int nuevaAlto) {
@@ -248,8 +246,7 @@ public class Bichito extends ObjetoGrafico {
         // Coordenadas del mapa en filas/columnas
         int fila = nuevoY / nivel.getAltoEstructura();
         int columna = (nuevoX / nivel.getAnchoEstructura());
-        // agrego +1 cuando está mirando a la derecha, para que se detecte bien la
-        // colisión
+        // agrego +1 cuando está mirando a la derecha, para que se detecte bien la colisión
         if (estaMirandoDerecha()) {
             columna = (nuevoX / (nivel.getAnchoEstructura() - 1));
 
@@ -308,8 +305,7 @@ public class Bichito extends ObjetoGrafico {
         }
         Rectangle rectLemming = new Rectangle((int) getX(), (int) getY(), getAncho(), getAlto());
 
-        return rectLemming.intersects(nivel.getMetaX(), nivel.getMetaY(), nivel.getAnchoEstructura(),
-                nivel.getAltoEstructura());
+        return rectLemming.intersects(nivel.getMetaX(), nivel.getMetaY(), nivel.getAnchoEstructura(), nivel.getAltoEstructura());
     }
 
     public boolean detectarPinche(Nivel nivel) {

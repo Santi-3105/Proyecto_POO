@@ -18,7 +18,7 @@ public class Cavador extends Bichito implements Habilidad{
     private boolean habilidadActiva = false;
     private final double VELOCIDAD_CAVIDO = 0.5; // Bloques por segundo
     private boolean ultimaDireccionAntesDeHabilidad = true;
-    BufferedImage spriteSheet;
+    private BufferedImage spriteSheet;
 
     public Cavador(Bichito b) {
         try {

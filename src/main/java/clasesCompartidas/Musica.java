@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.net.URL;
 
 public class Musica {
-    protected static Clip musicaFondo;
+    private static Clip musicaFondo;
 
     public static void iniciarMusica(String archivo) {
         try {

@@ -15,7 +15,7 @@ public class Escalador extends Bichito implements Habilidad {
     private boolean ultimaDireccionAntesDeHabilidad = true;
     private boolean escalando = false;
     private double tiempoDesdeUltimoMovimiento = 0;
-    BufferedImage spriteSheet;
+    private BufferedImage spriteSheet;
 
     public Escalador(Bichito b) {
         try {
@@ -259,6 +259,4 @@ public class Escalador extends Bichito implements Habilidad {
         setDireccion(ultimaDireccionAntesDeHabilidad);
         isAsignable = true;
     }
-
-
 }

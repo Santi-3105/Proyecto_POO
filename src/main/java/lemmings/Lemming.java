@@ -21,7 +21,6 @@ public class Lemming extends JGame {
     private final Keyboard teclado = this.getKeyboard(); // Inicializa el teclado
     private Nivel nivel1, nivel2, nivel3, nivelJugando;
     private ArrayList<Bichito> arrBichito, arrBichito2, arrBichito3, lemmingsEnJuego;
-    // private boolean nukeActivado = false; -------------FIJARSE DE SACAR
     public EstadoJuego estado;
     public EstadoJuego estadoAnterior;
 
@@ -84,7 +83,6 @@ public class Lemming extends JGame {
             habilidad4 = appProperties.getProperty("habilidad4", "4");
             acelerarJuego = appProperties.getProperty("acelerarJuego", "5");
             autodestruccion = appProperties.getProperty("autodestruccion", "6");
-            //Optimizar
             nomHabilidades.add(habilidad1.toUpperCase());
             nomHabilidades.add(habilidad2.toUpperCase());
             nomHabilidades.add(habilidad3.toUpperCase());
@@ -369,8 +367,8 @@ public class Lemming extends JGame {
             if (index != -1 && lemmingSeleccionado.isAsignable && !lemmingSeleccionado.detectarCaida()) {
                 Bichito original = lemmingsEnJuego.get(index);
                 bloqueador = new Bloqueador(original);  
-                lemmingsEnJuego.set(index, bloqueador); // Reemplaza solo la referencia, misma posición en pantalla
-                lemmingSeleccionado = bloqueador; // Actualiza también la referencia seleccionada
+                lemmingsEnJuego.set(index, bloqueador); 
+                lemmingSeleccionado = bloqueador; 
             }
         }
         if (teclado.isKeyPressed(IntHabilidad4)) {
@@ -378,8 +376,8 @@ public class Lemming extends JGame {
             if (index != -1 && lemmingSeleccionado != bloqueador) {
                 Bichito original = lemmingsEnJuego.get(index);
                 Paracaidista nuevo = new Paracaidista(original);
-                lemmingsEnJuego.set(index, nuevo); // Reemplaza solo la referencia, misma posición en pantalla
-                lemmingSeleccionado = nuevo; // Actualiza también la referencia seleccionada
+                lemmingsEnJuego.set(index, nuevo); 
+                lemmingSeleccionado = nuevo; 
                 lemmingSeleccionado.isAsignable = false;
             }
         }
@@ -527,7 +525,9 @@ public class Lemming extends JGame {
         velocidadRapidaActiva = false;
         Bichito.multiplicadorVelocidad = 1.0;
         temporizador.reiniciar();
+        // Reseteo nuke
         Nuke.nukeActivado = false;
+        // Reseteo los default de musica y sonido
         musicaActiva = Boolean.parseBoolean(appProperties.getProperty("musicaBox", "true"));
         sonidoActivo = Boolean.parseBoolean(appProperties.getProperty("efectoSonidoBox", "true"));
     }
@@ -535,7 +535,6 @@ public class Lemming extends JGame {
     private void detenerJuego(int maxLemmingsNivel, int nroNivel, int maxGanar, double tiempoMaximo) {
         if (lemmingsGenerados >= maxLemmingsNivel && lemmingsEnJuego.isEmpty() && bichitosRescatados >= maxGanar
                 && temporizador.getTiempoEnSegundos() <= tiempoMaximo) {
-            // Nuevo
             temporizador.detener();
             jugadorActual.setLemmingsRescatados(bichitosRescatados);
             jugadorActual.setTiempoJuego((long) temporizador.getTiempoEnSegundos());

@@ -24,7 +24,6 @@ public class Temporizador {
         multiplicadorVelocidad = 1.0; // volver a la velocidad normal
     }
 
-    // Se llama desde tu método update general (por ejemplo GameUpdate)
     public void update(double delta) {
         if (enEjecucion) {
             tiempoAcumulado += delta * multiplicadorVelocidad;

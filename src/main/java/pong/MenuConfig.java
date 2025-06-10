@@ -8,7 +8,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
 
 import javax.swing.*;
 
@@ -43,7 +42,6 @@ public class MenuConfig implements ActionListener {
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.setLocationRelativeTo(null);
 
-        // Crear el panel principal del menú de configuración
         // Crear el panel principal del menú de configuración con fondo de imagen
         panelCompleto = new JPanel(new BorderLayout()) {
             Image pongFondo = new ImageIcon(getClass().getResource("/pong/confgFondo.jpg")).getImage();
@@ -81,9 +79,9 @@ public class MenuConfig implements ActionListener {
         guardar.addActionListener(this);
         guardar.setVisible(true);
         defaultProps = new Properties();
+        // JComponent el cual engloba todo
         componentes = new HashMap<>();
 
-        // JComponent el cual engloba todo
         // Cargo en un mapa las key y los valores
         // JRadioButtons
         componentes.put("ventana", ventana);
@@ -101,14 +99,12 @@ public class MenuConfig implements ActionListener {
         componentes.put("paleta", paleta);
         componentes.put("cancha", cancha);
 
-        // Iniciara el mapa (cargarConfig) con los datos que le pase el archivo
-        // (cargarEnArchivo)
+        // Iniciara el mapa (cargarConfig) con los datos que le pase el archivos
         cargarEnArchivo(defaultProps, archivoConfig);
         cargarConfiguracion(componentes, defaultProps);
 
         // Creo el menu configuracion
         // Añado sus botones
-        // Config panel
         config = new JPanel(new GridBagLayout());
         config.setOpaque(false);
         GridBagConstraints g = new GridBagConstraints();
@@ -256,7 +252,7 @@ public class MenuConfig implements ActionListener {
         for (Component component : components) {
             if (component instanceof JLabel) {
                 component.setForeground(Color.WHITE);
-                component.setFont(new Font("Courier New", Font.BOLD, 20)); // Opcional, para que coincida el estilo
+                component.setFont(new Font("Courier New", Font.BOLD, 20));
             }
         }
         // Unificar y agregar paneles al frame
@@ -322,33 +318,6 @@ public class MenuConfig implements ActionListener {
             System.out.println("No se pudo cargar configuración previa.");
         }
     }
-
-    // Método genérico para convertir un string en el keycode correspondiente
-    private int convertirTecla(String nombreTecla) {
-        nombreTecla = nombreTecla.trim();
-
-        // Traducir flechas Unicode a teclas reales
-        switch (nombreTecla) {
-            case "↑":
-                return KeyEvent.VK_UP;
-            case "↓":
-                return KeyEvent.VK_DOWN;
-        }
-
-        // Tecla simple (una letra o número)
-        if (nombreTecla.length() == 1) {
-            return KeyEvent.getExtendedKeyCodeForChar(nombreTecla.toUpperCase().charAt(0));
-        }
-
-        // Tecla especial como "UP", "SPACE", etc.
-        try {
-            return KeyEvent.class.getField("VK_" + nombreTecla.toUpperCase()).getInt(null);
-        } catch (Exception e) {
-            System.out.println("Tecla inválida: " + nombreTecla + ". Se usará VK_UNDEFINED.");
-            return KeyEvent.VK_UNDEFINED;
-        }
-    }
-
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == guardar) {

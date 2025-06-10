@@ -18,7 +18,7 @@ public class Paracaidista extends Bichito implements Habilidad{
     private boolean habilidadActiva = false;
     private boolean yaEstabaEnAire = false;
     private boolean ultimaDireccionAntesDeHabilidad = true;
-    BufferedImage spriteSheet;
+    private BufferedImage spriteSheet;
 
     public Paracaidista(Bichito b) {
         try {
@@ -115,7 +115,7 @@ public class Paracaidista extends Bichito implements Habilidad{
     }
 
     public void moverY(double dy) {
-        setY(getY() + dy); // caída lenta
+        setY(getY() + dy);
     }
 
     public void update(double delta) {

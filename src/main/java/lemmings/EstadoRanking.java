@@ -1,9 +1,7 @@
 package lemmings;
 
 import java.awt.*;
-import java.awt.event.KeyEvent;
 import java.util.ArrayList;
-import com.entropyinteractive.Keyboard;
 
 
 public class EstadoRanking {

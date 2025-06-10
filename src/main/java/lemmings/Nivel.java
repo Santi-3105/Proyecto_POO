@@ -167,13 +167,13 @@ public class Nivel {
                     char simbolo = filaTexto.charAt(col);
                     Estructura estructura = estructuras.get(simbolo);
                     if(simbolo == 'S'){
-                        //averiguamos donde está el spawn para cargar a los lemmings
+                        // Averiguamos donde está el spawn para cargar a los lemmings
                         spawnX = col*anchoEstructura;
                         spawnY = fila*altoEstructura;
                     }
 
                     if (simbolo == 'G') {
-                        //averiguamos donde está la meta para sacar a los lemmings
+                        // Averiguamos donde está la meta para sacar a los lemmings
                         metaX = col * anchoEstructura;
                         metaY = fila * altoEstructura;
                     }
@@ -188,7 +188,6 @@ public class Nivel {
                     }
 
                     if (estructura == null) {
-                        //System.err.println("Símbolo '" + simbolo + "' no mapeado en estructuras.");
                         continue;
                     }
                     mapaEstructuras[fila][col] = estructura;

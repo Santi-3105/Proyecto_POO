@@ -44,8 +44,5 @@ public class Cancha extends ObjetoGrafico {
     }
 
     @Override
-    public void update(double delta) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'update'");
-    }
+    public void update(double delta) {}
 }
