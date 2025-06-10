@@ -15,7 +15,6 @@ import com.entropyinteractive.Mouse;
 
 import clasesCompartidas.Sonido;
 import clasesCompartidas.conversorTecla;
-import pong.MenuConfig;
 
 public class Lemming extends JGame {
     private final Keyboard teclado = this.getKeyboard(); // Inicializa el teclado
